@@ -1,0 +1,60 @@
+div.yui-b p {
+
+    margin: 0 0 .5em 0;
+    color: #999;
+
+}
+
+div.yui-b p strong {
+
+    font-weight: bold;
+    color: #000;
+
+}
+
+div.yui-b p em {
+
+    color: #000;
+
+}            
+
+h1 {
+
+    font-weight: bold;
+    font-family: Georgia;
+    margin: 0 0 1em 0;                
+    padding: .25em .5em;
+    /* background-color: #ccc; */
+
+}
+
+.yuimenuitem-selected {
+    background-color: #F00;
+    z-index: 80;
+}
+
+#productsandservices {
+    
+    position: static;
+    
+}
+
+
+/*
+    For IE 6: trigger "haslayout" for the anchor elements in the root Menu by 
+    setting the "zoom" property to 1.  This ensures that the selected state of 
+    MenuItems doesn't get dropped when the user mouses off of the text node of 
+    the anchor element that represents a MenuItem's text label.
+*/
+
+#productsandservices .yuimenuitemlabel {
+
+    _zoom: 1;
+
+}
+
+#productsandservices .yuimenu .yuimenuitemlabel {
+
+    _zoom: normal;
+
+}

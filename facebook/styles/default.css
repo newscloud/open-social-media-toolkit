@@ -1,0 +1,1627 @@
+/*
+Author: Adam Faja for Geoffco
+URL: http://www.geoffco.com 
+Test compress
+CONTENTS 
+
+ 1)  BASELINE and OVERRIDES
+ 2)  GLOBAL LAYOUT STRUCTURE
+2a)  HEADER
+2b)  FOOTER
+ 3)  SPECIAL LINKS
+4a)  NAV TABS
+4b)  SUBNAV TABS
+ 5)  SPECIAL PANELS
+ 6)  REUSABLE LAYOUT PANELS
+ 7)  BUTTONS
+ 8)  CONTENT LISTS
+ 9)  FACEBOOK PUBLISHER / ATTACH
+10)  TABLES
+11)  PROFILE BOX
+12)  RESOURCES LIST
+13)  FORMS
+
+*/
+
+/****************
+Temporary styles from newsroom.css - Adam you can remove these as we go along and add the replacements
+*************/
+.hidden {display:none;}
+#testBar {width:750px;height:10px;background-color:white;padding:5px;margin:0px 0px 10px 0px;font-weight:bold;text-align:center;}
+#loadingStatus {margin:200px 0px 100px 0px;min-height:200px;text-align:center;}
+#smallLoadingStatus {margin:20px 0px 20px 0px;min-height:50px;text-align:center;}
+
+/* action team styles */
+.actionSidePanel {border:1px solid #ccc;background-color:#e1e1e1;padding:5px;margin:0px 0px 10px 0px;}
+.readSidePanel {border:1px solid #ccc;background-color:#e1e1e1;padding:5px;margin:0px 0px 10px 0px;}
+
+
+.templateEditHover, .templateEditHover *
+{
+	background-color: #fcc;
+	/*border:1px solid #f00;*/
+}
+
+#videoBox 
+{
+	/*width: 250px; height: 260px; float: left;*/
+	float: left;
+	margin: 15px;
+}
+
+#joinButton
+{
+	text-align: center; font-weight: bold;
+}			
+
+.rewardItem 
+{
+	width: 100px; height: 100px;
+}
+#challengeList 
+{
+	padding-left: 0px;	
+}
+
+
+#actionFeedList 
+{
+	padding-left: 0px;	
+}
+.availabilityText
+{
+	color: #777777;
+	font-size: .8em;
+}
+
+/*********************************
+End temporary styles
+*********************************/
+
+/*********************************
+1) BASELINE and OVERRIDES
+*********************************/
+
+body {
+	direction:ltr;
+	font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+	font-size:11px;
+	text-align:left;
+	direction:ltr;
+	unicode-bidi:embed;
+	margin:0px;
+	padding:0px;
+	}
+
+h1, h2, h3, h4, h5 {
+	font-size: 14px;
+	color: #333;
+	margin: 0px;
+	padding: 0px;
+	}
+
+/* H1 for page titles */
+h1 { font-size: 16px;
+	font-weight: bold;
+	color: #333333;
+	margin: 0 0 6px 0;
+	padding: 0;
+	}
+
+h1 a { color: #333333; }
+
+.standard_message.has_padding h1 {padding: inherit;}
+
+
+/* H2 for panelBar title bars, and story titles in lists */
+h2 { font-size: 14px;
+	font-weight: bold;
+	margin: 0 0 6px 0;
+	padding: 0;
+	}
+
+h3 { font-size: 11px;
+	font-weight: normal;
+	color: #999;
+	margin: 0 0 7px 0;
+	padding: 0;	}
+
+h4 { font-size: 12px;
+	font-weight: bold;
+	margin: 0 0 6px 0;
+	padding: 0;
+	}
+
+h5 {
+	font-size: 12px;
+	font-weight: bold;
+	color: #cb4d01;
+	border-top: 2px solid #cb4d01;
+	margin: 20px 0px 10px 0;
+	padding: 5px 0px;
+	}
+
+p { font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+	font-size:11px;
+	text-align:left;
+	margin: 0 0 7px 0;
+	padding: 0px;
+	}
+
+a { color:#1D7195;
+	cursor:pointer;
+	outline-style:none;
+	-moz-outline-style:none;
+	text-decoration:none;
+	}
+
+a:hover{text-decoration:underline;}
+img{border:0px;}
+
+.meta { color: #999; }
+.bold { font-weight: bold; }
+
+blockquote {
+	background: transparent url(http://www.facebook.com/images/start_quote_small.gif) no-repeat scroll -1px 0;
+	color:#333333;
+	line-height: 14px;
+	margin: 0 0 10px 0;
+	padding: 0 0 0 16px; } 
+
+blockquote .quotes {
+	background:transparent url(http://www.facebook.com/images/end_quote_small.gif) no-repeat scroll right bottom;
+	padding: 0 15px 0 0; } 
+
+.bullet_list ul {
+	margin: 10px 0 10px 0;
+	}
+
+.bullet_list li {
+	display: list-item;
+	margin: 0 0 10px 20px;
+	padding: 0;
+	list-style-image: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bullet1.gif);
+	list-style-type: disc;
+	list-style-position: outside;
+	border: none;
+	}
+
+hr { border: none 0;
+	margin: 0;
+	border-top: 1px solid #cce4f0;
+	height: 1px;
+	}
+
+.bump10 {padding:10px;}
+
+.bump4 {padding: 4px;}
+
+.clearfix {display:inline-block;}
+
+.float_left {float: left;}
+
+.float_right {float: right;}
+
+
+/*********************************
+2)  GLOBAL LAYOUT STRUCTURE
+*********************************/
+
+#header {
+	width: 760px;
+	height: 78px;
+	display: inline-block;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_banner.jpg) top left no-repeat;
+	margin: 0;
+	}
+
+#pageBody {
+	clear: both;
+	width: 760px;
+	display: inline-block;
+	margin: 0px;
+	}
+
+#col_left {
+	clear: both;
+	width: 500px;
+	float: left;
+	margin: 0px 0px 15px 0px;
+	}
+
+#col_right {
+	width: 245px;
+	float: right;
+	margin: 0px 0px 15px 0px;
+	}
+
+#footer {
+	clear: both;
+	display: block;
+	width: 740px;
+	padding: 5px 10px;
+	margin-bottom: 2px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
+	}
+
+
+/*********************************
+2a)  HEADER
+*********************************/
+
+.dh_links {
+	float: right;
+	margin:	10px;
+	padding: 0px 0px 5px 0px;
+	width: auto;
+	}
+
+#header .pipe {
+	margin: 0 5px;
+	color: #ff7a00;
+	}
+
+
+/*********************************
+2b)  FOOTER
+*********************************/
+
+#footer .dh_links {
+	float: left;
+	margin:	0px;
+	padding: 0px;
+	color: #fff;
+	}
+
+#footer .dh_links a { color: #fff; }
+
+.powered {
+	clear: both;
+	float: right;
+	margin: 2px 0 0 0;
+	padding: 2px 5px 4px 4px;
+	color: #999;
+	background: #efefef;
+	font-size: 10px;
+	line-height: 1.4em;
+	}
+
+.powered a {
+	color: #999;
+	}
+
+a.powered:hover {
+	color: #1D7195;
+	text-decoration: none;
+	}
+
+.powered .label {
+	font-family: "arial black",arial,"lucida grande",tahoma,verdana,sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	padding-bottom: 2px;
+	color: #1D7195;
+	line-height: 1.2em;
+	}
+
+
+/*********************************
+3)  SPECIAL LINKS
+*********************************/
+
+.rss_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_rss.png) left no-repeat;
+	padding: 3px 0 3px 18px;
+	}
+
+.twitter_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_twitter.gif) left no-repeat;
+	padding: 3px 0 3px 18px;
+	}
+
+.newscloud_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_newscloud.gif) left no-repeat;
+	padding: 3px 0 3px 20px;
+	}
+
+.grist_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_grist.gif) left no-repeat;
+	padding: 3px 0 3px 20px;
+	}
+
+
+/*********************************
+4a)  NAV TABS
+*********************************/
+
+#pageTabs {
+	width: 100%;
+	height: 25px;
+	position: relative;
+	top: -26px;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	float: right;
+	overflow: visible; }
+
+.ie6 #pageTabs, .ie7 #pageTabs {
+	top: -24px;}
+
+#pageTabs .tabs {
+	border-bottom: 1px solid #1d7195;
+	width: 100%;
+	height: 23px;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px; }
+
+.ie6 .tabs, .ie7 .tabs {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;}
+
+.ff2 .tabs {
+	margin: 0px 0px 0px 0px;
+	padding: 8px 0px 0px 0px;}
+
+.tabs.top {background:#f7f7f7;}
+
+.tabs .left_tabs {
+	float: left;
+	padding-left: 10px;
+	}
+
+.tabs .right_tabs {
+	float: right;
+	padding-right: 8px;
+	}
+
+.tabs .back_links { padding-right:20px; float:right;}
+
+.toggle_tabs {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	height: 25px;
+	text-align: center;
+	}
+
+.ie6 .toggle_tabs, .ie7 .toggle_tabs { margin-bottom: 0px;}
+
+.toggle_tabs li { display:inline;
+	padding: 0px 0px 0px 0px;
+	margin: 0 2px 0 2px;
+	overflow: hidden;
+	}
+
+.ie6 .toggle_tabs li, .ie7 .toggle_tabs li {background-position: 0 3px;}
+
+.ff2 .toggle_tabs li { line-height: 2em; }
+
+.toggle_tabs li a, .toggle_tabs li.first a {
+	margin: 0px 0px 0px 0px;
+	padding: 3px 10px 4px 10px;
+	height: 15px;
+	border: 1px solid #1d7195;
+	color: #fff;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: normal;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;	}
+
+.ie6 .toggle_tabs li a, .ie7 .toggle_tabs li a {display:inline-block;}
+
+.toggle_tabs li.first a { border: 1px solid #1d7195;}
+
+.toggle_tabs li a:focus { outline: 0px;}
+
+.toggle_tabs li a.selected, .toggle_tabs li.first a.selected {
+	margin: 0px 0px 0px 0px;
+	background: #fff;
+	border-top: 1px solid #1d7195;
+	border-right: 1px solid #1d7195;
+	border-bottom: 1px solid #fff;
+	border-left: 1px solid #1d7195;
+	color: #105576; }
+
+.toggle_tabs li a.selected:hover { text-decoration:none;}
+.toggle_tabs li a.disabled { color:#999; cursor:default;}
+.toggle_tabs li a.disabled:hover { text-decoration:none;}
+
+
+/*********************************
+4b)  SUBNAV TABS
+*********************************/
+
+#subNav {
+	clear: both;
+	width: 100%;
+	height: 20px;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	display: inline-block;
+	overflow: visible;
+	border-bottom: none;
+	}
+
+.ff2 #subNav {
+	overflow: visible; }
+
+#subNav.tabs {
+	border-bottom: 1px solid #1d7195;
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px; }
+
+
+#subNav .toggle_tabs {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	text-align: center;
+	}
+
+#subNav .toggle_tabs li { display:inline;
+	padding: 0px 0px 0px 0px;
+	margin: 0 2px 0 2px;
+	overflow: hidden;
+	}
+
+#subNav .toggle_tabs li a {
+	margin: 0px 0px 0px 0px;
+	padding: 2px 10px 3px 10px;
+	height: 13px;
+	border: 1px solid #1d7195;
+	color: #fff;
+	font-weight: bold;
+	font-size: 11px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
+	}
+
+#subNav .toggle_tabs li a.selected {
+	margin: 0px 0px 0px 0px;
+	background: #fff;
+	border-top: 1px solid #1d7195;
+	border-right: 1px solid #1d7195;
+	border-bottom: 1px solid #fff;
+	border-left: 1px solid #1d7195;
+	color: #105576;
+	}
+
+#subNav .toggle_tabs li a.selected:hover { text-decoration:none;}
+#subNav .toggle_tabs li a.disabled { color:#999; cursor:default;}
+#subNav .toggle_tabs li a.disabled:hover { text-decoration:none;}
+
+#attachTabs {
+	margin-bottom: none;}
+
+#attachTabs .tabs {
+	border-bottom: none;
+	width: 100%;
+	padding: 4px 0 3px 0;
+	}
+
+#attachTabs .toggle_tabs li { display:inline;
+	padding: 3px 0px 3px 0;
+	margin: 0 0 0 0;
+	background: #E1E1E1;
+	}
+
+#attachTabs .toggle_tabs li a {
+	border: 1px solid #E1E1E1;
+	border-bottom: #CCCCCC;
+	background: inherit;
+	color: #105576;
+	font-weight: normal;
+	font-size: 11px;
+	padding: 2px 10px 3px 28px;}
+
+#attachTabs .toggle_tabs li a.selected {
+	background: #fff;
+	border: 1px solid #CCCCCC;
+	border-bottom: 1px solid #fff;
+	color: #105576;
+	margin-left: 0;}
+
+#attachTabs .toggle_tabs li a.selected.photo_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_photo.gif) 4px no-repeat #fff;}
+
+#attachTabs .toggle_tabs li a.photo_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_photo.gif) 4px no-repeat;
+	}
+
+#attachTabs .toggle_tabs li a.selected.video_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_video.gif) 4px no-repeat #fff;}
+
+#attachTabs .toggle_tabs li a.video_link {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_video.gif) 4px no-repeat;
+	}
+
+#attachTabs .toggle_tabs li a.selected:hover { text-decoration:none;}
+#attachTabs .toggle_tabs li a.disabled { color:#999; cursor:default;}
+#attachTabs .toggle_tabs li a.disabled:hover { text-decoration:none;}
+
+.attachBox {
+	border: 1px solid #CCCCCC;	
+	padding: 10px;
+	clear: both;}
+
+
+
+/*********************************
+5)  SPECIAL PANELS
+*********************************/
+
+#featurePanel {
+	padding: 0px 0px 10px 0px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	margin-bottom: 15px;
+	}
+
+#featurePanel h1 { font-size: 20px;
+	font-family: helvetica,arial,"lucida grande",tahoma,verdana,arial,sans-serif;
+	font-weight: bold;
+	color: #333333;
+	margin: 10px 0 6px 0;
+	padding: 0px;
+	}
+
+#featurePanel h1 a { color: #333333; }
+
+.featured_story {
+	clear: both;
+	padding: 10px 10px 0px 10px;
+	}
+
+.featured_story_half {
+	width: 230px;
+	float: left;
+	margin: 10px 10px 0 10px;
+	}
+
+#featurePanel .panelBar {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
+	}
+
+#featurePanel .thumb {
+	float: left;
+	margin: 0px 20px 10px 0px;
+	}
+
+#featurePanel .thumb img {
+	max-width: 180px;
+	max-height: 135px;
+	}
+
+#col_left .featured_story_half .storyBlockWrap {
+	clear: both;
+	width: 230px;
+	margin: 0px;
+	}
+
+#col_left #featurePanel .storyBlockWrap {
+	float: left;
+	width: 280px;
+	margin: 0px;
+	}
+
+.related_story { clear: both; }
+
+#featurePanel .more_link, #introPanel .more_link, #teamPanel .more_link, #rewardGrid .more_link {
+	color: #ff7a00;
+	font-size: 11px;
+	font-weight: bold;
+	}
+
+#featurePanel .slot {
+	float: left;
+	width: 40px;
+	height: 30px;
+	margin: 0 10px 10px 0;
+	}
+
+#readStoryList {
+	clear: both;
+	display: inline-block;
+	}
+
+#readBlog {
+	clear: both;
+	display: inline-block;
+	margin:5px;
+	}
+
+#readVideo {
+	clear: both;
+	margin:5px;
+	text-align:center;
+}
+
+#videoPreview {
+	text-align:center; 
+	height: 130px;
+	margin:5px;
+}
+
+#videoPreviewMsg {
+	position: relative; top: 45px;
+}
+
+#col_left #readStoryList .storyBlockWrap, #teamWrap #readStoryList .storyBlockWrap{
+	float: left;
+	width: 300px;
+	margin: 10px 0px 0px 0px;
+	}
+
+#readStoryList .thumb {
+	float: left;
+	margin: 0px 20px 20px 0px;
+	}
+
+#readStoryList .thumb img {
+	/* djm again */
+	max-width: 180px;
+	max-height: 135px;
+}
+
+#readStoryList .storyCaption {
+	clear: both;
+	font-size: 12px;
+	}
+
+#readStoryList .videoIntro {
+	clear: both;
+	text-align:center;
+	margin:5px 0px 0px 0px;
+	}
+
+#readStoryList .btn_1 {
+	float: right;
+	margin: 6px 10px 20px 10px;
+	}
+
+#readStoryList .panel_block {
+	padding: 0px 0px 3px 0px;}
+
+#myProfile {
+	clear: both;
+	display: inline-block;
+	}
+
+#col_left #myProfile .storyBlockWrap {
+	float: left;
+	width: 300px;
+	margin: 10px 0px 0px 0px;
+	}
+
+#myProfile .thumb {
+	float: left;
+	margin: 0px 20px 20px 0px;
+	}
+
+.panel_block {
+	clear: both;
+	display: inline-block;
+	padding: 10px 0px 3px 0px;}
+
+.panel_half {
+	display: inline-block;
+	margin: 10px;
+	}
+
+.friend {
+	float: left;
+	margin: 0px 5px;}
+
+#col_left #commentThread .storyBlockWrap {
+	float: left;
+	width: 420px;
+	margin: 0px;
+	}
+
+.comments {
+	width: 480px;
+	margin: 10px;
+	}
+
+.formfield {
+	padding: 5px;
+	border: solid 1px #AED0DA;
+	}
+
+#commentThread .btn_1 {
+	float: right;
+	margin: 0 10px 10px 0;
+	border: none;
+	display: block;
+	}
+
+#postComment .btn_1 {
+	float: right;
+	margin: 0 10px 10px 0;
+	border: none;
+	display: block;
+	}
+
+#introPanel {
+	padding: 10px 10px 3px 10px;
+	margin: 0 0 5px 0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
+	}
+
+#introPanel p { color: #fff; }
+
+#introPanel a {	color: #FF7A00; }
+
+#teamPanel {
+	padding: 0 0 0 0;
+	margin: 0 0 15px 0;
+	overflow: auto;
+	display: inline-block;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	}
+
+#teamPanel h1 {
+	font-size: 14px;
+	font-weight: bold;
+	color: #cb4d01;
+	margin: 0 72px 10px 0;
+	padding: 0px;
+	}
+
+#teamWrap {
+	margin: 10px 0 15px 0;
+	}
+
+#teamPanel .thumb {
+	width: 320px;
+	margin: 0 20px 0 0;
+	}
+#teamPanel .thumb #hideTip {
+	margin-top:10px;
+	}
+
+#teamPanel .storyBlockWrap {
+	float: left;
+	width: 400px;
+	margin: 10px 0px 0px 0px;
+	}
+
+#teamPanel .btn_1 {
+	margin: 10px 0 10px 0;
+	}
+
+#rewardsHead {
+	padding: 0;
+	margin: 0;
+	display: inline-block;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	}
+
+#rewardsHead .storyBlockWrap {
+	float: left;
+	width: 290px;
+	margin: 0px;
+	}
+
+#rewardGrid {
+	clear: both;
+	display: inline-block;
+	padding: 5px 0px 15px 0px;
+	}
+
+#rewardGrid .subFilter  {
+	font-size: 10px;
+	color: #333;
+	background-color: #ebf6fc;
+	border-top: 1px solid #aed0da;
+	padding: 4px 10px 5px 10px;
+	}
+
+.gridBlock {
+	float: left;
+	margin: 5px;
+	padding: 5px;
+	width: 168px;
+	height: 168px;
+	overflow: hidden;
+	border: 1px solid #ccc;
+	}
+
+.gridBlock .panel_block {
+	margin: 0;
+	padding: 0;
+	}
+
+.gridBlock .thumb {
+	float: left;
+	margin: 0px 5px 10px 0px;
+	}
+
+.gridBlock .thumb img {
+	/*width: 90px; djm: theses sizes now set by intelligent image scaler */
+	max-width: 90px;
+	max-height: 50px;
+	}
+
+.gridBlock .storyBlockWrap {
+	float: left;
+	width: 72px;
+	margin: 0px;
+	padding: 20px 0 0 0;
+	}
+
+.gridBlock .storyHead {
+	clear: both;
+	}
+
+#teamIcon {
+	padding: 10px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_team.gif) top right no-repeat;
+	overflow: auto;
+	}
+
+.pointValue {
+	color: #ff7a00;
+	font-size: 11px;
+	font-weight: bold;
+	}
+
+.pts {
+	text-transform: uppercase;
+	font-size: 9px;
+	}
+
+.userLevel0 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #cc99cc;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_reader.gif) center repeat-x; }
+
+.userLevel1 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #cb4d01;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_contributor.gif) center repeat-x;	}
+
+.userLevel2 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #996633;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_bronze.gif) center repeat-x;	}
+
+.userLevel3 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #999999;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_silver.gif) center repeat-x;	}
+
+.userLevel4 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #cc9900;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_gold.gif) center repeat-x;	}
+
+.userLevel5 {
+	font-weight: normal;
+	font-size: 9px;
+	padding: 1px 2px;
+	color: #80aac0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_platinum.gif) center repeat-x;	}
+
+
+#actionLegend {
+	padding: 10px;
+	margin: 0 0 15px 0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) repeat-x bottom;
+	}
+
+#actionLegend .btn_1 { margin: 0 0 10px 20px; float: right; }
+
+#actionLegend .pointsTable { margin: 10px 0 0 0; }
+
+#wideTipPanel,.wideMsgPanel {
+	padding: 0;
+	margin: 0 0 15px 0;
+	display: inline-block;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	}
+
+#wideTipPanel .wideTipLeft {
+	float: left;
+	display: inline;
+	padding: 10px 10px 0px 10px;
+	margin: 0;
+	width: 230px;
+	}
+
+#wideTipPanel .wideTipRight {
+	float: right;
+	display: inline;
+	padding: 10px;
+	margin: 0;
+	width: 230px;
+	}
+
+#leaderWeeklyRewardBlock /* hack by djm */ 
+{
+	clear: both;
+}
+
+
+/*********************************
+6)  REUSABLE LAYOUT PANELS
+*********************************/
+
+/* Different colored panel shells, depending on conent:
+BLUE "panel_1" div wraps general content panels
+ORANGE "panel_2" div wraps Action Team specific panels
+
+These wrappers cascade to tell .panelBar to which background to use for the title bar, and add a border-bottom. */
+
+.panelBar {	width: 100%; }
+
+.panel_1 {
+	border-bottom: 2px solid #aed0da;
+	margin-bottom: 15px;
+	}
+
+.panel_2 {
+	border-bottom: 2px solid #ff7a00;
+	margin-bottom: 15px;
+	}
+
+.panel_1 .panelBar {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #AED0DA;
+	}
+
+.panel_2 .panelBar {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_orange.png) top repeat-x #cb4d01;
+	}
+
+.panelBar h2 {
+	float: left;
+	padding: 3px 6px;
+	margin: 0;
+	color: #fff;
+	font-weight: bold;
+	font-size: 11px;
+	}
+
+.panelBar h2 a {
+	color: #fff;
+	font-weight: bold;
+	font-size: 11px;
+	}
+
+.bar_link {
+	float: right;
+	margin: 3px 10px; }
+
+.bar_link a { color: #fff; }
+
+.pipe {
+	margin: 0 5px;
+	color: #cce4f0;
+	}
+
+.subtitle, .subFilter  {
+	clear: both;
+	font-size: 10px;
+	color: #333;
+	background-color:#ebf6fc;
+	border-bottom:1px solid #aed0da;
+	padding: 3px 10px 4px 10px;
+	}
+
+.subFilter a {
+	padding: 1px 5px 2px 5px;
+	}
+
+.subFilter .selected {
+	color: #fff;
+	padding: 1px 5px 2px 5px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: #AED0DA url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) repeat-x scroll center top;
+	}
+
+
+/*********************************
+7)  BUTTONS
+*********************************/
+
+.btn_1 {
+	color: #fff;
+	font-weight: bold;
+	padding: 3px 10px 4px 10px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_1.png) top repeat-x #c14001;
+	}
+
+.btn_1_lg {
+	font-size:16px;
+}
+
+#col_right .btn_1 {
+	display: block;
+	text-align: center;
+	margin: 10px;
+	}
+
+.btn_2 {
+	margin: 0 1px;
+	padding: 2px 10px 3px 10px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	}
+
+.btn_left {
+	margin: 0 1px;
+	padding: 3px 8px 4px 8px;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	}
+
+.voteLink {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_vote.gif) left no-repeat;
+	padding-left: 15px;
+	}
+
+.btn_mid {
+	margin: 0 1px;
+	padding: 3px 8px 4px 8px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	}
+
+.btn_right {
+	margin: 0 1px;
+	padding: 3px 8px 4px 8px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-bottomright: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-webkit-border-bottom-right-radius: 4px;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	}
+
+.rating {
+	margin: 0 0 10px 15px;
+	display: block;
+	float: left;
+	height: 16px;
+	}
+
+.rate_up {
+	display: block;
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 0 0 0 10px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) top left no-repeat;
+	}
+
+.rate_up:hover {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) center left no-repeat;
+	}
+
+.rate_up_on {
+	display: block;
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 0 0 0 10px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) bottom left no-repeat;
+	}
+
+.rate_down {
+	display: block;
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 0 10px 0 10px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) top right no-repeat;
+	}
+
+.rate_down:hover {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) center right no-repeat;
+	}
+
+.rate_down_on {
+	display: block;
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 0 10px 0 10px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) bottom right no-repeat;
+	}
+
+.flag {
+	display: block;
+	float: left;
+	color: #666;
+	height: 16px;
+	margin: 0 0 0 10px;
+	border-left: 1px solid #ccc;
+	padding-left: 30px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px top no-repeat;
+	}
+
+a.flag:hover {
+	color: #cc3333;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px center no-repeat;
+	}
+
+.flag_on {
+	display: block;
+	float: left;
+	color: #cc3333;
+	height: 16px;
+	margin: 0 0 0 10px;
+	border-left: 1px solid #ccc;
+	padding-left: 30px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px bottom no-repeat;
+	}
+
+
+
+/*********************************
+8)  CONTENT LISTS
+*********************************/
+
+ul {
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	}
+
+li {
+	display: inline-block;
+	list-style-type:none;
+	margin: 0;
+	padding: 10px 0 3px 0;
+	}
+
+#newswireWrap ul li, .list_rewards ul li, #feedList ul li {
+	clear: both;
+	}
+
+.panel_1 ul li {
+	clear: both;
+	float: left;
+	border-bottom: 1px solid #cce4f0;
+	}
+
+.panel_2 ul li {
+	clear: both;
+	float: left;
+	border-bottom: 1px solid #ffd3aa;
+	}
+
+.thumb {
+	float: left;
+	margin: 0px 20px 10px 0px;
+	}
+
+.avatar {
+	float: left;
+	margin: 0px 10px 0px 0px;
+	}
+
+.feed_poster {
+	margin: 0;
+	min-height: 36px;
+	}
+
+.feed_poster h3 {
+	padding-top: 7px;
+	color: #333;
+	}
+
+.storyHead {
+	font-size: 14px;
+	font-weight: bold;
+	}
+
+#col_left .storyBlockWrap {
+	width: 390px;
+	float: right;
+	}
+
+#col_right .storyBlockWrap {
+	width: 185px;
+	float: right;
+	}
+
+
+/* Stories List */
+
+.list_stories .thumb img {
+	/*width: 90px; djm - fix for awkward reward image sizes, will break ie 6*/
+	max-width: 90px;
+	max-height: 90px;
+	}
+
+.profilePic {
+	float: left;
+	margin: 0px 10px 0px 0px;
+	}
+
+.profilePicLarger {
+	float: left;
+	margin: 0px 10px 0px 0px;
+	}
+
+.list_stories .profilePic img {
+	width: 30px;
+	height: 30px;
+}
+
+.list_stories .profilePicLarger img { /* djm: need a small profile pic for action feed that doesnt override fb pic sizes */
+	/*width: 30px;
+	height: 30px;*/
+}
+
+.storyBlockMeta {
+	color: #999;
+	padding-bottom: 7px;
+	margin: 0;
+	}
+
+.storyCommands table {
+	margin: 0;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	}
+
+.storyCommands td {
+	margin: 0;
+	padding: 3px 8px 4px 8px;
+	}
+
+.storyCommands .commentLink {
+	border-left: 2px solid #fff;
+	border-right: 2px solid #fff;
+	}
+
+/* Rewards List */
+
+#col_right .thumb {
+	float: left;
+	margin: 0px 10px 0px 0px;
+	}
+
+.top_reward {
+	padding: 10px 10px 3px 10px;
+	margin: 0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
+	}
+
+.top_reward .thumb {
+	float: left;
+	margin: 0px 10px 0px 0px;
+	}
+
+#col_right .top_reward .storyBlockWrap {
+	width: 125px;
+	float: right;
+	}
+
+
+/*********************************
+9)  FACEBOOK PUBLISHER / ATTACH
+*********************************/
+
+/*moved to publisher.css*/
+
+/*********************************
+10)  TABLES
+*********************************/
+
+.pointsTable table {
+	clear: both;
+	margin: 0;
+	background: #fff;
+	width: 100%;
+	border-bottom: 1px solid #AED0DA;
+	}
+
+.pointsTable td {
+	border-top: 1px solid #AED0DA;
+	margin: 0;
+	padding: 3px 5px 4px 10px;
+	}
+
+.pointsTable_profile table {
+	clear: both;
+	margin: 0 0 10px 0;
+	width: 100%;
+	border-bottom: 1px solid #AED0DA;
+	}
+
+.pointsTable_profile td {
+	border-top: 1px solid #AED0DA;
+	margin: 0;
+	padding: 3px 10px 4px 0px;
+	}
+
+.historyTable table {
+	clear: both;
+	margin: 0;
+	width: 100%;
+	text-align: left;
+	border-bottom: none;
+	}
+
+.historyTable table th {
+	font-size: 10px;
+	font-weight: normal;
+	color: #333;
+	background-color:#EBF6FC;
+	margin: 0;
+	padding: 2px 5px 3px 10px;
+	}
+
+.historyTable td {
+	border-top: 1px dashed #CCE4F0;
+	margin: 0;
+	padding: 3px 5px 4px 10px;
+	}
+
+ 
+/* My Profile Summary */
+
+#profileSummary {
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
+	}
+
+#profileSummary .panel_block {
+	padding: 10px;
+	margin: 0;
+	}
+
+#profileSummary .thumb {
+	float: left;
+	margin: 0px 10px 10px 0px;
+	}
+
+#profileSummary .storyBlockWrap {
+	width: 165px;
+	margin-bottom: 3px;
+	}
+
+#profileSummary .pointsTable_profile table {
+	clear: both;
+	margin: 0 0 0 0;
+	width: 225px;
+	border-bottom: 1px solid #FF7A00;
+	}
+
+#profileSummary .pointsTable_profile td {
+	border-top: 1px solid #FF7A00;
+	border-bottom: none;
+	margin: 0;
+	padding: 3px 0px 4px 5px;
+	background-color: #fff;
+	}
+
+
+/* Bookmarklet Panel */
+
+#bookmarkletPanel {
+	padding: 10px 10px 3px 10px;
+	margin: 0 0 5px 0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
+	}
+
+#bookmarkletPanel p, #bookmarkletPanel h2 {
+	color: #fff;
+	}
+
+#bookmarkletPanel .btn_1 {
+	display: inline;
+	padding: 5px 12px 6px 12px;
+	}
+
+#bookmarkletDemo {
+	width: 225px;
+	height: 26px;
+	padding: 70px 0 0 0;
+	margin: 15px 0 10px 0;
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bookmarklet_demo.gif) top left no-repeat;
+	}
+
+
+/*********************************
+11)  PROFILE BOX
+*********************************/
+
+
+#profileBox {
+	margin: 0;
+	padding:0;
+	font-size: 10px;
+	}
+
+#profileBox .btn_1 {
+	display: block;
+	text-align: center;
+	font-size: 9px;
+	margin: 10px;
+	}
+
+
+#profileBox .pointsTable_profile table {
+	clear: both;
+	font-size: 9px;
+	margin: 0;
+	width: 100%;
+	}
+
+#profileBox .pointsTable_profile td {
+	font-size: 9px;
+	margin: 0;
+	padding: 3px 3px 4px 0px;
+	border-bottom: none;
+	}
+
+#profileBox h1, #profileBox h1 a {
+	color: #1D7195;
+	font-size: 11px;
+	font-weight: bold;
+	}
+
+.box_intro {
+	margin: 0 0 10px 0;
+	padding: 0px 8px 3px 8px;
+	width: 170px;
+	/*background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_bob2.gif) top right no-repeat #d8dfea;*/
+	}
+.box_intro p {
+	font-size: 10px;
+	}
+
+#profileBox .box_intro h1, #profileBox .box_intro h1 a {
+	color: #CB4D01;
+	font-size: 12px;
+	font-weight: bold;
+	margin-right: 54px;
+	}
+
+.microTabs  {
+	clear: both;
+	font-size: 10px;
+	color: #333;
+	background-color: #ECEFF5;
+	border-bottom: 1px solid #94a3c4;
+	padding: 2px 0;
+	}
+
+.microTabs a {
+	padding: 1px 5px 2px 5px;
+	}
+
+.microTabs .selected {
+	color: #fff;
+	padding: 1px 5px 2px 5px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-topleft: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-webkit-border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	background: #94a3c4;
+	}
+
+.microFeed { }
+
+.microFeed .thumb {
+	margin: 0 8px 8px 0;
+	}
+
+.microFeed .thumb img { width: 50px; }
+
+.microFeed li {
+	padding: 8px 0 0 0;
+	border-bottom: 1px solid #D8DFEA;
+	}
+
+.microFeed .storyBlockWrap {width: 184px;}
+
+/*********************************
+12)  RESOURCES LIST
+*********************************/
+
+
+.colFull_half {
+	width: 360px;
+	float: left;
+	margin: 0 10px;
+	}
+
+.resourceList {
+	clear: both;
+	margin-bottom: 10px;
+	display: inline-block;
+	}
+
+.resourceList h2 {
+	border-top: 2px solid #cb4d01;
+	font-size: 12px;
+	color: #cb4d01;
+	margin: 10px 0px 10px 10px;
+	padding: 5px 0px;
+	}
+
+.resourceList ul {
+	margin: 10px 0 10px 20px;
+	}
+
+.resourceList li {
+	clear: both;
+	display: list-item;
+	margin: 0 0 10px 40px;
+	padding: 0;
+	list-style-image: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bullet1.gif);
+	list-style-type: disc;
+	list-style-position: outside;
+	border: none;
+	}
+
+.resourceList li.thumb {
+	list-style: none;
+	height: 60px;
+	margin: 0 0 10px 20px;
+	}
+
+.resourceList .thumb img {
+	height: 50px;
+	padding: 0 10px 10px 0;
+	vertical-align: middle;
+	float: left;
+	}
+
+.resourceList .thumb a {
+	display: inline;
+	position: relative;
+	top: 10px;
+	margin: 0 0 20px 0;
+	font-size: 12px;
+	font-weight: bold;
+	}
+
+.resourceList .thumb .meta {
+	font-size: 11px;
+	font-weight: normal;
+	}
+
+
+/*****************
+13)  FORMS
+******************/
+.process {background: white url('http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=vertical_bg_animation.gif') top left repeat;opacity: .5;}
+.attachment_stage{width:360px;}
+.attachment_stage{border-top:1px solid #ccc;border-bottom:1px solid #ccc;background-color:#f0f0f0;}
+.formErrorText {font-weight: bold;color: #cb4d01;}
+
+/*****************
+14)  ADS
+******************/
+.adWideBanner {
+	text-align:center;
+	margin:0px 0px 10px 0px;
+}

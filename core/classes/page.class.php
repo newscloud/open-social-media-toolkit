@@ -1,0 +1,1 @@
+<?phpclass page {				var $db;		function page(&$db=NULL)	{		if (is_null($db)) { 			require_once('db.class.php');			$this->db=new cloudDatabase();		} else			$this->db=$db;	}	}	?>

@@ -1,0 +1,118 @@
+.clearfix {
+}
+html[xmlns] .clearfix {
+	display:block;
+}
+#testBar {width:750px;height:10px;background-color:yellow;padding:5px;margin:0px 0px 10px 0px;font-weight:bold;text-align:center;}
+#loadingStatus {margin:200px 0px 100px 0px;min-height:200px;text-align:center;}
+#appTitle {font-size:200%;font-family:verdana,arial,helvetica;font-weight:bold;margin:0px 0px 10px 0;}
+#appFrame {margin:10px 0px 0px 0px;padding:0px;width:100%;}
+#pageBody {margin:0px 5px 0px 5px;padding:0px 5px 0px 5px;width:640px;}
+#pageContent {margin:5px;padding:5px;width:625px;}
+#col_left {margin:5px;padding:5px;width:420px;display:inline;float:left;}
+#col_right {margin:5px;padding:5px;width:165px;display:inline;float:left;}
+#newswireList {margin:5px 5px 5px 5px;padding:0px;list-style-type:none;}
+#dialogMessage {font-size:125%;}
+#theFilter {margin:0px;padding:0px;}
+.subFilter {float:right;margin:5px;}
+.storyHead {font-size:125%;font-weight:bold;}
+.storyHeadLarge {font-size:150%;font-weight:bold;}
+.storyPosted {font-size:90%;color:#999;}
+.storyCaption {color:#393733;}
+.storyCommands {font-size:100%;}
+.shareButton {margin:1px 0 0 10px;float:left;width:150px;}
+.comment {background:transparent url(http://facebook.com/images/end_quote_small.gif) no-repeat scroll right bottom;color:#666666;font-size:11px;font-style:normal;padding-right:17px;text-align:left;}
+.filterOption {margin:0 3px 0 3px; padding:0px; font-size:120%;}
+.memberIcon {
+	background-position:left bottom;
+	background-repeat:no-repeat;
+	display:block;
+	height:50px;
+	left:2px;
+	top:2px;
+	width:50px;
+	color:#3B5998;
+	text-decoration:none;
+	border-style:none solid solid;
+	list-style-type:none;
+}
+.sidePanel {width:165px;border:1px solid #ccc;background-color:#e1e1e1;min-height:100px;margin:0px 0px 10px 0px;padding:5px; }
+#actionLegend {width:350px;border:1px solid #ccc;background-color:#e1e1e1;min-height:100px;margin:10px 10px 10px 0px;padding:5px; }
+#featurePanel {width:370px;border:1px solid #ccc;background-color:#e1e1e1;min-height:150px;padding:5px;}
+#promoPanel {border:1px solid #ccc;background-color:#e1e1e1;padding:5px;margin:0px 0px 10px 0px; }
+.wideTipPanel {width:350px;border:1px solid #ccc;background-color:#e1e1e1;margin:10px 10px 10px 0px;padding:5px; }
+.wideTipLeft {float:left;display:inline;width:150px;padding:5px;margin:5px;}
+.wideTipRight {float:left;display:inline;width:150px;padding:5px;margin:5px;}
+/* action team styles */
+.actionSidePanel {border:1px solid #ccc;background-color:#e1e1e1;padding:5px;margin:0px 0px 10px 0px;}
+.readSidePanel {border:1px solid #ccc;background-color:#e1e1e1;padding:5px;margin:0px 0px 10px 0px;}
+
+
+#teamGrayBox 
+{
+	background-color: gray; height: 280px;
+}
+
+#videoBox 
+{
+	/*width: 250px; height: 260px; float: left;*/
+	float: left;
+	margin: 15px;
+}
+
+#joinButton
+{
+	text-align: center; font-weight: bold;
+}			
+
+#teamLowerBox
+{}
+
+#lowerLeftColumn
+{
+	 width: 290px; float: left; display: inline;
+}
+
+#lowerRightColumn
+{
+	width: 290px; float: left;	display: inline;
+}
+
+.rewardItem 
+{
+	width: 100px; height: 100px;
+}
+
+#rewardList 
+{
+	
+
+}
+
+#challengeList 
+{
+	padding-left: 0px;	
+}
+
+
+#actionFeedList 
+{
+	padding-left: 0px;	
+}
+#actionFeedItem 
+{
+	
+}
+
+
+.pointValue 
+{	
+	color: #11AA11;
+	font-size: .9em;
+}
+
+.availabilityText
+{
+	color: #777777;
+	font-size: .8em;
+}

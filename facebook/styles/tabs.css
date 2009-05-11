@@ -1,0 +1,133 @@
+.tab_bar {
+border-bottom:1px solid #3B5998;
+padding:3px 20px 0px 10px;
+}
+.tab_bar #tabs {
+border-bottom:medium none;
+display:inline;
+float:left;
+margin:0px 10px;
+}
+.tab_bar .back_links {
+float:right;
+padding:4px 0px;
+}
+#tabs {
+border-bottom:1px solid #3B5998;
+margin:10px 20px 0px;
+padding:4px 0px;
+text-align:center;
+}
+#tabs div {
+display:inline;
+margin:0px;
+padding:0px;
+}
+* html #tabs div {
+margin:0pt 3px;
+}
+#tabs a {
+margin:0px;
+padding:4px;
+}
+#tabs .activetab a {
+background:#3B5998 none repeat scroll 0%;
+color:white;
+}
+#tabs .activetab a:hover {
+text-decoration:none;
+}
+#tabs .inactivetab a:hover {
+background:#D8DFEA none repeat scroll 0%;
+text-decoration:none;
+}
+#tabs .disabled {
+color:#C0C0C0;
+margin:0px;
+padding:4px;
+text-decoration:none;
+}
+.tabs {
+border-bottom:1px solid #898989;
+padding:3px 0pt;
+}
+.tabs.top {
+background:#F7F7F7 none repeat scroll 0%;
+}
+.tabs .left_tabs {
+float:left;
+padding-left:10px;
+}
+.tabs .right_tabs {
+float:right;
+padding-right:10px;
+}
+.tabs .back_links {
+float:right;
+padding-right:20px;
+}
+.toggle_tabs {
+display:inline;
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:0pt;
+padding:0pt;
+text-align:center;
+}
+.toggle_tabs li {
+background:#F1F1F1 url(/images/components/toggle_tab_gloss.gif) repeat-x scroll left top;
+display:inline;
+padding:2px 0px 3px;
+}
+.toggle_tabs li a {
+border-color:#898989 rgb(137, 137, 137) rgb(137, 137, 137) -moz-use-text-color;
+border-style:solid solid solid none;
+border-width:1px 1px 1px 0pt;
+color:#333333;
+font-weight:bold;
+padding:2px 8px 3px 9px;
+}
+.toggle_tabs li a small {
+font-size:11px;
+font-weight:normal;
+}
+.toggle_tabs li a:focus {
+outline-color:invert;
+outline-style:none;
+outline-width:0px;
+}
+.toggle_tabs li.first a {
+border:1px solid #898989;
+}
+.toggle_tabs li a.selected {
+background:#6D84B4 none repeat scroll 0%;
+border-color:#3B5998 rgb(89, 115, 169);
+border-style:solid;
+border-width:1px;
+color:#FFFFFF;
+margin-left:-1px;
+}
+.toggle_tabs li.last a.selected {
+border-left:1px solid #5973A9;
+border-right:1px solid #36538F;
+margin-left:-1px;
+}
+.toggle_tabs li.first a.selected {
+border-left:1px solid #36538F;
+border-right:1px solid #5973A9;
+margin:0pt;
+}
+.toggle_tabs li.first.last a.selected {
+border:1px solid #36538F;
+}
+.toggle_tabs li a.selected:hover {
+text-decoration:none;
+}
+.toggle_tabs li a.disabled {
+color:#999999;
+cursor:default;
+}
+.toggle_tabs li a.disabled:hover {
+text-decoration:none;
+}

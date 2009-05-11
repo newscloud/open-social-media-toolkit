@@ -1,0 +1,136 @@
+.boxHead {
+	background:#D8DFEA none repeat scroll 0%;
+	background-position:left 0px;
+	background-repeat:no-repeat;
+	border-top:1px solid #3B5998;
+	padding-left:23px;
+	padding:1px 6px 1px 8px;	
+}
+.boxSubHead {
+	background:#EEEEEE none repeat scroll 0%;
+	border-top:1px solid #CCCCCC;
+	color:#444444;
+	overflow:hidden;
+	padding:2px 8px;
+}
+#inline_wall_post {
+	background:#F7F7F7 none repeat scroll 0%;
+	border-bottom:1px solid #CCCCCC;
+	border-top:1px solid #CCCCCC;
+	padding:10px 8px 7px;
+}
+#inline_wall_post textarea {
+	height:150px;
+	width:570px;
+}
+.inputbutton {
+	background-color:#3B5998;
+	border-color:#D9DFEA rgb(14, 31, 91) rgb(14, 31, 91) rgb(217, 223, 234);
+	border-style:solid;
+	border-width:1px;
+	color:#FFFFFF;
+	font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+	font-size:11px;
+	padding:2px 15px 3px;
+	text-align:center;
+}
+.buttonRule {
+	border-bottom:1px solid #E0E0E0;
+	margin-bottom:8px;
+	padding-bottom:3px;
+	width:100%;
+}
+.wallkit_frame {
+}
+.wallkit_post {
+float:right;
+margin-bottom:5px;
+margin-left:-50px;
+margin-top:10px;
+width:100%;
+}
+.wallkit_post .wallkit_profilepic {
+float:left;
+width:50px;
+}
+.wallkit_post .wallkit_postcontent {
+margin-left:50px;
+padding-left:5px;
+}
+.wallkit_post .wallkit_postcontent h4 {
+background:#F7F7F7 none repeat scroll 0%;
+border-bottom:1px solid #D8DFEA;
+border-top:1px solid #3B5998;
+font-weight:normal;
+padding:3px 5px;
+}
+.wallkit_post .wallkit_postcontent h4 .wall_time {
+display:block;
+font-size:9px;
+padding-top:2px;
+}
+.wallkit_post .wallkit_postcontent h4 a {
+font-weight:bold;
+}
+.wallkit_post .wallkit_postcontent div {
+padding:5px;
+}
+.wallkit_post .wallkit_profilepic img {
+display:block;
+}
+.wallkit_post div.wallkit_actionset {
+border-bottom:1px solid #D8DFEA;
+font-size:9px;
+padding-bottom:3px;
+}
+.wallkit_title {
+background-color:#CFD7E4;
+border-top:1px solid #3B5998;
+color:#3B5998;
+font-size:11px;
+font-weight:bold;
+padding:3px 5px 2px;
+}
+.wallkit_subtitle {
+background-color:#EEEEEE;
+border-bottom:1px solid #CCCCCC;
+border-top:1px solid #CCCCCC;
+color:#000000;
+font-size:11px;
+font-weight:normal;
+padding:3px 5px 2px;
+}
+.wallkit_no_posts {
+background-color:#F7F7F7;
+border-top:1px solid #CCCCCC;
+color:#000000;
+margin:0pt;
+padding:20px 10px;
+text-align:center;
+}
+.wallkit_form {
+background-color:#F7F7F7;
+border-bottom:1px solid #CCCCCC;
+padding:10px;
+}
+.wallkit_form form {
+width:100%;
+}
+.wallkit_form textarea {
+display:block;
+height:50px;
+padding:0.75%;
+width:98%;
+}
+.wallkit_form .inputsubmit {
+display:block;
+margin:10px 0pt 0pt;
+}
+p.wallkit_extra {
+clear:both;
+display:block;
+padding:10px 0pt 0pt;
+text-align:right;
+width:100%;
+}
+

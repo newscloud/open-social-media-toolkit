@@ -1,0 +1,8 @@
+<?php
+$static.='<h1>Rare Earthtones</h1><h5>from the Center for Biological Diversity</h5>'
+.'<div class="panel_block"><div class="thumb"><img src="'.URL_CALLBACK.'?p=cache&f=prize_21__CBDringtone2.jpg&x=90&y=90&m=scaleImg&path=uploads&fixed=y" alt="Rare Earthtones picture" /></div>'
+.'<p>The Center for Biological Diversity offers you free endangered species ringtones and phone wallpapers - a collection of high-quality, authentic sounds and images of some of the world\'s most threatened birds, owls, frogs, toads and marine mammals.</p>'
+.'<p>Whether the cry of the Mexican gray wolf or the underwater warbles of the beluga whale, our ringtones provide a great starting point for talking about the plight of threatened species worldwide. In fact, they\'ve been downloaded by thousands of people in more than 150 countries around the globe, including the United Kingdom, Canada, China, Japan, Iran, India, Poland, Germany, France, Brazil, Australia, and the United States. Make a statement with your cell phone and <a onclick="quickLog(\'extLink\',\'prize\',0,\'http://store.equalexchange.com/?utm_campaign=Hot_Dish&utm_medium=link&utm_source=grist\');" href="http://www.rareearthtones.org/ringtones/hot_dish.html" target="_blank">download free endangered species ringtones now</a>.</p>'
+.'<p><em>Make a note of the link below if you want to get them later:</em><br /><a onclick="quickLog(\'extLink\',\'prize\',0,\'http://www.rareearthtones.org/ringtones/hot_dish.html\');" href="http://www.rareearthtones.org/ringtones/hot_dish.html" target="_blank">http://www.rareearthtones.org/ringtones/hot_dish.html</a></p></div>';
+	$static.='<br /><br />';
+?>

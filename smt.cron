@@ -1,0 +1,7 @@
+# this file is called smt in /etc/cron.d
+#MAILTO=you@yourdomain.com
+#please do not set up a cron job for each demonstration site, just set up one demo site
+#if you are just testing the social media toolkit, please do not set up your cron frequency more than once an hour
+#if you need higher frequency for testing please contact jeff@newscloud.com
+<# between 0 and 59> * * * * <your-user-name-here> /usr/bin/wget -t 2 -o /dev/null -q -O /dev/null -U <your-user-name> "<your-site-url-here>?p=engine&apiKey=<your-api-key-here>"
+

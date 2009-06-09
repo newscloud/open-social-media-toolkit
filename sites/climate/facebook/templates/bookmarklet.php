@@ -17,7 +17,7 @@ body {
 #bookmarkletPanel {
        padding: 10px 10px 3px 10px;
        margin: 0 0 5px 0;
-       background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
+       background: url(http://callback.newsreel.org/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
        }
 
 #bookmarkletPanel p {
@@ -43,7 +43,7 @@ body {
 font-weight: bold;
 -moz-border-radius: 4px;
 -webkit-border-radius: 4px;
-background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_1.png) top repeat-x #c14001;
+background: url(http://callback.newsreel.org/sites/climate/facebook/index.php?p=cache&img=btn_1.png) top repeat-x #c14001;
        font-size:14px;
        text-decoration:none;
 }
@@ -53,7 +53,7 @@ background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cac
        height: 26px;
        padding: 70px 0 0 0;
        margin: 15px 0 10px 0;
-       background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bookmarklet_demo.gif) top left no-repeat;
+       background: url(http://callback.newsreel.org/sites/climate/facebook/index.php?p=cache&img=bookmarklet_demo.gif) top left no-repeat;
        }
 </style></head><body><div id="bookmarkletPanel" class="clearfix">
 	<h2>There&rsquo;s an easier way to submit stories!</h2>
@@ -61,6 +61,6 @@ background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cac
     <div id="bookmarkletDemo"><a class="btn_1" onclick="alert(\'Drag this button to your Bookmarks Bar.\'); return false;" href="'.$firefoxCode.'">Post to Hot Dish</a></div>
 	<p>Once there, just click it from a story on any website or blog to post it to Hot Dish!</p>
 </div><!--end "bookmarkletPanel"--></body></html>';
-//$code='<a onclick="alert(\'Drag this button to your Bookmarks Bar.\'); return false;" href="'.$firefoxCode.'" title="Post to Hot Dish"><img style="border:none;" src="http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bookmarklet.jpg" /></a>';
+//$code='<a onclick="alert(\'Drag this button to your Bookmarks Bar.\'); return false;" href="'.$firefoxCode.'" title="Post to Hot Dish"><img style="border:none;" src="http://callback.newsreel.org/sites/climate/facebook/index.php?p=cache&img=bookmarklet.jpg" /></a>';
 ?>
 

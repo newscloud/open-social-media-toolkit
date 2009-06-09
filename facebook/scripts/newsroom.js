@@ -1,5 +1,5 @@
 // set the ajax server node for site 
-var ajaxUrl=document.getElementById('ajaxNode').getValue(); // 'http://host.newscloud.com/sites/climate/facebook/index.php';
+var ajaxUrl=document.getElementById('ajaxNode').getValue(); // 'http://callback.newsreel.org/sites/climate/facebook/index.php';
 var userid;
 var fbId;
 var sessionKey;

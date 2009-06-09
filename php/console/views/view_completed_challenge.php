@@ -36,7 +36,7 @@
 // TODO: factor these out in a common constants file
 
 /*
-define("URL_BASE","http://host.newscloud.com/sites/climate/facebook");	
+define("URL_BASE","http://callback.newsreel.org/sites/climate/facebook");	
 
 define('URL_UPLOADS', URL_BASE.'/uploads');
 define('URL_THUMBNAILS', URL_UPLOADS.'/images');

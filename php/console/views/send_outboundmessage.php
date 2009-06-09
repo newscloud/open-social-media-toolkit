@@ -1,5 +1,5 @@
 <?php if ($outboundmessage['msgType'] == 'announcement'): ?>
-	<img width="760" height="78" class="float_left" src="http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&simg=bg_banner.jpg"/>
+	<img width="760" height="78" class="float_left" src="http://callback.newsreel.org/sites/climate/facebook/index.php?p=cache&simg=bg_banner.jpg"/>
 
 	<h1 style="color: green;"><?php echo $outboundmessage['userIntro']; ?></h1>
 

@@ -43,7 +43,7 @@ function disp_header($title = "Newscloud Management Console", $action = 'index')
 	require_once (PATH_PHP.'/classes/page.class.php');
 	$page=new XHTMLpage();
 	$page->pkgScripts(CACHE_PREFIX.'nrConsole',array(PATH_PHP_SCRIPTS.'/template.js'));
-	//$template_src = '<script src="http://hotdish.newsi.us/?p=cache&type=js&cf=template.js&v=1.002"></script>';
+	//$template_src = '<script src="http://hotdish.newsreel.org/?p=cache&type=js&cf=template.js&v=1.002"></script>';
 	//$page->addScript(PATH_PHP_SCRIPTS.'/template.js');
 
 	// hack: djm - dont know correct way to incorporate this
@@ -76,7 +76,7 @@ function load_dashboard($db) {
 
 /*
 // HAAAXXX
-define("URL_BASE","http://host.newscloud.com/sites/climate/facebook");
+define("URL_BASE","http://callback.newsreel.org/sites/climate/facebook");
 
 // TODO: problem: management console needs these as well
 define('URL_UPLOADS', URL_BASE.'/uploads');

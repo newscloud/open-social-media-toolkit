@@ -7,7 +7,7 @@
 	$footer.='<span class="pipe">|</span><a class="newscloud_link" href="http://www.newscloud.com" onclick="quickLog(\'extLink\',\'footer\',0,\'http://www.newscloud.com\');" title="Visit the NewsCloud Web site" target="_blank">NewsCloud.com</a><span class="pipe">|</span><a class="grist_link" href="http://www.grist.org" onclick="quickLog(\'extLink\',\'footer\',0,\'http://www.grist.org\');" target="_blank">Grist.org</a>'.
 	'<span class="pipe">|</span><a href="?p=faq" onclick="switchPage(\'static\',\'faq\');return false;">FAQ</a><span class="pipe">|</span><a href="http://blog.newscloud.com/open-source.html" target="_blank">Developers</a><span class="pipe">|</span><a href="?p=tos" onclick="switchPage(\'static\',\'tos\');return false;">Terms of Use</a><span class="pipe">|</span><a href="?p=about" onclick="switchPage(\'static\',\'about\');return false;">About</a>';
 	if ($isConsole)
-		$footer .= '<span class="pipe">|</span><a href="http://hotdish.newsi.us/?p=console&e='.htmlentities($email).'&a='.htmlentities($actCode).'">Admin</a>';
+		$footer .= '<span class="pipe">|</span><a href="http://hotdish.newsreel.org/?p=console&e='.htmlentities($email).'&a='.htmlentities($actCode).'">Admin</a>';
 	if ($isResearch)
 		$footer .= '<span class="pipe">|</span><a href="http://research.newscloud.com/index.php?e='.htmlentities($email).'&a='.htmlentities($actCode).'">Research</a>';
     $footer.='</div><!--end "dh_links"--></div><!--end "footer"-->'.

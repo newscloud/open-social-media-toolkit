@@ -9,7 +9,7 @@
     '<span class="pipe">|</span><a href="http://www.mndaily.com" onclick="quickLog(\'extLink\',\'footer\',0,\'http://www.mndaily.com\');" target="_blank">mndaily.com</a>'.
 	'<span class="pipe">|</span><a href="?p=faq" onclick="switchPage(\'static\',\'faq\');return false;">FAQ</a><span class="pipe">|</span><a href="http://blog.newscloud.com/open-source.html" target="_blank">Developers</a><span class="pipe">|</span><a href="?p=tos" onclick="switchPage(\'static\',\'tos\');return false;">Terms of Use</a><span class="pipe">|</span><a href="?p=about" onclick="switchPage(\'static\',\'about\');return false;">About</a>';
 	if ($isConsole)
-		$footer .= '<span class="pipe">|</span><a href="http://minn.newsi.us/?p=console&e='.htmlentities($email).'&a='.htmlentities($actCode).'">Admin</a>';
+		$footer .= '<span class="pipe">|</span><a href="http://minn.newsreel.org/?p=console&e='.htmlentities($email).'&a='.htmlentities($actCode).'">Admin</a>';
 	if ($isResearch)
 		$footer .= '<span class="pipe">|</span><a href="http://research.newscloud.com/index.php?e='.htmlentities($email).'&a='.htmlentities($actCode).'">Research</a>';
     $footer.='</div><!--end "dh_links"--></div><!--end "footer"-->'.

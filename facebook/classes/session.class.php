@@ -324,8 +324,15 @@ class session {
 				$userInfoTest->loadFromFbId($fbId);
 					
 				if ($debug) echo '<p>fetched user info debug: $userInfo:<pre>'. print_r($userInfoTest, true).'</pre>';				
-				
-				
+
+				// populate subscription settings for the new user
+				require_once(PATH_CORE.'/classes/subscriptions.class.php');
+				$subTable = new SubscriptionsTable($this->db); 
+				$sub = $subTable->getRowObject();
+				$sub->userid=$user->userid;
+				$sub->rxFeatures=1;
+				$sub->rxMode='notification';
+				$sub->insert();
 			} else
 			{
 				if ($debug)

@@ -162,11 +162,13 @@ class dynamicTemplate
 		
 		//echo 'Authorized editors: <pre>'.print_r($authorizedEditors, true).'</pre>';
 		if (array_search($fbId, $authorizedEditors) !== false)
-		{
-					
+		{					
 			$this->editEnabled = true;
 			//echo '...Editing enabled!';
 			return true;
+		} else if (1==2) {
+			// to do - check if these fbIds are in the userinfo table as admins
+			
 		} else
 		{
 			//echo '...Sorry, editing not enabled.';

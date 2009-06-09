@@ -35,6 +35,7 @@ class pagePostStory {
 	}
 	
 	function fetch($option='link') {		
+		global $init;
 		require_once(PATH_CORE.'/classes/template.class.php');
 		$this->templateObj=new template($this->db);
 		$this->templateObj->registerTemplates(MODULE_ACTIVE, 'postStory');
@@ -43,6 +44,21 @@ class pagePostStory {
 			$inside.=$this->buildSubNav($option).'<br /><br />';			
 		} 
 		switch ($option) {
+			case 'auto':
+				$inside.=$this->buildScriptInclude('auto');			
+				if ($this->session->u->isModerator OR $this->session->u->isSponsor OR $this->session->u->isAdmin) {
+					// auto posting for moderators - a quicker way to post and feature stories
+					require_once(PATH_CORE.'/classes/newswire.class.php');					
+					$nwObj=new newswire($this->db);	
+					$stories=$nwObj->fetchRawStories();
+					$inside.='<p>This is an experimental page viewable only by administrators to speed up posting stories and featuring them.</p><p><a href="'.URL_HOME.'?p=engine&force=syncLog&apiKey='.$init['apiKey'].'" target="_cts">Sync photos now</a></p>';
+					$inside.='<div id="newswireWrap">';
+					$inside.=$stories;
+					$inside.='<!-- end newswireWrap --></div>';											
+				} else {
+					$inside.=$this->page->buildMessage('error','Access Denied','You do not have permission to view this page.');
+				}
+			break;
 			case 'blog':
 				$result=false;
 				if (isset($_GET['editid'])) {
@@ -408,6 +424,7 @@ class pagePostStory {
 				$fData->title='';
 				$fData->caption='';					
 			}
+			$fData->isFeatureCandidate=0;
 			$fData->showPreview=false;
 			$fData->alert='';
 			$this->fData=&$fData;
@@ -429,6 +446,11 @@ class pagePostStory {
 	    '<fb:editor-text label="Photo Web Address" id="imageUrl" name="imageUrl" value=""/>';
 		$code.=$this->buildImageSelector();	
 	   	$code.='<fb:editor-custom label="Video"><h3>Please paste the URL or embed code for a Facebook or YouTube Video. No other services are currently supported.</h3><input type="text" name="videoEmbed" id="videoEmbed" onChange="videoURLChanged();return false;" value="'.$this->fData->videoEmbed.'"><div id="videoPreview" class="hidden"><div id="videoPreviewMsg">Video Preview</div></div></fb:editor-custom>'; 	
+		if ($this->session->u->isAdmin) {
+		   	$code.='<fb:editor-custom label="Feature Candidate?"><input type="checkbox" name="isFeatureCandidate" '.($this->fData->isFeatureCandidate==1?'CHECKED':'').'></fb:editor-custom>'; 	
+		} else {
+			$code.='<input type="hidden" name="isFeatureCandidate" value="off">';
+		}
 		// Button area
 		$code.='<fb:editor-buttonset>  ' .
 //				'<fb:editor-button name="preview" value="Preview"/>'.
@@ -465,6 +487,10 @@ class pagePostStory {
 			break;
 			case 'event':
 			break;
+			case 'auto':
+			$script='<script src="'.URL_CALLBACK.'?p=cache&type=js&cf=postStory_'.$this->page->fetchPkgVersion('postStory',array(PATH_SCRIPTS.'/loadStory.js'),'js',true).'.js" type="text/javascript" language="javascript" charset="utf-8"></script>';
+			$script.='<script src="'.URL_CALLBACK.'?p=cache&type=js&cf=autoPost_'.$this->page->fetchPkgVersion('autoPost',array(PATH_SCRIPTS.'/autoPost.js'),'js',true).'.js" type="text/javascript" language="javascript" charset="utf-8"></script>';
+			break;
 		}
 		return $script;
 	}
@@ -484,6 +510,11 @@ class pagePostStory {
 		$fData->title=mysql_real_escape_string(stripslashes(strip_tags($title)), $this->db->handle);
 		$fData->tags=$_POST['tags'];
 		$fData->mediatype=$_POST['mediatype'];
+		if (isset($_POST['isFeatureCandidate']) AND $_POST['isFeatureCandidate']=='on') {
+			$fData->isFeatureCandidate=1;
+		} else {
+			$fData->isFeatureCandidate=0;
+		}
 		$fData->isBookmarklet=true; 
 		$fData->showPreview=false;
 		$fData->alert='';
@@ -620,6 +651,9 @@ class pagePostStory {
 		$pages = array();		
 		$pages['link'] = 'Post a link to a story';
 		$pages['blog']='Compose a blog entry';
+		if ($this->session->u->isAdmin) {
+			$pages['auto']='Publish from Feeds';
+		}
 		 
 		 $tabs='<div id="subNav" class="tabs clearfix"><div class="left_tabs"><ul class="toggle_tabs clearfix" id="toggle_tabs_unused">';
 		 $i=0;

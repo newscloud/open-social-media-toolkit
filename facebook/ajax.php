@@ -16,7 +16,14 @@
 		// session not required		
 		switch ($method) {
 			case 'wall':
-				$code='<fb:comments xid="'.CACHE_PREFIX.'_wall" canpost="true" candelete="true" numposts="25" callbackurl="'.URL_CALLBACK.'?p=ajax&m=wall"></fb:comments>';
+				$topic=requestInt('topic');				
+				if ($topic==0)
+					$code='<fb:comments xid="'.CACHE_PREFIX.'_wall" canpost="true" candelete="true" numposts="25" callbackurl="'.URL_CALLBACK.'?p=ajax&m=wall"></fb:comments>';
+				else {
+					$app=setupAppFramework();
+					$code='<fb:comments xid="'.CACHE_PREFIX.'_wall_'.$topic.'" canpost="true" candelete="true" numposts="25" callbackurl="'.URL_CALLBACK.'?p=ajax&m=wall&topic='.$topic.'"></fb:comments>';
+					$db->update("ForumTopics","lastChanged=NOW(),numPostsToday=numPostsToday+1","id=$topic");							
+				}
 			break;
 			case 'fetchDynamicDialog':
 				require_once(PATH_CORE ."/classes/template.class.php");
@@ -461,6 +468,20 @@
 					else
 						$code = "Error clearing template.";
 					
+				break;
+				case 'previewPublish':
+					require_once(PATH_FACEBOOK.'/classes/autoPost.class.php');
+					$apObj=new autoPost($app);
+					$id=requestInt('id');
+					$code=$apObj->fetchPostForm($id);
+					$code.='end of form';					
+				break;
+				case 'postPublish':
+					require_once(PATH_FACEBOOK.'/classes/autoPost.class.php');
+					$apObj=new autoPost($app);
+					$id=requestInt('id');
+					//$code=$apObj->fetchPostForm($id);
+					$code='all done';
 				break;
 				case 'addRawToJournal':
 					$error = false;

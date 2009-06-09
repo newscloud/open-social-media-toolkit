@@ -86,6 +86,9 @@ class template {
 					case 'teamactivity':
 						include PATH_TEMPLATES.'/teamactivity.php';
 					break;
+					case 'forum':
+						include PATH_TEMPLATES.'/forum.php';
+					break;
 					case 'signup':
 						include PATH_TEMPLATES.'/signup.php';
 					break;

@@ -5,10 +5,11 @@
 	define ("MODULE_ACTIVE","FACEBOOK");
 	define ("MODULE_FACEBOOK",TRUE);	
 
-	// SITE SPECIFIC
+	// SITE SPECIFIC 
 	define ("TEST_MODE","OFF");
 	define ("DEBUG_LOCAL",FALSE);
 	define ("SITE_CLOUDID",73); // see approvedClouds.txt 
+	define ("RESEARCH_SITE_ID",1); // value definied in research.sites database
 	define ("SITE_TITLE",'Hot Dish');
 	define ("SITE_TITLE_SHORT",'Hot Dish');
 	define ("SITE_TEAM_TITLE",'Action Team');
@@ -39,12 +40,12 @@
 		
 	/* URL Settings */
 	define ("URL_CANVAS","http://apps.facebook.com/hotdish");
-	define("URL_BASE","http://callback.newsreel.org/sites/climate/facebook");
+	define("URL_BASE","http://host.newscloud.com/sites/climate/facebook");
 	define ("URL_PREFIX",'/index.php');	
 	define ("URL_CALLBACK",URL_BASE.URL_PREFIX);
-	define ("URL_HOME",'http://hotdish.newsreel.org/');
+	define ("URL_HOME",'http://hotdish.newsi.us/');
 	define ("URL_CACHE",URL_HOME.'?p=cache');
-	define ("URL_CONSOLE","http://hotdish.newsreel.org?p=console");
+	define ("URL_CONSOLE","http://hotdish.newsi.us?p=console");
 	define ("URL_RSS","http://feeds.feedburner.com/HotDish"); // burned feed from URL_CANVAS?p=rss		
 	// TODO: problem: management console needs these as well
 	define('URL_UPLOADS', URL_BASE.'/uploads');
@@ -53,8 +54,9 @@
 	
 	
 	/* Directory path settings */
-	define ("SRC_ROOT","/var/www/base/current");
+	define ("SRC_ROOT","/var/www/grist/current");
 	define ("PATH_ROOT",$_SERVER['DOCUMENT_ROOT']);
+	define ("PATH_CONSOLE",SRC_ROOT.'/php/console');
 	define ("PATH_SITE",PATH_ROOT."/sites/climate/facebook");
 	define ("PATH_FACEBOOK",SRC_ROOT."/facebook");	
 	define ("PATH_CACHE",SRC_ROOT.'/sites/cache');
@@ -89,7 +91,7 @@
 	// a global $init array must exist for the database to be initialized properly
 	define ("INI_FILE_FOR_SECRET_KEYS",true);
 	if (INI_FILE_FOR_SECRET_KEYS) {
-		define ("INI_PATH",'/var/www/base/'); // hard coded for unification
+		define ("INI_PATH",'/var/www/grist/'); // hard coded for unification
 		$init=parse_ini_file(INI_PATH.'climate.ini');
 		if (USE_RECAPTCHA)
 			define ("KEY_PRI_RECAPTCHA",$init['key_pri_recaptcha']);					
@@ -121,7 +123,7 @@
 	define ("PATH_PHP_TEMPLATES",SRC_ROOT.'/sites/climate/php/templates');
 	define ("PATH_PHP_STYLES",PATH_PHP.'styles'); // or, move to /styles directory for site-specific approach
 	define ("PATH_PHP_SCRIPTS",PATH_PHP.'scripts');
-		
+
 	// DJM: User Levels
 	$userLevels = new stdClass;
 	$userLevels->pointLevels=array(0,100,1000,2500,5000,10000);
@@ -141,9 +143,11 @@
 	define("ENABLE_ACTION_REWARDS",true);     // enable rewards: rewards page & sidebars
 	define("ENABLE_ACTION_CHALLENGES",true);  // enable challenges: b & sidebars
 	define ("ENABLE_USER_BLOGGING",true);
-	define ("ENABLE_ACTION_WALL",true);
+	define ("ENABLE_ACTION_CHALLENGES",true);
 	define("ENABLE_TEMPLATE_EDITS", false);
 	define("ENABLE_MINOR_CONSENT", true);
+	define ("ENABLE_WALL",true);	
+	define ("SITE_WALL_TITLE",'Talk');
 	
 	
 ?>

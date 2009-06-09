@@ -13,6 +13,10 @@
 		echo 'Invalid access!';
 		die();
 	}
+
+	// override default time limit
+	set_time_limit(300);
+	
 	require_once(PATH_CORE.'/classes/cron.class.php');
 	$cObj=new cron($init['apiKey']);
 	// when you set init variable, we populate the job list for the first time

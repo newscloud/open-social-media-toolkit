@@ -187,7 +187,7 @@ blockquote .quotes {
 	display: list-item;
 	margin: 0 0 10px 20px;
 	padding: 0;
-	list-style-image: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=bullet1.gif);
+	list-style-image: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=bullet1.gif);
 	list-style-type: disc;
 	list-style-position: outside;
 	border: none;
@@ -218,7 +218,7 @@ hr { border: none 0;
 	width: 760px;
 	height: 78px;
 	display: inline-block;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=bg_banner.jpg) top left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=bg_banner.jpg) top left no-repeat;
 	margin: 0;
 	}
 
@@ -317,22 +317,22 @@ a.powered:hover {
 *********************************/
 
 .rss_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_rss.png) left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_rss.png) left no-repeat;
 	padding: 3px 0 3px 18px;
 	}
 
 .twitter_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_twitter.gif) left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_twitter.gif) left no-repeat;
 	padding: 3px 0 3px 18px;
 	}
 
 .newscloud_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_newscloud.gif) left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_newscloud.gif) left no-repeat;
 	padding: 3px 0 3px 20px;
 	}
 
 .grist_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_grist.gif) left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_grist.gif) left no-repeat;
 	padding: 3px 0 3px 20px;
 	}
 
@@ -523,17 +523,17 @@ a.powered:hover {
 	margin-left: 0;}
 
 #attachTabs .toggle_tabs li a.selected.photo_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_photo.gif) 4px no-repeat #fff;}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_photo.gif) 4px no-repeat #fff;}
 
 #attachTabs .toggle_tabs li a.photo_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_photo.gif) 4px no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_photo.gif) 4px no-repeat;
 	}
 
 #attachTabs .toggle_tabs li a.selected.video_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_video.gif) 4px no-repeat #fff;}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_video.gif) 4px no-repeat #fff;}
 
 #attachTabs .toggle_tabs li a.video_link {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_video.gif) 4px no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_video.gif) 4px no-repeat;
 	}
 
 #attachTabs .toggle_tabs li a.selected:hover { text-decoration:none;}
@@ -579,7 +579,7 @@ a.powered:hover {
 	}
 
 #featurePanel .panelBar {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=headerbar-blue.gif) center center #8797a9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=headerbar-blue.gif) center center #8797a9;
 	}
 
 #featurePanel .thumb {
@@ -752,7 +752,7 @@ a.powered:hover {
 	margin: 0 0 15px 0;
 	overflow: auto;
 	display: inline-block;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=grad_bg_light.png) top repeat-x #ffca4d;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=grad_bg_light.png) top repeat-x #ffca4d;
 	}
 
 #teamPanel h1 {
@@ -852,7 +852,7 @@ a.powered:hover {
 
 #teamIcon {
 	padding: 10px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=bg_team.gif) top right no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=bg_team.gif) top right no-repeat;
 	overflow: auto;
 	}
 
@@ -873,48 +873,48 @@ a.powered:hover {
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cc99cc;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_reader.gif) center repeat-x; }
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_reader.gif) center repeat-x; }
 
 .userLevel1 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cb4d01;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_contributor.gif) center repeat-x;	}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_contributor.gif) center repeat-x;	}
 
 .userLevel2 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #996633;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_bronze.gif) center repeat-x;	}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_bronze.gif) center repeat-x;	}
 
 .userLevel3 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #999999;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_silver.gif) center repeat-x;	}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_silver.gif) center repeat-x;	}
 
 .userLevel4 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cc9900;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_gold.gif) center repeat-x;	}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_gold.gif) center repeat-x;	}
 
 .userLevel5 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #80aac0;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=user_platinum.gif) center repeat-x;	}
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=user_platinum.gif) center repeat-x;	}
 
 
 #actionLegend {
 	padding: 10px;
 	margin: 0 0 15px 0;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) repeat-x bottom;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) repeat-x bottom;
 	}
 
 #actionLegend .btn_1 { margin: 0 0 10px 20px; float: right; }
@@ -973,11 +973,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	}
 
 .panel_1 .panelBar {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=headerbar-blue.gif) center center #8797a9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=headerbar-blue.gif) center center #8797a9;
 	}
 
 .panel_2 .panelBar {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=headerbar-red.gif) center center #901d18;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=headerbar-red.gif) center center #901d18;
 	}
 
 .panelBar h2 {
@@ -1045,7 +1045,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_1.png) top repeat-x #760304;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_1.png) top repeat-x #760304;
 	}
 
 #col_right .btn_1 {
@@ -1060,7 +1060,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
 	}
 
 .btn_left {
@@ -1072,18 +1072,18 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-webkit-border-bottom-left-radius: 4px;
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
 	}
 
 .voteLink {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_vote.gif) left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_vote.gif) left no-repeat;
 	padding-left: 15px;
 	}
 
 .btn_mid {
 	margin: 0 1px;
 	padding: 3px 8px 4px 8px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
 	}
 
 .btn_right {
@@ -1095,7 +1095,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-webkit-border-bottom-right-radius: 4px;
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
 	}
 
 .rating {
@@ -1111,11 +1111,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 0 0 10px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) top left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) top left no-repeat;
 	}
 
 .rate_up:hover {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) center left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) center left no-repeat;
 	}
 
 .rate_up_on {
@@ -1124,7 +1124,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 0 0 10px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) bottom left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) bottom left no-repeat;
 	}
 
 .rate_down {
@@ -1133,11 +1133,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 10px 0 10px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) top right no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) top right no-repeat;
 	}
 
 .rate_down:hover {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) center right no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) center right no-repeat;
 	}
 
 .rate_down_on {
@@ -1146,7 +1146,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 10px 0 10px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) bottom right no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_thumbs.gif) bottom right no-repeat;
 	}
 
 .flag {
@@ -1157,12 +1157,12 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	margin: 0 0 0 10px;
 	border-left: 1px solid #ccc;
 	padding-left: 30px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px top no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px top no-repeat;
 	}
 
 a.flag:hover {
 	color: #cc3333;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px center no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px center no-repeat;
 	}
 
 .flag_on {
@@ -1173,7 +1173,7 @@ a.flag:hover {
 	margin: 0 0 0 10px;
 	border-left: 1px solid #ccc;
 	padding-left: 30px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px bottom no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=icon_flag.gif) 10px bottom no-repeat;
 	}
 
 
@@ -1287,7 +1287,7 @@ li {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=btn_2.png) top repeat-x #d9d9d9;
 	}
 
 .storyCommands td {
@@ -1310,7 +1310,7 @@ li {
 .top_reward {
 	padding: 10px 10px 3px 10px;
 	margin: 0;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) bottom repeat-x;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) bottom repeat-x;
 	}
 
 .top_reward .thumb {
@@ -1388,7 +1388,7 @@ li {
 /* My Profile Summary */
 
 #profileSummary {
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) bottom repeat-x;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=grad_bg_orange.png) bottom repeat-x;
 	}
 
 #profileSummary .panel_block {
@@ -1427,7 +1427,7 @@ li {
 #bookmarkletPanel {
 	padding: 10px 10px 3px 10px;
 	margin: 0 0 5px 0;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=grad_bg_light.png) top repeat-x #ffca4d;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=grad_bg_light.png) top repeat-x #ffca4d;
 	}
 
 #bookmarkletPanel h2 {
@@ -1448,7 +1448,7 @@ li {
 	height: 26px;
 	padding: 70px 0 0 0;
 	margin: 15px 0 10px 0;
-	background: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=bookmarklet_demo.gif) top left no-repeat;
+	background: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=bookmarklet_demo.gif) top left no-repeat;
 	}
 */
 
@@ -1581,7 +1581,7 @@ li {
 	display: list-item;
 	margin: 0 0 10px 40px;
 	padding: 0;
-	list-style-image: url(http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=bullet1.gif);
+	list-style-image: url(http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=bullet1.gif);
 	list-style-type: disc;
 	list-style-position: outside;
 	border: none;
@@ -1618,7 +1618,7 @@ li {
 /*****************
 13)  FORMS
 ******************/
-.process {background: white url('http://callback.newsreel.org/sites/minn/facebook/index.php?p=cache&simg=vertical_bg_animation.gif') top left repeat;opacity: .5;}
+.process {background: white url('http://host.newscloud.com/sites/minn/facebook/index.php?p=cache&simg=vertical_bg_animation.gif') top left repeat;opacity: .5;}
 .attachment_stage{width:360px;}
 .attachment_stage{border-top:1px solid #ccc;border-bottom:1px solid #ccc;background-color:#f0f0f0;}
 .formErrorText {font-weight: bold;color: #cb4d01;}

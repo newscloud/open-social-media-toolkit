@@ -1,7 +1,7 @@
 <?php
 	// IMPORTANT: change image paths in /facebook/styles/default.css
 
-	// FACEBOOK SPECIFIC
+	// FACEBOOK SPECIFIC 
 	define ("MODULE_ACTIVE","FACEBOOK");
 	define ("MODULE_FACEBOOK",TRUE);	
 
@@ -9,6 +9,7 @@
 	define ("TEST_MODE","OFF");
 	define ("DEBUG_LOCAL",FALSE);
 	define ("SITE_CLOUDID",655); // see approvedClouds.txt 
+	define ("RESEARCH_SITE_ID",2); // value definied in research.sites database
 	define ("SITE_TITLE",'Minnesota Daily');
 	define ("SITE_TITLE_SHORT",'Daily');
 	define ("SITE_SPONSOR",'mndaily');
@@ -39,12 +40,12 @@
 		
 	/* URL Settings */
 	define ("URL_CANVAS","http://apps.facebook.com/mndaily");
-	define("URL_BASE","http://callback.newsreel.org/sites/minn/facebook");
+	define("URL_BASE","http://host.newscloud.com/sites/minn/facebook");
 	define ("URL_PREFIX",'/index.php');	
 	define ("URL_CALLBACK",URL_BASE.URL_PREFIX);
-	define ("URL_HOME",'http://minn.newsreel.org/');
+	define ("URL_HOME",'http://minn.newsi.us/');
 	define ("URL_CACHE",URL_HOME.'?p=cache');
-	define ("URL_CONSOLE","http://minn.newsreel.org?p=console");
+	define ("URL_CONSOLE","http://minn.newsi.us?p=console");
 	define ("URL_RSS","http://feeds2.feedburner.com/mndaily"); // burned feed from URL_CANVAS?p=rss		
 	// TODO: problem: management console needs these as well
 	define('URL_UPLOADS', URL_BASE.'/uploads');
@@ -53,7 +54,8 @@
 	
 	
 	/* Directory path settings */
-	define ("SRC_ROOT","/var/www/base/current");
+	define ("SRC_ROOT","/var/www/grist/current");
+	define ("PATH_CONSOLE",SRC_ROOT.'/php/console');
 	define ("PATH_ROOT",$_SERVER['DOCUMENT_ROOT']);
 	define ("PATH_SITE",PATH_ROOT."/sites/minn/facebook");
 	define ("PATH_FACEBOOK",SRC_ROOT."/facebook");	
@@ -89,7 +91,7 @@
 	// a global $init array must exist for the database to be initialized properly
 	define ("INI_FILE_FOR_SECRET_KEYS",true);
 	if (INI_FILE_FOR_SECRET_KEYS) {
-		define ("INI_PATH",'/var/www/base/'); // hard coded for unification
+		define ("INI_PATH",'/var/www/grist/'); // hard coded for unification
 		$init=parse_ini_file(INI_PATH.'minn.ini');
 		if (USE_RECAPTCHA)
 			define ("KEY_PRI_RECAPTCHA",$init['key_pri_recaptcha']);					
@@ -130,7 +132,7 @@
 	define("ENABLE_POINTS_BASED_REWARDS",true);     // enable rewards: rewards page & sidebars
 	define("ENABLE_ACTION_CHALLENGES",true);  // enable challenges: b & sidebars
 	define ("ENABLE_USER_BLOGGING",true);	
-	define ("ENABLE_ACTION_WALL",true);
+//	define ("ENABLE_ACTION_WALL",true);
 	define("ENABLE_TEMPLATE_EDITS", false);
 	define("ENABLE_MINOR_CONSENT", true);
 ?>

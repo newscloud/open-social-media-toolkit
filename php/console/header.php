@@ -4,27 +4,69 @@
 <head>
    <title><?php echo ($title != '') ? $title : 'NewsCloud Management Console'; ?></title>
    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/reset-fonts-grids/reset-fonts-grids.css&2.6.0/build/base/base-min.css"> 
-   <!--<link rel="stylesheet" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">-->
+	 <style type="text/css">
+	 /*margin and padding on body element
+	   can introduce errors in determining
+	   element position and are not recommended;
+	   we turn them off as a foundation for YUI
+	   CSS treatments. */
+	 body {
+margin:0;
+padding:0;
+	}
+	 </style>
+
+	 <!--<link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css"> -->
+	 <link rel="stylesheet" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts-grids/reset-fonts-grids.css&2.7.0/build/base/base-min.css"> 
+	 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/paginator/assets/skins/sam/paginator.css"> 
+	 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/fonts/fonts-min.css" />
+	 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
+	 <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/logger/assets/skins/sam/logger.css"> 
+   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css" />
+	 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/calendar/assets/skins/sam/calendar.css" />
    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.1/build/menu/assets/skins/sam/menu.css"> 
    <link rel="stylesheet" type="text/css" href="yui_menu.css"> 
-   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/button/assets/skins/sam/button.css" />
-   <script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-   <script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/animation/animation.js"></script>
 
-   <script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/container/container_core.js"></script>
-   <script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/menu/menu.js"></script>
-   <?php if (true): ?>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/json/json-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/element/element-beta-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/button/button-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/connection/connection-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-min.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/paginator/paginator-min.js"></script> 
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/charts/charts-debug.js"></script>
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/calendar/calendar-min.js"></script>
+   	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/menu/menu.js"></script>
+	 <!--<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/charts/charts-min.js"></script>-->
+	 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/logger/logger-min.js"></script> 
+	 <?php if ($controller_name == 'dashpods'): ?>
+	 	<script type="text/javascript">
+			var pod_group = '<? echo $action_name; ?>';
+			var CURR_SITE_ID = <?php echo $curr_site_id; ?>;
+		</script>
+		 <? if (isset($_REQUEST['new_js'])): ?>
+			<script type="text/javascript" src="new_pods.js?<? echo time(); ?>"></script>
+		 <?php else: ?>
+			<script type="text/javascript" src="pods.js?<? echo time(); ?>"></script>
+			<script type="text/javascript">
+				<?php echo file_get_contents(PATH_CONSOLE.'/pods.js', true); ?>
+			</script>
+			<!--<script type="text/javascript" src="pods.js?<? //echo time(); ?>"></script>-->
+		 <?php endif; ?>
+	 <?php endif; ?>
 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/datasource/datasource-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/charts/charts-experimental-min.js"></script>
+
+
+
+
+
+
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>
-	<?php endif; ?>   
 	<?php if ($templateBuilder): ?>
 		<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
 		<script type="text/javascript" src="http://yui.yahooapis.com/2.6.0/build/dragdrop/dragdrop-min.js"></script>
@@ -329,15 +371,106 @@
    });
 
 </script>
+	<style type="text/css">
+	/*.pod.yui-module { border:1px dotted black;padding:5px;margin:10px; display:none; }*/
+	.pod.yui-module { padding:5px;margin:10px; display:none; }
+	.pod.yui-module .hd { border:1px solid #9ff088;padding:5px; height: 19px; display: block; background-color: #9ff088;}
+	.pod.yui-module .bd { border:1px solid #9ff088;padding:5px; }
+	.pod.yui-module .ft { border:1px solid #9ff088;padding:5px; }
+	.pod {min-width: 260px;}
+	#full-view .hd { background-color: #9ff088; }
+	.pod.yui-module .hd span {float: left;}
+	.pod-menu {float: right;}
+	.full-menu {float: right;}
+	/*.yui-u {display: block; width: 32%; position: relative;}*/
+	/* REQUIRED:: FIND WORK AROUND, OTHERWISE COLUMNS OVERRIDE */
+	.yui-u {padding-top: 1px; min-height: 500px; width: 31% !important;}
+	.pod .hd {cursor: move;}
+	/* TODO: FIX WORDWRAP */
+	ul.nav li {
+		overflow: hidden;
+		word-wrap: break-word;
+		text-overflow: ellipsis;
+	}
+	#main-nav ul{ width: 122px; overflow: hidden;}
+	.yui-panel-container .underlay { overflow: visisble; }
+	.yui-panel .bd { overflow: auto; }
+	.yui-module-container .underlay { overflow: visisble; }
+	.yui-module .bd { overflow: auto; }
+	/*#dashpods {position:relative;width:100%;}*/
+	.asdf-hidden-button {
+		display: block;
+		height: 0px;
+		left: -9999px;
+		overflow: hidden;
+		position: relative;
+		top: -9999px;
+		width: 0px;
+	}
+	.asdf-pod-full-button {
+		background-image: url('images/unselected_full.jpg');
+		height: 23px;
+		width: 21px;
+		z-index: 3;
+		float: right;
+		position: relative;
+	}
+	.filters-fieldset {
+		border: 2px groove threedface;
+		margin-left: 2px;
+		margin-right: 2px;
+		padding: 2px;
+		width: 320px;
+	}
+	.chart-pod
+	{
+		width: 250px;;
+		height: 150px;
+	}
+
+	.chart-full
+	{
+		width: 500px;
+		height: 350px;
+	}
+	.chart_title
+	{
+		display: block;
+		font-size: 1.2em;
+		font-weight: bold;
+		margin-bottom: 0.4em;
+	}
+    #dates {
+        float:left;
+        border: 1px solid #000;
+        background-color: #ccc;
+        padding:10px;
+        margin:10px;
+    }
+
+    #dates p {
+        clear:both;
+    }
+
+    #dates label {
+        float:left;
+        display:block;
+        width:7em;
+        font-weight:bold;
+    }
+	
+</style>
 </head>
 <?php if ($templateBuilder): ?>
 	<body onload="loadTemplate('select_templates');" class="yui-skin-sam">
 <?php else: ?>
 	<body class="yui-skin-sam">
 <?php endif; ?>
-<div id="doc4" class="yui-t5">
+<!--<div id="doc4" class="yui-t5">-->
+<div id="doc3">
    <div id="hd">
 
+	 <!--
      <div style="clear:both;"></div>
      <div class="yui-gf" style="padding-bottom: 10px;">
      <div class="yui-u first"></div>
@@ -347,100 +480,231 @@
      </div>
      </div>
      <div style="clear:both;"></div>
+	 -->
 
 		<div class="clear"></div>
      <div id="management" class="yuimenubar yuimenubarnav" style="margin-left: 0px; width: 100%;">
        <div class="bd">
 
          <ul class="first-of-type" style="padding-left: 50px;">
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=stories">Editorial</a>
+
+           <?php if (($url = url_for('stories', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Editorial</a>
              <div id="stories" class="yuimenu">
                <div class="bd">                    
                  <ul>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=stories&action=featured">Featured Stories</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=stories&action=comments">Review Comments</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=stories&action=story_posts">Review Story Posts</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=stories&action=video_posts">Review Videos</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=stories&action=widgets">Widgets</a></li>
+                   <?php if (($url = url_for('stories', 'featured'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Featured Stories</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'story_posts'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Review Stories</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'comments'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Review Comments</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'video_posts'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Review Videos</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'widgets'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Widgets</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'edittemplates'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Site Templates</a></li>
+                   <?php endif; ?>
                  </ul>
                </div>
              </div>                    
            </li>
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=members">Community</a>
+           <?php endif; ?>
+
+           <?php if (($url = url_for('members', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Community</a>
              <div id="members" class="yuimenu">
                <div class="bd">                                        
                  <ul>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=members&action=members">Manage Members</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=members&action=member_emails">Manage Email Messages</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=members&action=outboundmessages">Manage Outbound Messages</a></li>
+                   <?php if (($url = url_for('members', 'members'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Members</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'member_emails'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Email Messages</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'outboundmessages'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Outbound Messages</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'forumtopics'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Forum Topics</a></li>
+                   <?php endif; ?>
+                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="http://www.facebook.com/apps/application.php?id=<?php global $init; echo $init['fbAppId'] ?>" target="_blank">Facebook About Page</a></li>
                  </ul>                    
                </div>
              </div>                                        
            </li>
+           <?php endif; ?>
 
 
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=street_team">Action Team</a>
+           <?php if (($url = url_for('street_team', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Action Team</a>
              <div id="street_team" class="yuimenu">
                <div class="bd">                    
                  <ul>
-                   <!-- <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=feature_panel">Features</a></li> -->
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=challenges">Challenges</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=completed_challenges">Completed Challenges</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=prizes">Prizes</a></li>
-                   <!-- <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=winners">Winners</a></li> -->
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=orders">Orders</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=street_team&action=leaders">Leaders</a></li>
+                   <!-- <?php if (($url = url_for('street_team', 'feature_panel'))): ?>
+ 		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Features</a></li> -->
+ <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'challenges'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Challenges</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'completed_challenges'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Completed Challenges</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'prizes'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Prizes</a></li>
+                   <?php endif; ?>
+                   <!-- <?php if (($url = url_for('street_team', 'winners'))): ?>
+ 		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Winners</a></li> -->
+ <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'orders'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Orders</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'leaders'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Leaders</a></li>
+                   <?php endif; ?>
                  </ul>                    
                </div>
              </div>                                        
            </li>
+           <?php endif; ?>
 
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=admin">Administrative</a>
+		           <?php if (($url = url_for('dashpods', 'main'))): ?>
+		           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Statistics</a>
+		             <div id="dashpods-menu" class="yuimenu">
+		               <div class="bd">                    
+		                 <ul>
+		                   <?php if (($url = url_for('dashpods', 'main'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Overview</a></li>
+		                   <?php endif; ?>
+		                   <?php if (($url = url_for('dashpods', 'members'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Members</a></li>
+		                   <?php endif; ?>
+		                   <?php if (($url = url_for('dashpods', 'stories'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Stories</a></li>
+		                   <?php endif; ?>
+		                   <?php if (($url = url_for('dashpods', 'stats'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Activities</a></li>
+		                   <?php endif; ?>
+		                   <?php if (($url = url_for('dashpods', 'geo'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Geography</a></li>
+		                   <?php endif; ?>
+		                   <?php if (($url = url_for('dashpods', 'challenges'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Challenges</a></li>
+		                   <?php endif; ?>
+		                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="https://www.google.com/analytics/reporting/?id=<?php global $init; echo $init['analyticsId'] ?>" target="_blank">Google Analytics</a></li>
+		                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="http://www.new.facebook.com/business/insights/app.php?id=<?php global $init;  echo $init['fbAppId'] ?>" target="_blank">Facebook Insight</a></li>
+		<!--                   <?php if (($url = url_for('dashpods', 'misc'))): ?>
+		                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Misc Pods</a></li>
+		                   <?php endif; ?> -->
+		                 </ul>
+		               </div>
+		             </div>                    
+		           </li>
+		           <?php endif; ?>
+
+           <?php if (($url = url_for('admin', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Administrative</a>
              <div id="admin" class="yuimenu">
                <div class="bd">                                        
                  <ul>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=cronJobs">Scheduled Tasks</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=cloud_properties">Cloud Properties</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=feed_list">Feed List</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=database">Database</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=flushfeeds">Flush Newswire</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=sitestatus">Toggle site status</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=admin&action=editTemplates">Edit Site Templates</a></li>
+                   <?php if (($url = url_for('admin', 'cronjobs'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Scheduled Tasks</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'cloud_properties'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Cloud Properties</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'feed_list'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Feed List</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'database'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Database</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'flushfeeds'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Flush Newswire</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'sitestatus'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Toggle site status</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'insert_survey_monkey_data'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Load Survey Monkey CSV</a></li>
+                   <?php endif; ?>
                  </ul>                    
                </div>
              </div>                                        
            </li>
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=facebook">Facebook</a>
+           <?php endif; ?>
+
+           <?php if (($url = url_for('facebook', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Facebook</a>
              <div id="facebook" class="yuimenu">
                <div class="bd">                                        
                  <ul>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="http://www.facebook.com/apps/application.php?id=<?php global $init; echo $init['fbAppId'] ?>" target="_blank">About Page</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=facebook&action=registerFeedTemplates">Register Feed Templates</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=facebook&action=syncAllocations">Sync Allocations</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=facebook&action=downloadSettings">Download settings</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=facebook&action=initProfileBox">Initialize Profile Box</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=facebook&action=deleteFeedTemplates">Delete Feed Templates</a></li>                   
+                   <?php if (($url = url_for('facebook', 'registerfeedtemplates'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Register Feed Templates</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('facebook', 'syncallocations'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Sync Allocations</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('facebook', 'downloadsettings'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Download settings</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('facebook', 'initprofilebox'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Initialize Profile Box</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('facebook', 'deletefeedtemplates'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Delete Feed Templates</a></li>                   
+                   <?php endif; ?>
                  </ul>                    
                </div>
              </div>                                        
            </li>
-           <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="index.php?p=console&group=statistics">Statistics</a>
+           <?php endif; ?>
+
+<!--
+	           <?php if (($url = url_for('statistics', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Statistics</a>
              <div id="statistics" class="yuimenu">
                <div class="bd">                                        
                  <ul>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.php?p=console&group=statistics&action=statistics">View Statistics</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="https://www.google.com/analytics/reporting/?id=<?php global $init; echo $init['analyticsId'] ?>" target="_blank">Google Analytics</a></li>
-                   <li class="yuimenuitem"><a class="yuimenuitemlabel" href="http://www.new.facebook.com/business/insights/app.php?id=<?php global $init;  echo $init['fbAppId'] ?>" target="_blank">Facebook Insight</a></li>
+                   <?php if (($url = url_for('statistics', 'statistics'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">View Statistics</a></li>
+                   <?php endif; ?>
                  </ul>                    
                </div>
              </div>                                        
            </li>
+           <?php endif; ?>
+-->
+
          </ul>            
        </div>
      </div>
 
      <br />
    </div>
+   <!-- OPTIONALLY LOAD DASHPODS -->
+   <?php if ($controller_name == 'dashpods'): ?>
+	<table cellpadding="0" cellspacing="0" width="100%">
+	<tbody>
+	<tr>
+	<td id="col1" width="133px" height="100%" style="vertical-align: top;">
+						<div class="col1_contents">
+							<div id="main-nav">
+								<p>Dash Pods</p>
+							<ul id="dashpod-nav" class="nav">
+							</ul>
+						</div>
+					</div>
+	</td>
+	<td id="col2" style="vertical-align: top;">
+	<div id="dashpods">
+   <?php endif; ?>
    <div id="bd">
    	<div id="yui-main">
       <div id="flash_notice" class="yui-g">
@@ -450,4 +714,20 @@
         <div style="color: red"><h1><?php if (isset($flash) && isset($flash['error']) && $flash['error'] != '') echo $flash['error']; ?></h1></div>
       </div>
 
+	 	<?php if ($controller_name == 'dashpods'): ?>
+	 		<div class="yui-b">
+						<div class="yui-gb"> 
+							<div id="pod-col-1" class="yui-u first"> 
+					<!-- YOUR DATA GOES HERE --> 
+							</div> 
+							<div id="pod-col-2" class="yui-u"> 
+					<!-- YOUR DATA GOES HERE --> 
+							</div> 
+							<div id="pod-col-3" class="yui-u"> 
+					<!-- YOUR DATA GOES HERE --> 
+							</div> 
+						</div> <!-- end yui-gb -->
+		<!-- ELSE load <div class="yui-g"> in view file
+		<?php //else: ?>
+		<?php endif; ?>
 <!-- MAIN CONTENT GOES HERE. THIS IS INCLUDED IN THE MAIN CONSOLE.PHP FILE -->

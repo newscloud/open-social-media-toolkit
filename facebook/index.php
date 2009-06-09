@@ -168,6 +168,9 @@ switch ($p) {
 	case 'wall':
 		$code=$pagesObj->fetch('wall');
 		break;
+	case 'cards':
+			$code=$pagesObj->fetch('cards',$o);
+			break;
 	case 'rules':
 		$code=$pagesObj->fetch('rules');
 		break;

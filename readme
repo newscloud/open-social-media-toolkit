@@ -15,9 +15,9 @@ This program is free software: you can redistribute it and/or modify
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Current Release Notes - PREVIEW RELEASE MAY 11, 2009
+Current Release Notes - Jun 9, 2009
 ----------------------------------------
-The Facebook preview release provides the code needed for running Facebook applications similar to Hot Dish and MnDaily (this code does not provide code running NewsCloud.com). Please share your feedback at our Google Groups developer forum below and we will try to integrate documentation and configuration improvements for our beta release at the end of May. 
+The Facebook release provides the code needed for running Facebook applications similar to Hot Dish and MnDaily (this code does not provide code running NewsCloud.com). Please share your feedback at our Google Groups developer forum below and we will try to integrate documentation and configuration improvements for our beta release at the end of May. 
 
 Please read the setup.txt document in the /docs folder in order to set up and configure your application and its synchronization with the NewsCloud.com API services.
 
@@ -31,6 +31,9 @@ http://blog.newscloud.com/open-source.html
 
 Release Notes
 ---------------------------------------------
+v0.25 - Facebook release - Jun 9, 2009
+- Final MnDaily and Hot Dish code updates from Knight Grant project
+
 v0.20 - Facebook preview beta - May 11, 2009
 
 v0.11 - Updated alpha - November 2008

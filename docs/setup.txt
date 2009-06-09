@@ -241,3 +241,4 @@ e.g. 'reader','contributor','bronze','silver','gold','platinum'
 Notes:
 ----------------------------------------------------------------------------------------
 * Caching does not operate when ENABLE_TEMPLATE_EDITS is on. So, some user interface features may not update when this mode is active
+* ENABLE_TEMPLATE_EDITS does not save changes unless a list of Facebook ids by admins is in the SystemStatus table with name template_editor_fbIds and strValue=comma separated list of admin FBIds

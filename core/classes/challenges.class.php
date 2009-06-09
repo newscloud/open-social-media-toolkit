@@ -172,7 +172,6 @@ class ChallengeTable
 						array("automatic","optInSMS","Receive SMS updates from ".SITE_TITLE."","Receive announcements and feature updates via SMS (aka text messages). Click on \"Settings\" and then \"Would you like to receive sms notifications from us through facebook? (50 pts)\" and follow the instructions.","0","0","50","1","1","0","enabled"),
 						array("automatic","levelIncrease","Level up!","As you accumulate points, your User Level increases. When you reach a new level, we give you bonus points!","0","0","200","6","6","0","enabled"),
 						array("automatic","referReader","Reader referral","Earn points when someone reads a story you shared!","0","0","5","300","10","0","enabled"),
-						array("automatic","betaTest","Beta Test ".SITE_TITLE."","This special challenge is awarded only to the beta-testers of ".SITE_TITLE.".","0","0","250","1","1","0","disabled"),
 						array("automatic","chatStory","Chat about a story in ".SITE_TITLE."","Strike up a conversation about a story with one of your Facebook friends using the chat widget on the story page sidebar. This is a great way to introduce friends to climate change issues! Fine print: Your friend must click through to read the story. If they are not ".SITE_TITLE." members, they will be required to authorize the application for you to receive credit.","0","0","25","1000","10","0","enabled"),
 						
 						array("submission","addAppTab","Add App Tab to profile","Add the ".SITE_TITLE." application tab to your Facebook profile so your friends can see what you've been up to. See <a href=\"".URL_CANVAS."?p=faq\">the FAQ</a> for details. Then send us a screenshot of the tab on your profile! File size must be under 2mb. (Don't know how to take a screenshot? Once again, <a href=\"".URL_CANVAS."?p=faq\">hit up the FAQ</a>.)","0","0","100","1","0","0","disabled"),
@@ -181,6 +180,7 @@ class ChallengeTable
 						array("submission","blog","Blog about ".SITE_TITLE."","Forget blogging about what you had for lunch. We know you love ".SITE_TITLE." -- so why not write a post about it on your blog and send us the link?","0","0","75","25","1","0","disabled"),						
 						
 						);
+//					array("automatic","betaTest","Beta Test ".SITE_TITLE."","This special challenge is awarded only to the beta-testers of ".SITE_TITLE.".","0","0","250","1","1","0","disabled"),
 
 		echo "Populating common challenges if missing...<br />";
 		foreach ($challenges as $cfields)

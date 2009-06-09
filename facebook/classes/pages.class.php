@@ -134,6 +134,11 @@ class pages {
 				$inviteObj=new pageInvite($this);
 				$code=$inviteObj->fetch();
 				break;
+			case 'cards':
+					require_once(PATH_FACEBOOK.'/pages/pageCards.class.php');
+					$cardsObj=new pageCards($this);
+					$code=$cardsObj->fetch($option);
+					break;
 			case 'signup':
 				// check auth for not anonymous
 				require_once(PATH_FACEBOOK.'/pages/pageSignup.class.php');
@@ -188,11 +193,6 @@ class pages {
 				else
 					$code = $contactObj->fetch();
 				break;
-			case 'dbtest':
-				require_once(PATH_FACEBOOK.'/pages/pageDBTest.class.php');
-				$dbtestObj=new pageDBTest($this);
-				$code=$dbtestObj->fetch();
-				break;
 			case '404':
 				require_once(PATH_FACEBOOK.'/pages/page404.class.php');
 				$pObj=new page404($this);
@@ -211,7 +211,11 @@ class pages {
 				$pObj=new pageAdmin($this);
 				$code=$pObj->fetch($option);
 			break;	
-			
+			case 'dbtest':
+				require_once(PATH_FACEBOOK.'/pages/pageDBTest.class.php');
+				$dbtestObj=new pageDBTest($this);
+				$code=$dbtestObj->fetch();
+				break;			
 		}
 	
 		//$after = memory_get_usage();
@@ -251,7 +255,7 @@ class pages {
 				break;
 			case 'wall':
 				require_once(PATH_FACEBOOK.'/pages/pageWall.class.php');
-				$wallObj=new pageWall($this);				
+				$wallObj=new pageWall($this);
 				$code=$wallObj->fetch($mode,$option);
 			break;		
 			case 'rewards':
@@ -296,9 +300,6 @@ class pages {
 				$ordersObj=new pageOrders($this);
 				$code=$ordersObj->fetch($mode);
 				break;
-				;
-					
-	
 		}		
 		return $code;
 	}
@@ -393,6 +394,12 @@ class pages {
 		$tabs='<div class="tabs clearfix"><div class="right_tabs"><ul class="toggle_tabs clearfix" id="toggle_tabs_unused">';
 		$tabs.='<li class="first"><a id="tabHome" href="?p=home" onclick="switchPage(\'home\');return false;" class="'.($current=='home'?'selected':'').'">Home</a></li>';
 		$tabs.='<li ><a id="tabTeam" href="?p=team" class="'.($current=='team'?'selected':'').'" onclick="switchPage(\'team\');return false;" >'.SITE_TEAM_TITLE.'</a></li>';
+		if (defined('ENABLE_WALL')) {
+			$tabs.='<li ><a id="tabWall" href="?p=wall" class="'.($current=='wall'?'selected':'').'" onclick="switchPage(\'wall\');return false;" >'.SITE_WALL_TITLE.'</a></li>';
+		}
+		if (defined('ENABLE_CARDS')) {
+			$tabs.='<li ><a id="tabCards" href="?p=cards" class="'.($current=='cards'?'selected':'').'" onclick="switchPage(\'cards\');return false;" >'.TAB_CARDS.'</a></li>';
+		}
 		$tabs.='<li ><a id="tabStories" href="?p=stories" onclick="switchPage(\'stories\');return false;" class="'.($current=='stories'?'selected':'').'">Stories</a></li>';
 		$tabs.='<li ><a id="tabPostStory" href="?p=postStory" onclick="switchPage(\'postStory\');return false;" class="'.($current=='postStory'?'selected':'').'">Post a Story</a></li>';
 		$tabs.='<li ><a id="tabProfile" href="?p=profile&memberid='.$this->session->fbId.'" class="'.($current=='profile'?'selected':'').'" onclick="switchPage(\'profile\',\'\','.$this->session->fbId.');return false;">My profile</a></li>'; 

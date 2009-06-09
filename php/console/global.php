@@ -23,18 +23,25 @@ if (!$_SESSION['authed']) {
 	else
 		$errors[] = 'Invalid activation code.';
 	if (count($errors)) {
+		echo '<html><head><title>Invalid authentication</title><meta http-equiv="refresh" content="10;url='.URL_CANVAS.'"></head><body>';
+
 		foreach ($errors as $error)
 			echo "<h1>ERROR: $error</h1>";
 		echo '<h1 style="color: red;">Authorization has failed. Redirecting you to the '.SITE_TITLE.' app in 10 seconds, or <a href="'.URL_CANVAS.'">click here</a> to return immediately.</h1>';
+		echo "</body></html>";
 		exit;
 	}
 	$db = new dbConsoleModel('all');
-	$result = $db->query("SELECT ncUid, userid, name, email from User WHERE email = '".mysql_real_escape_string($email)."'");
+	$result = $db->query("SELECT ncUid, userid, name, email, isAdmin, isResearcher, isSponsor, isModerator from User WHERE email = '".mysql_real_escape_string($email)."'");
 	if ($row = mysql_fetch_assoc($result)) {
 		$ncUid = $row['ncUid'];
 		$e = $row['email'];
 		$u = $row['userid'];
 		$n = $row['name'];
+		$isAdmin = $row['isAdmin'];
+		$isResearcher = $row['isResearcher'];
+		$isSponsor = $row['isSponsor'];
+		$isModerator = $row['isModerator'];
 	}
 	$activation_code = crypt($ncUid, $email);
 	$activation_code .= 'c';
@@ -45,6 +52,20 @@ if (!$_SESSION['authed']) {
 		$_SESSION['email']	= $e;
 		$_SESSION['userid']	= $u;
 		$_SESSION['name'] 	= $n;
+		if ($isAdmin == 1) {
+			$_SESSION['role'] = 'admin';
+			if ($n == 'Jeff Reifman' || $n == 'Russell Branca')
+				$_SESSION['curr_site_id'] = 0;
+		} else if ($isResearcher == 1) {
+			$_SESSION['role'] = 'researcher';
+			$_SESSION['curr_site_id'] = 0;
+		} else if ($isSponsor == 1) {
+			$_SESSION['role'] = 'sponsor';
+		} else if ($isModerator == 1) {
+			$_SESSION['role'] = 'moderator';
+		} else {
+			$_SESSION['role'] = 'default';
+		}
 	} else {
 		$_SESSION['authed'] = false;
 		// TODO: BLOW UP!!!!
@@ -103,24 +124,24 @@ function init_session() {
 	if (!isset($_SESSION['flash_error'])) $_SESSION['flash_error'] = '';
 }
 
-function init_db($group = 'main', $action = 'index') {
+function init_db($ctrl = 'main', $action = 'index') {
 	$db = false;
-	switch ($group) {
+	switch ($ctrl) {
 		case 'stories':
-			if (preg_match('/story/i', $action)) {
+			if (preg_match('/widget/i', $action)) {
+					$db = new dbConsoleModel('Widgets', array(), 'id');
+			} else if (preg_match('/story/i', $action)) {
 					$db = new dbConsoleModel('Content', array(), 'siteContentId');
 			} else if (preg_match('/comment/i', $action)) {
 					$db = new dbConsoleModel('Comments', array(), 'siteCommentId');
 			} else if (preg_match('/video/i', $action)) {
 					$db = new dbConsoleModel('Videos', array(), 'id');
-			} else if (preg_match('/widget/i', $action)) {
-					$db = new dbConsoleModel('Widgets', array(), 'id');
 			} else {
 				$db = new dbConsoleModel('all');
 			}
 		break;
 		case 'admin':
-			if (preg_match('/cronJobs/i', $action)) {
+			if (preg_match('/cronjobs/i', $action)) {
 					$db = new dbConsoleModel('cronJobs');
 			} else {
 				$db = new dbConsoleModel('all');
@@ -150,9 +171,11 @@ function init_db($group = 'main', $action = 'index') {
 			if (preg_match('/member_email/i', $action)) {
 				$db = new dbConsoleModel('ContactEmails');
 			} else if (preg_match('/member/i', $action)) {
-				$db = new dbConsoleModel('User', array(), 'dateRegistered');
+				$db = new dbConsoleModel('User', array(), 'userid');
 			} else if (preg_match('/outboundmessage/i', $action)) {
 				$db = new dbConsoleModel('OutboundMessages');
+			} else if (preg_match('/forumtopic/i', $action)) {
+					$db = new dbConsoleModel('ForumTopics');
 			} else {
 				$db = new dbConsoleModel('all');
 			}

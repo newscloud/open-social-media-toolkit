@@ -1,5 +1,5 @@
 // set the ajax server node for site 
-var ajaxUrl=document.getElementById('ajaxNode').getValue(); // 'http://callback.newsreel.org/sites/climate/facebook/index.php';
+var ajaxUrl=document.getElementById('ajaxNode').getValue(); // 'http://host.newscloud.com/sites/climate/facebook/index.php';
 var userid;
 var fbId;
 var sessionKey;
@@ -368,7 +368,6 @@ function saveBio()
 			); 
 }
 
-
 function addRawToJournal(itemid) {
 	lookupSession();
 	var ajax = new Ajax();
@@ -586,6 +585,14 @@ function switchPage(name,option,arg3,hack_id) { // hack_id added so setTeamTab c
 	setLoading(document.getElementById('pageContent')); // must happen after lookupSession - it obliterates userid
 	// array doesn't work in FBJS
 	document.getElementById('tabHome').setClassName('');
+	if (document.getElementById('tabWall'))
+	{ 
+	 document.getElementById('tabWall').setClassName('');
+	}
+	if (document.getElementById('tabCards'))
+	{ 
+	 document.getElementById('tabCards').setClassName('');
+	}
 	document.getElementById('tabStories').setClassName('');
 	document.getElementById('tabPostStory').setClassName('');
 	document.getElementById('tabProfile').setClassName('');
@@ -622,6 +629,12 @@ function switchPage(name,option,arg3,hack_id) { // hack_id added so setTeamTab c
 		case 'team':
 			document.getElementById('tabTeam').setClassName('selected');
 		break;		
+		case 'wall':
+			document.getElementById('tabWall').setClassName('selected');
+		break;
+		case 'cards':
+			document.getElementById('tabWall').setClassName('selected');
+		break;
 	}
 	var ajax = new Ajax();
 	if(name in {'home':'','read':'', 'stories':'','team':'','rules':'', 'rewards':'','challenges':'','leaders':'','static':'','links':''}) {

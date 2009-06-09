@@ -42,7 +42,7 @@ class profileBoxes
 		
 	}
 	function updateProfileBoxes(){	
-		$q="select fbId from UserInfo where isAppAuthorized=1 and (lastProfileUpdate='0000-00-00 00:00:00' or lastProfileUpdate IS NULL or lastProfileUpdate<NOW() - INTERVAL 1 DAY)  order by dateCreated DESC limit 15;";
+		$q="select fbId from UserInfo where isAppAuthorized=1 and (lastProfileUpdate='0000-00-00 00:00:00' or lastProfileUpdate IS NULL or lastProfileUpdate<NOW() - INTERVAL 7 DAY)  order by dateCreated DESC limit 15;";
 		$query=$this->db->query($q);
 		while ($users=$this->db->readQ($query)){		
 			$errors=$this->updateProfileBox($users->fbId);	

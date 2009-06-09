@@ -46,6 +46,8 @@ class account
 		else
 			$fdata->showResearchImportance=false;
 		$fdata->noCommentNotify=0;
+		$fdata->rxFeatures=0;
+		$fdata->rxMode='notification';
 		if ($this->session->age<>'unknown')
 			$fdata->age=$this->session->age;
 		else
@@ -60,7 +62,7 @@ class account
                 $fdata->city=$fbInfo[0]['current_location']['city'];
                 $fdata->state=$fbInfo[0]['current_location']['state'];
                 $fdata->country=$fbInfo[0]['current_location']['country'];
-                
+                $fdata->zip=$fbInfo[0]['current_location']['zip'];
             }
             
         if ($this->debug) echo 'fbInfo:<pre>'.print_r($fbInfo,true).'</pre>';	
@@ -124,43 +126,7 @@ class account
 
 		if ($this->accountTemplate->collectLocation)
 		{
-			// location
-			$code .= (!strlen($fdata->city) || $canChangePopulated) ?	
-				'<fb:editor-text label="City" name="city" value="'.$fdata->city.'"/>' :
-			 	('<fb:editor-custom label="City" name="city">'.$fdata->city.'</fb:editor-custom>'.
-			 	 '<input type="hidden" name="city" value="'.$fdata->city.'"/>') ;
-	/*		$code .= !strlen($fdata->state) ?	
-				'<fb:editor-text label="State" name="state" value="'.$fdata->state.'"/>' :
-			 	'<fb:editor-custom label="State" name="state">'.$fdata->state.'</fb:editor-custom>';
-			$code .= !strlen($fdata->country) ?	
-				'<fb:editor-text label="Country" name="country" value="'.$fdata->country.'"/>' :
-			 	'<fb:editor-custom label="Country" name="country">'.$fdata->country.'</fb:editor-custom>';
-	*/
-			if (!strlen($fdata->state) || $canChangePopulated)
-			{
-				$code .='<fb:editor-custom label="State/Province">'. 
-				  		'<select name="state"> '.
-							$this->makeSelDrop('provinces', $fdata->state); 
-				  			'</select>'; 	     
-				$code.= '</fb:editor-custom> ';
-			} else
-			{
-			 	$code .= '<fb:editor-custom label="State" name="city">'.$fdata->state.'</fb:editor-custom>'.
-			 	 		'<input type="hidden" name="state" value="'.$fdata->state.'"/>' ;
-			}
-		
-			$code .='<fb:editor-custom label="Country">'; 
-				if (!strlen($fdata->country) || $canChangePopulated)
-				{
-					$code .= '<select name="country"> '.
-							$this->makeSelDrop('countries', 'United States'); 
-				  			'</select>';
-				} else
-				{
-					$code .= $fdata->country . '<input type="hidden" name="country" value="'.$fdata->country.'"/>' ;
-				}
-			$code.= '</fb:editor-custom> ';
-			
+			$code.=$this->getLocationFields($fdata,$canChangePopulated);
 		}		
 	
 		/*if ($fdata->showOptIn) 
@@ -205,6 +171,39 @@ class account
 		
 	}
 	
+	function getLocationFields($fdata,$canChangePopulated) {
+		// location
+		$temp .= (!strlen($fdata->city) || $canChangePopulated) ?	
+			'<fb:editor-text label="City" name="city" value="'.$fdata->city.'"/>' :
+		 	('<fb:editor-custom label="City" name="city">'.$fdata->city.'</fb:editor-custom>'.
+		 	 '<input type="hidden" name="city" value="'.$fdata->city.'"/>') ;
+		if (!strlen($fdata->state) || $canChangePopulated)
+		{
+			$temp .='<fb:editor-custom label="State/Province">'. 
+			  		'<select name="state"> '.
+						$this->makeSelDrop('provinces', $fdata->state); 
+			  			'</select>'; 	     
+			$temp.= '</fb:editor-custom> ';
+		} else
+		{
+		 	$temp .= '<fb:editor-custom label="State" name="city">'.$fdata->state.'</fb:editor-custom>'.
+		 	 		'<input type="hidden" name="state" value="'.$fdata->state.'"/>' ;
+		}
+
+		$temp .='<fb:editor-custom label="Country">'; 
+			if (!strlen($fdata->country) || $canChangePopulated)
+			{
+				$temp .= '<select name="country"> '.
+						$this->makeSelDrop('countries', 'United States'); 
+			  			'</select>';
+			} else
+			{
+				$temp .= $fdata->country . '<input type="hidden" name="country" value="'.$fdata->country.'"/>' ;
+			}
+		$temp.= '</fb:editor-custom> ';
+		return $temp;
+		
+	}
 	// signup specific wrapping and extra fields outside of core block
 	function buildSignupForm($fdata=null, $message='', $canChangePopulated=false) 
 	{
@@ -226,16 +225,10 @@ class account
 		$code.=$this->buildOptInStudyText();
 		$code.=$this->buildAcceptRulesText();
 				
-	    $facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email', $this->session->fbId);
-	    
+	    $facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email', $this->session->fbId);	    
 	   	if (!$facebookEmailPermitted)
 			$code.='<fb:editor-custom><fb:prompt-permission perms="email">Would you like to receive email from us through facebook? (50 pts)</fb:prompt-permission></fb:editor-custom>';
 	    
-   //    	$code.= '</fb:editor-custom> ';
-       	
-		
-		
-		
 		$code.='<fb:editor-buttonset>  
 	           <fb:editor-button value="Submit"/> <fb:editor-cancel href="'.URL_CANVAS.'"/>  </fb:editor-buttonset>';
 		$code.='</fb:editor>';	
@@ -269,34 +262,18 @@ class account
 				$fdata->showResearchImportance=false;							
 		}
 		$code='';		
-	//	$code="Welcome <fb:name uid=\"".$this->session->fbId."\"/>,"; 
 		
 		$code.='<fb:editor action="?p=account&settings&step=submit" labelwidth="100">';
 
-		
 		$code .= $this->buildAccountInfoFormFields($fdata, $message, true);
 		if ($fdata->showOptIn) {
 			$code.=$this->buildOptInStudyText($fdata->optInStudy );
 		} else {
 			$code.='<input type="hidden" name="optInStudy" value="on" />';			
 		}
-	    
-	    $facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email');
-	    if (!$facebookEmailPermitted)
-			$code.='<fb:editor-custom><fb:prompt-permission perms="email">Would you like to receive email from us through facebook? (50 pts)</fb:prompt-permission><br></fb:editor-custom>';
-
-  		$facebookSMSPermitted=$this->facebook->api_client->users_hasAppPermission('sms');
-	   	if (!$facebookSMSPermitted)
-			$code.='<fb:editor-custom><fb:prompt-permission perms="sms">Would you like to receive sms notifications from us through facebook? (50 pts)</fb:prompt-permission><br /></fb:editor-custom>';			
-		
-		$facebookOfflinePermitted=$this->facebook->api_client->users_hasAppPermission('offline_access');
-		if (!$facebookOfflinePermitted)
-			$code.='<fb:editor-custom><fb:prompt-permission perms="offline_access">Would you like Facebook to keep you permanently signed in to '.SITE_TITLE.'</fb:prompt-permission>? This will prevent timeout messages from appearing.</fb:editor-custom>';
-			
-		$code .= '<fb:editor-custom><fb:add-section-button section="profile" /><fb:editor-custom>';
-
-		$code.='<fb:editor-custom><input type="checkbox" name="noCommentNotify" '.($fdata->noCommentNotify==1?'CHECKED':'').'> Do not send me notifications when people reply to my comments and stories</fb:editor-custom>';
-	   	
+/*
+		$code.=$this->buildPermissions();
+*/
 		$code.='<fb:editor-buttonset>  
 	           <fb:editor-button value="Update"/> <fb:editor-cancel href="'.URL_CANVAS.'"/>  </fb:editor-buttonset>';
 		$code.='</fb:editor>';	
@@ -314,6 +291,48 @@ class account
 		return $code;		
 	}
 	
+	function validateLocationData() {
+		// used by address form
+		$fdata->result = true;
+		$fdata->alert = '';
+
+		// the stuff we get from facebook or user but might be invalid anyway 
+		$fdata->address1 	= stripslashes($_POST['address1']);
+		$fdata->address2 	= stripslashes($_POST['address2']);
+		$fdata->city 	= stripslashes($_POST['city']);
+		$fdata->state 	= stripslashes($_POST['state']);
+		$fdata->country	= stripslashes($_POST['country']);
+		if (isset($_POST['zip']))
+			$fdata->zip	= stripslashes($_POST['zip']);
+		else
+			$fdata->zip='';
+		if ($fdata->address1 == '')
+		{
+			$fdata->alert .= 'Please enter at least the first line of your mailing address.<br />';
+			$fdata->result = false;						
+		}
+		if ($fdata->city == '')
+		{
+			$fdata->alert .= 'Please enter your city.<br />';
+			$fdata->result = false;						
+		}
+		if ($fdata->state == '')
+		{
+			$fdata->alert .= 'Please select the state where you live.<br />';
+			$fdata->result = false;						
+		}
+		if ($fdata->country == '')
+		{
+			$fdata->alert .= 'Please select the country where you live.<br />';
+			$fdata->result = false;						
+		}
+		if ($fdata->zip == '')
+		{
+			$fdata->alert .= 'Please enter your postal code.<br />';
+			$fdata->result = false;						
+		}
+		return $fdata;		
+	}
 	
 	function validateFormData($isNewRegistration=true)
 	{
@@ -332,12 +351,18 @@ class account
 		$fdata->city 	= stripslashes($_POST['city']);
 		$fdata->state 	= stripslashes($_POST['state']);
 		$fdata->country	= stripslashes($_POST['country']);
+		if (isset($_POST['zip']))
+			$fdata->zip	= stripslashes($_POST['zip']);
+		else
+			$fdata->zip='';
 		/*$fdata->researchImportance=	$_POST['researchImportance'];  // tentatively moved into templates since this field may be site-specific
 		if ($isNewRegistration OR $fdata->researchImportance==0)
 			$fdata->showResearchImportance=true;*/
 		$fdata->optInStudy = stripslashes($_POST['optInStudy']) == 'on' ? 1 : 0;
 		$fdata->acceptRules = stripslashes($_POST['acceptRules']) == 'on' ? 1 : 0;
 		$fdata->noCommentNotify = stripslashes($_POST['noCommentNotify']) == 'on' ? 1 : 0;
+		$fdata->rxFeatures = stripslashes($_POST['rxFeatures']) == 'on' ? 1 : 0;
+		$fdata->rxMode	= stripslashes($_POST['rxMode']);
 		
 		// TODO:optInEmail, etc
 		
@@ -415,6 +440,83 @@ class account
 				
 	}
 	
+	function processLocationUpdate($fdata) {
+		require_once(PATH_CORE.'/classes/user.class.php'); 
+		$userTable = new UserTable($this->db); 
+		$userInfoTable = new UserInfoTable($this->db);
+		
+		$userinfo = $userInfoTable->getRowObject();
+		
+		dbRowObject::$debug = 0; // NEVER TURN ON FOR LIVE SITE
+		
+		if (
+			!$userinfo->load($this->session->userid))
+		{
+		 	$fdata->alert = 'Fatal error: userid not found in database';
+		 	$fdata->result = false;
+		 	echo 'Error loading user table entries.';
+		 	return $fdata;			
+		}
+		$userinfo->address1 = $fdata->address1;
+		$userinfo->address2 = $fdata->address2;
+		$userinfo->city = $fdata->city;
+		$userinfo->state = $fdata->state;
+		$userinfo->country = $fdata->country;
+		if ($fdata->zip<>'')
+			$userinfo->zip=$fdata->zip; // safe overwrite only if not empty string
+		
+		$userinfo->update();
+		return $fdata;
+		
+	}
+	
+	function updateSubscriptions($fdata) {
+		require_once(PATH_CORE.'/classes/user.class.php'); 
+		$userTable = new UserTable($this->db); 
+		$userInfoTable = new UserInfoTable($this->db);
+		
+		$user = $userTable->getRowObject();
+		$userinfo = $userInfoTable->getRowObject();
+		
+		if (!$user->load($this->session->userid) ||
+			!$userinfo->load($this->session->userid)) {
+		 	$fdata->alert = 'Fatal error: userid not found in database';
+		 	$fdata->result = false;
+		 	echo 'Error loading user table entries.';
+		 	return $fdata;						
+		}
+
+		$userinfo->noCommentNotify=$fdata->noCommentNotify;
+	//	$user->update();
+		$userinfo->update();
+
+		require_once(PATH_CORE.'/classes/subscriptions.class.php'); 
+		$subTable = new SubscriptionsTable($this->db); 
+		$sub = $subTable->getRowObject();
+		$sub->userid=$this->session->userid;
+		$sub->rxFeatures=$fdata->rxFeatures;
+		$sub->rxMode=$fdata->rxMode;
+		if ($sub->rxMode=='sms') {
+	  		if (!$facebookSMSPermitted=$this->facebook->api_client->users_hasAppPermission('sms')) {
+				$sub->rxMode='notification';
+			}
+		} else if ($sub->rxMode=='email') {
+	  		if (!$facebookSMSPermitted=$this->facebook->api_client->users_hasAppPermission('email')) {
+				$sub->rxMode='notification';
+			}
+		}
+		$qDup=$subTable->checkExists($this->session->userid);
+		if (!$qDup) {
+			$sub->insert();
+		} else {			
+			$data=$this->db->readQ($qDup);
+			$sub->id=$data->id;
+			$this->db->log($sub);
+			$sub->update();			
+		}
+		return $fdata;		
+	}
+	
 	function processFormUpdateDatabase($fdata)
 	{
 		// TODO: update data tables based on form data which is presumably now validated
@@ -448,6 +550,8 @@ class account
 		$userinfo->city = $fdata->city;
 		$userinfo->state = $fdata->state;
 		$userinfo->country = $fdata->country;
+		if ($fdata->zip<>'')
+			$userinfo->zip=$fdata->zip; // safe overwrite only if not empty string
 		$userinfo->researchImportance=$fdata->researchImportance;
 		$userinfo->noCommentNotify=$fdata->noCommentNotify;
 		//$userinfo->birthdate = ''; // TODO 
@@ -470,8 +574,6 @@ class account
 	
 		$user->update();
 		$userinfo->update();
-		
-
 		return $fdata;
 	}
 
@@ -501,6 +603,9 @@ class account
 		$fdata->city= $userinfo->city;
 		$fdata->state= $userinfo->state;
 		$fdata->country= $userinfo->country;
+		$fdata->address1 = $userinfo->address1;
+		$fdata->address2 = $userinfo->address2;
+		$fdata->zip = $userinfo->zip;
 		$fdata->gender = $userinfo->gender;
 		//$userinfo->birthdate = ''; // TODO 
 		
@@ -514,11 +619,20 @@ class account
 		$fdata->noCommentNotify = $userinfo->noCommentNotify;
 
 		$fdata->acceptRules = $user->acceptRules;
+
+		require_once(PATH_CORE.'/classes/subscriptions.class.php'); 
+		$subTable = new SubscriptionsTable($this->db); 
+		$sub = $subTable->getRowObject();
+		if ($sub->loadWhere("userid=".$this->session->userid)) {
+			$fdata->rxFeatures=$sub->rxFeatures;
+			$fdata->rxMode=$sub->rxMode;			
+		} else {
+			$fdata->rxFeatures=1;
+			$fdata->rxMode='notification';
+		}
 		
 		return $fdata;
 	}
-	
-	
 	
 	function checkEligibility($user, $userinfo)
 	{
@@ -833,14 +947,60 @@ class account
 		return $this->accountTemplate->buildAcceptRulesText($acceptRules);
 	}
 	
-	function buildAccountSubscribeForm($fdata=null, $message='') 
-	{
+	function buildAccountAddressForm($fdata=null, $message='') {
 		if (!$fdata) {
 			// $fdata = initFormData();
 		}
 		$code='';		
+		if (strlen($message))
+		{
+			$code.='<fb:editor-custom label="" name="message"><fb:error><fb:message>There was a problem</fb:message>Please correct the following items: '.$message.'</fb:error>'.
+					'</fb:editor-custom>';
+		}		
+		$code.='<fb:editor action="?p=account&o=address&step=submit" labelwidth="100">';
+	   	$code .= '<fb:editor-text label="Address line 1" name="address1" value="'.$fdata->address1.'"/>';
+	   	$code .= '<fb:editor-text label="Address line 2" name="address2" value="'.$fdata->address2.'"/>';
+		$code.=$this->getLocationFields($fdata,true);
+	   	$code .= '<fb:editor-text label="Postal code" name="zip" value="'.$fdata->zip.'"/>';		
+		$code.='<fb:editor-buttonset>  
+	           <fb:editor-button value="Update"/> <fb:editor-cancel href="'.URL_CANVAS.'"/>  </fb:editor-buttonset>';
+		$code.='</fb:editor>';	
+		return $code;
+	}
+	
+	function buildAccountSubscribeForm($fdata=null, $message='') 
+	{
+		if (!$fdata) {
+			$fdata = initFormData();
+		}
+		$code='';		
 		
 		$code.='<fb:editor action="?p=account&o=subscribe&step=submit" labelwidth="100">';
+		$code.=$this->buildPermissions();
+		$code.='<fb:editor-custom><input type="checkbox" name="noCommentNotify" '.($fdata->noCommentNotify==1?'CHECKED':'').'> Do not send me notifications when people reply to my comments and stories</fb:editor-custom>';
+
+		$code.='<fb:editor-custom><input type="checkbox" name="rxFeatures" '.($fdata->rxFeatures==1?'CHECKED':'').'> Notify me when featured stories are updated</fb:editor-custom>';
+
+    	$code .='<fb:editor-custom label="Contact preference">'. 
+	  		'<select name="rxMode">  
+	  			<option value="notification" '.(($fdata->rxMode=='notification')?'SELECTED':'').'>Facebook Notification</option>
+	  			<option value="email" '.(($fdata->rxMode=='email')?'SELECTED':'').'>Email - Requires authorization above</option>
+	  			<option value="sms" '.(($fdata->rxMode=='sms')?'SELECTED':'').'>Text Message (SMS) - Requires authorization above</option>
+	  		</select>'; 	     
+		$code.= '</fb:editor-custom> ';
+	   	
+		$code.='<fb:editor-buttonset>  
+	           <fb:editor-button value="Update"/> <fb:editor-cancel href="'.URL_CANVAS.'"/>  </fb:editor-buttonset>';
+		$code.='</fb:editor>';	
+		return $code;		
+	}	
+	
+	function buildPermissions() {
+		$code='';
+	    $facebookPublishStream=$this->facebook->api_client->users_hasAppPermission('publish_stream');
+	    if (!$facebookPublishStream)
+			$code.='<fb:editor-custom><fb:prompt-permission perms="publish_stream">Would you like to grant us permission to publish to your Facebook profile stream? (100 pts)</fb:prompt-permission><br></fb:editor-custom>';
+	    
 	    $facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email');
 	    if (!$facebookEmailPermitted)
 			$code.='<fb:editor-custom><fb:prompt-permission perms="email">Would you like to receive email from us through facebook? (50 pts)</fb:prompt-permission><br></fb:editor-custom>';
@@ -854,16 +1014,7 @@ class account
 			$code.='<fb:editor-custom><fb:prompt-permission perms="offline_access">Would you like Facebook to keep you permanently signed in to '.SITE_TITLE.'</fb:prompt-permission>? This will prevent timeout messages from appearing.</fb:editor-custom>';
 			
 		$code .= '<fb:editor-custom><fb:add-section-button section="profile" /><fb:editor-custom>';
-
-		$code.='<fb:editor-custom><input type="checkbox" name="noCommentNotify" '.($fdata->noCommentNotify==1?'CHECKED':'').'> Do not send me notifications when people reply to my comments and stories</fb:editor-custom>';
-	   	
-		$code.='<fb:editor-buttonset>  
-	           <fb:editor-button value="Update"/> <fb:editor-cancel href="'.URL_CANVAS.'"/>  </fb:editor-buttonset>';
-		$code.='</fb:editor>';	
-			// perms: email, offline_access, status_update, photo_upload, create_listing, create_event, rsvp_event, sms. 
-		return $code;		
-	}	
-	
-	
+		return $code;
+	}
 }
 ?>

@@ -36,6 +36,7 @@
 			include_once(PATH_PHP.'/process.php');
 		break;
 		case 'engine':
+			ini_set('memory_limit', '32M');		
 			include_once(PATH_CORE.'/engine.php');
 		break;
 		case 'readStory':
@@ -63,6 +64,7 @@
 			include_once(PATH_PHP.'/x.php');
 		break;		
 		case 'console':
+			ini_set('memory_limit', '32M');
 			include_once(PATH_PHP.'/console/console.php');
 		break;
 		case 'load_story':

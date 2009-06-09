@@ -136,6 +136,8 @@ class dbConsoleModel
 		while ($row = mysql_fetch_assoc($res))
 			$results[] = $row;
 			
+		if (dbConsoleModel::$debug) echo "<p>Found ".count($results)." results!</p>";
+
 		return $results;
 	}
 

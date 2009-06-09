@@ -1,51 +1,91 @@
-<?php if ($_GET['logout']) require('global.php'); ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "XHTML1-s.dtd">
-<html>
-<head>
-<title>Newscloud Management Interface -- Login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<!--<link type="text/css" href="styles.css" rel="stylesheet" media="screen" />-->
-<style>
-body {background-color: #f6f4f5;}
+<?php
 
-</style>
-</head>
-<div class="containeradminfull">
-<body>
-<div class="containeradmin">
-<!--content area BEGINS here-->
- <?php
- if($_GET['logout']) { ?>
-	 <div style="color:red">Thank you for logging out.</div><br />
- <?php } ?>
-<div class="equalboxtext">
-	<table id="Table_01" width="150" height="50" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<form action="admin.php" method=POST>
+// auth
 
-			Username:
+$password = 'xxx';
 
-			  <input type="text" name="username"><br>
+session_start();
 
-			Password:
+if($_REQUEST['page'] == 'logout') unset($_SESSION['authed']);
 
-			<input type="password" name="password">
+if($_REQUEST['password'] == 'xxx') {
+  $_SESSION['authed'] = true;
+}
 
-			 <br>
+if($_SESSION['authed']) {
 
-			 <input type="submit" name="submit" value="Login">
-			 <input type="reset" name="reset" value="Reset"><br /><br />
-			 <?php
-			 if($_GET['auth_failed']) { ?>
-				 <div style="color:red">Incorrect username or password</div>
-			 <?php } ?>
- </form>
-		</tr>
-</table>
-Please click <a href="../index.php" border="0"> HERE </a> to return to the site.
-</div>
-<!--content area ENDS here-->
-</div>
-</body>
-</div>
-</html>
+
+
+
+
+
+
+
+
+require('../connect_to_db.php');
+
+function url_for($ctrl, $action, $id=0) {
+  return "?ctrl=$ctrl&page=$action&id=$id";
+}
+
+function create_from_params($table, $params) {
+  $fields = array();
+  $values = array();
+  foreach($params as $key => $val) {
+    array_push($fields, $key);
+    array_push($values, "'" . mysql_real_escape_string(stripslashes($val)) . "'");
+  }
+  $fields = implode($fields, ',');
+  $values = implode($values, ',');
+  
+  mysql_query("INSERT INTO $table ($fields) VALUES ($values)");
+}
+
+function update_from_params($table, $params, $id) {
+  $assignments = array();
+  foreach($params as $key => $val) {
+    array_push($assignments, $key . '=' . "'" . mysql_real_escape_string(stripslashes($val)) . "'");
+  }
+  $assignments = implode($assignments, ',');
+  
+  mysql_query("UPDATE $table SET $assignments WHERE id=$id");
+}
+
+$controller = ($_REQUEST['ctrl'] ? $_REQUEST['ctrl'] : 'product_categories');
+$action = ($_REQUEST['page'] ? $_REQUEST['page'] : 'index');
+$id = $_REQUEST['id'];
+
+$skip_render = false;
+
+require("controllers/$controller.php");
+
+if($skip_render == false) {
+  require('header.php');
+  require("views/$controller/$action.php");
+  require('footer.php');
+}
+
+
+} else {
+  echo '<html><head><body>';
+  
+      ?>
+      
+      
+      
+      <form action="index.php" method="post">
+
+        Please enter your password:<br />
+        <input type="password" name="password" />
+        <br /><br />
+        <input type="submit" value="Log in" />
+      </form>
+      </body></html>
+      
+      <?php
+
+
+
+  
+}
+?>

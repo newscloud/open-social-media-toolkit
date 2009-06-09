@@ -1,4 +1,6 @@
 <?php		
+
+define ("PHP_MAX_SCRIPT",90);  // # of seconds to limit jobs to
 	
 class CronJobsTable
 {
@@ -12,20 +14,21 @@ class CronJobsTable
 	static $dbRowObjectClass = "CronJob";
 		
 	static $fields = array(			
-		"freqMinutes" => "INT(2) default 0",
 		"task" => "VARCHAR(64) default ''",
 		"comments" => "VARCHAR(150) default ''",
 		"nextRun" => "timestamp",
 		"status" => "enum ('enabled','disabled') default 'enabled'",	
-		"dayOfWeek" => "VARCHAR(3) default ''",
-		"hourOfDay" => "VARCHAR(2) default ''",
-		"lastExecTime" => "INT(10) default 0",
+		"freqMinutes" => "INT(2) default 0", // run at a specific interval
+		"dayOfWeek" => "VARCHAR(3) default ''", // run on a specific day only
+		"hourOfDay" => "VARCHAR(2) default ''", // run at a specific hour only
+		"lastExecTime" => "INT(10) default 0", 
 		"isRunning" => "TINYINT(1) default 0",
 		"lastStart" => "DATETIME",
 		"lastItemTime" => "DATETIME",	
 		"failureNoticeSent" => "TINYINT(1) default 0"
 		);
 	static $keydefinitions = array(); 
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// standard table functions
 	function __construct(&$db=NULL) 
@@ -69,6 +72,9 @@ class cron {
 	var $dayOfWeek;
 	var $cloudid;
 	var $apiKey;
+	var $startTime;
+	var $history;
+	var $cntJobs;
 	 
 	function cron($apiKey='') {
 		require_once (PATH_CORE.'/classes/db.class.php');
@@ -77,53 +83,127 @@ class cron {
 		$this->dayOfWeek=date("D");
 		$this->hourOfDay=date("H");
 		require_once ('systemStatus.class.php');
-		//$ssObj=new systemStatus($this->db);
-		//$info=$ssObj->getProperties();
-		//$this->cloudid=$info->cloudid;
 		$this->cloudid=SITE_CLOUDID;
+		$this->cntJobs=0;
+		$this->history=array();
 	}
 
+	function checkTime() {
+		if ((time()-$this->startTime)>PHP_MAX_SCRIPT) {
+			// time is up
+			$this->notifyAdmins('Alert: '.SITE_TITLE.' Cron tasks ran out of time','Cron exceeded '.PHP_MAX_SCRIPT.' seconds.');
+			return false;
+		} else 
+			return true;
+	} 
+	
 	function fetchJobs() {
 		// log time of day
-		$entryTime=time();		
+		$entryTime=time();
+		$this->startTime=$entryTime;
+		// FIRST - run any jobs that are set for this particular day of week and time of day
+		if ($this->checkTime()) {
+			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE hourOfDay='".$this->hourOfDay."' AND dayOfWeek='".$this->dayOfWeek."' AND nextRun<=now() AND status='enabled';");
+			$this->runJobList($jobList);
+		} else
+			return;
+				
+		// SECOND - run any jobs that are set for this particular time of day
+		if ($this->checkTime()) {
+			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE hourOfDay='".$this->hourOfDay."' AND dayOfWeek='' AND nextRun<=now() AND status='enabled';");
+			$this->runJobList($jobList);
+		} else
+			return;
+		
+		// THIRD - run any jobs that are due to be run
 		//$this->log(date('g:i a \a\t D M n, Y',$entryTime));				
 		// fetch jobs that need to be run
-		$jobList=$this->db->query("SELECT * FROM cronJobs WHERE nextRun<now() AND status='enabled' ORDER BY freqMinutes ASC;");
-		while ($job=$this->db->readQ($jobList)) {
-			// reset next run timestamp to a later timestamp based on frequency in minutes
-			echo '<b>Cron: '.$job->task.'</b><br/>';
-			// if job must be run on a certain day, check for the right day
-			if (($job->dayOfWeek=='' OR $job->dayOfWeek==$this->dayOfWeek) 
-				&& ($job->hourOfDay=='' OR $this->hourOfDay > $job->hourOfDay))			
-			{
-				//$this->log('Run '.$job->task);
-				$startTime=time();
-				try {
-					$this->runJob($job);	
-				} catch (Exception $e) {
-					$this->log('Failed running '.$job->task.', Error: '.$e);
-				}				
-				$endTime=time();		
-				//$this->log(' exec time: '.(($endTime-$startTime)/60).' seconds');
-			}		
-		}
+		if ($this->checkTime()) {
+			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE hourOfDay='' AND dayOfWeek='' AND nextRun<=now() AND status='enabled' ORDER BY nextRun ASC;");
+			$this->runJobList($jobList);			
+		} else
+			return;
+
+		// check for tasks running behind
+		$this->hasDelayedTasks();
+
+		// check for dead tasks
 		$this->hasDeadTasks();
+		// reboot dead tasks
+		$this->resetDeadTasks();
 		$exitTime=time();
 		//$this->log('Execution time total: '.(($exitTime-$entryTime)/60).' seconds');
+		//mail('newscloud@gmail.com', 'Job history: '.SITE_TITLE, $this->showHistory(), 'From: support@newscloud.com'."\r\n");
+	}
+	
+	function runJobList($jobList) {
+		// processes a query of a list of cron jobs to run
+		while ($job=$this->db->readQ($jobList)) {
+			if ($this->checkTime()) {
+				// reset next run timestamp to a later timestamp based on frequency in minutes
+				echo '<b>Cron: '.$job->task.'</b><br/>';
+					//$this->log('Run '.$job->task);
+					$startTime=time();
+					try {
+						$this->runJob($job);	
+					} catch (Exception $e) {
+						$this->log('Failed running '.$job->task.', Error: '.$e);
+					}				
+					$endTime=time();		
+					//$this->log(' exec time: '.(($endTime-$startTime)/60).' seconds');
+			} else 
+				break;
+		}			
+	}
+	
+	function resetDeadTasks() {
+		$whereStr="isRunning=1 AND failureNoticeSent=1 AND status='enabled' AND lastStart<date_sub(NOW(), INTERVAL (freqMinutes+120) MINUTE)";
+		$resultStr=$this->db->buildIdList("SELECT task as id FROM cronJobs WHERE ".$whereStr);
+		if ($result<>'') {
+			$result=$this->db->query("SELECT * FROM cronJobs WHERE ".$whereStr);
+			while ($data=$this->db->readQ($result)) {
+				$this->db->update("UPDATE cronJobs SET isRunning=0,failureNoticeSent=0 WHERE id=".$data->id);			
+			}
+			$subject='Alert'.SITE_TITLE.' Cron Jobs Auto Reset';
+			$msg='The following cronJobs have been reset: '.$resultStr.' ';
+			mail('newscloud@gmail.com', $subject, $msg, 'From: support@newscloud.com'."\r\n");
+		}
 	}
 	
 	function hasDeadTasks() {
 		// looks for dead tasks and emails the admin
 		// task labeled as running but last started more than 15 minutes ago
-		$result=$this->db->buildIdList("SELECT task as id FROM cronJobs WHERE isRunning=1 AND failureNoticeSent=0 AND status='enabled' AND lastStart<date_sub(NOW(), INTERVAL (freqMinutes+15) MINUTE);");
+		$whereStr="isRunning=1 AND failureNoticeSent=0 AND status='enabled' AND lastStart<date_sub(NOW(), INTERVAL (freqMinutes+15) MINUTE)";
+		$result=$this->db->buildIdList("SELECT task as id FROM cronJobs WHERE ".$whereStr);
 		if ($result<>'') {
-			$q=$this->db->query("select email from User where isAdmin=1;");
-			while ($data=$this->db->readQ($q)) {
-				// Notify the admins		
-				mail($data->email, SITE_TITLE.' Cron Job Alert', 'Dave, this is Hal, I am noticing the following cronJobs are dead: '.$result.' When are you coming back to check on them?', 'From: support@newscloud.com'."\r\n");		
-			}
-			$result=$this->db->update("cronJobs","failureNoticeSent=1", "isRunning=1 AND failureNoticeSent=0 AND status='enabled' AND lastStart<date_sub(NOW(), INTERVAL (freqMinutes+15) MINUTE)"); 		
+			$subject='Alert'.SITE_TITLE.' Cron Job Failure';
+			$msg='The following cronJobs are dead: '.$result.' Please check on them.';
+			$this->notifyAdmins($subject,$msg);
+			$result=$this->db->update("cronJobs","failureNoticeSent=1", $whereStr); 		
 		}
+	}
+
+	function hasDelayedTasks() {
+		// looks for tasks missing their deadline by two hours and emails the admin
+		$whereStr="isRunning=0 AND failureNoticeSent=0 AND status='enabled' AND nextRun<date_sub(NOW(), INTERVAL (freqMinutes+120) MINUTE)";
+		$result=$this->db->buildIdList("SELECT task as id FROM cronJobs WHERE ".$whereStr);
+		if ($result<>'') {
+			$subject='Alert'.SITE_TITLE.' Cron Job Delayed Tasks Exist';
+			$msg='The following cronJobs are delay by more than two hours: '.$result.' Please check on them.';
+			$this->notifyAdmins($subject,$msg);
+			$result=$this->db->update("cronJobs","failureNoticeSent=1", $whereStr); 		
+		}
+	}
+		
+	function notifyAdmins($subject='Alert: Cron',$msg='This is the sample cron alert message') {
+		$q=$this->db->query("select email from User where isAdmin=1;");
+		// add cron history
+		$msg.="\r\n".$this->showHistory();
+		while ($data=$this->db->readQ($q)) {
+			// Notify the admins		
+			mail($data->email, $subject, $msg, 'From: support@newscloud.com'."\r\n");
+		}
+		
 	}
 		
 	function forceJob($task='') {
@@ -144,6 +224,7 @@ class cron {
 	}
 
 	function runJob($job,$force=false) {
+		$stopAfterJob=false;
 		$startTime=microtime(true);
 		$this->log($job->task.', started '.date('g:i a \a\t D M n, Y',$startTime));
 		
@@ -420,7 +501,7 @@ class cron {
 				$proObj->updateProfileBoxes();
 			break;
 			case 'facebookEmailEngine':
-				// invoke facebookCron class
+				// tbd
 			break;
 			case 'facebookAllocations':
 				// check nightly facebook allocations
@@ -454,6 +535,8 @@ class cron {
 				require_once PATH_CORE."/classes/researchRawSession.class.php";
 				require_once PATH_CORE."/classes/researchRawExtLink.class.php";
 				require_once PATH_CORE."/classes/researchSessionLength.class.php";
+				require_once PATH_CORE."/classes/researchLogDump.class.php";
+				require_once PATH_CORE."/classes/researchUserCollective.class.php";
 
 				$rawExtLinkTable = new RawExtLinkTable($this->db);
 				$rawExtLinkTable->insertNewestData();
@@ -463,6 +546,15 @@ class cron {
 
 				$sessionLengthTable = new SessionLengthTable($this->db);
 				$sessionLengthTable->insertNewestData();
+
+				$logDumpTable = new LogDumpTable($this->db);
+				$logDumpTable->insertNewestData();
+
+				$userCollectiveTable = new UserCollectiveTable($this->db);
+				$userCollectiveTable->assimilateUsers();
+
+				$stopAfterJob=true;
+				
 			break;
 			case 'cleanup':
 				require_once ('cleanup.class.php');
@@ -471,8 +563,20 @@ class cron {
 		}
 		$execTime=microtime(true)-$startTime;
 		$this->log('...completed in '.$execTime.' seconds.');
+		$this->history[$this->cntJobs]['task']=$job->task;
+		$this->history[$this->cntJobs]['time']=$execTime;
+		$this->cntJobs+=1;
 		$this->db->update("cronJobs","nextRun=date_sub(NOW(), INTERVAL (0-$job->freqMinutes) MINUTE),lastExecTime=$execTime,lastStart='".date('Y-m-d H:i:s',$startTime)."',isRunning=0","id=$job->id");
+		if ($stopAfterJob) exit;
 	}	
+	
+	function showHistory() {
+		$code='';	
+		for ($i = 0; $i < $this->cntJobs; $i++) {
+			$code.=$this->history[$i]['task'].' -> '.$this->history[$i]['time'].' seconds'."\r\n";
+		}
+		return $code;
+	}
 	
 	function listJobs() {
 		$jobList=$this->db->query("SELECT * FROM cronJobs ORDER BY freqMinutes ASC;");

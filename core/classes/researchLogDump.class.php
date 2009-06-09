@@ -121,6 +121,12 @@ class LogDumpTable
 					$row['isFeedPublished'],
 					$siteid
 				);
+				if ($log_count % 10000 == 0) {
+					$insert_sql = substr($insert_sql, 0, -1);
+					$this->db->selectDB('research');
+					$this->db->query($insert_sql);
+					$insert_sql = "REPLACE INTO LogDumps (userid1, action, itemid, itemid2, userid2, ncUid, t, dateCreated, status, isFeedPublished, siteid) VALUES ";
+				}
 			}
 			$insert_sql = substr($insert_sql, 0, -1);
 
@@ -128,6 +134,8 @@ class LogDumpTable
 				$this->db->selectDB('research');
 				$this->db->query($insert_sql);
 			}
+
+			echo "\n Dumped $log_count log records.\n";
 		}
 
 	}

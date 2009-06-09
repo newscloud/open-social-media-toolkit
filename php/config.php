@@ -73,6 +73,8 @@
 		default:
 		break;
 		case 'initDB':
+			// override default time limit
+			set_time_limit(300);			
 			include_once PATH_CORE."utilities/initDatabase.php";
 		break;
 		case 'resetCron':
@@ -80,6 +82,11 @@
 			$cObj=new cron($init['apiKey']);
 			$cObj->initJobs();
 			$cObj->resetJobs();
+		break;
+		case 'populateSubscriptions':
+			require_once(PATH_CORE.'/classes/subscriptions.class.php');
+			$subObj=new SubscriptionsManager($db);
+			$subObj->populateSubscriptions();
 		break;
 		case 'reSync':
 			// call all cron jobs with new sync info

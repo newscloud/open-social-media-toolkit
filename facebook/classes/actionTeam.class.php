@@ -45,9 +45,6 @@ class actionTeam {
 		if (ENABLE_ACTION_CHALLENGES) $pages['challenges']='Challenges';
 		$pages['leaders']='Leaders';
 		if (ENABLE_ACTION_REWARDS) $pages['rewards']='Rewards';
-		if (defined('ENABLE_ACTION_WALL') AND ENABLE_ACTION_WALL==true) {
-			$pages['wall']='Forum';
-		}
 		$pages['rules']='Rules';		
 		 
 		 $tabs='<div id="subNav" class="tabs clearfix"><div class="left_tabs"><ul class="toggle_tabs clearfix" id="toggle_tabs_unused">';

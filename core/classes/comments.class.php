@@ -205,7 +205,7 @@ class comments {
 		    $siteContentId=$comment['siteContentId'];
 		    $storyPoster=$story->userid;
 		    //$ignoreLink="http://www.newscloud.com/ver/igCom/{safeEmail}/{actCode}/".$commentid;
-		    $profileLink='<a href="'.URL_CANVAS.'?p=account&o=settings">Stop comment notifications?</a>';
+		    $profileLink='<a href="'.URL_CANVAS.'?p=account&o=subscribe">Change notifications?</a>';
 		    $storyLink='<a href="'.URL_CANVAS.'?p=read&cid='.$siteContentId.'&nc">'.$story->title.'</a>'; // nc for no cache
 		    $app->loadFacebookLibrary();
 	        // check that commenter is not the poster

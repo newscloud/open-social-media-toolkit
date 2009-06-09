@@ -38,7 +38,8 @@ class ContentTable
 		"isBlocked" => "TINYINT(1) default 0",
 		"videoid" => "INT(11) default 0",
 		"widgetid" => "INT(11) default 0",
-		"isBlogEntry" => "TINYINT(1) default 0"			
+		"isBlogEntry" => "TINYINT(1) default 0",
+		"isFeatureCandidate" => "TINYINT(1) default 0"								
 		);
 	static $keydefinitions = array(); 
 	
@@ -140,7 +141,7 @@ class content {
 			$isBlogEntry=0;
 		else
 			$isBlogEntry=1;
-		$story=$this->serialize(0,$info->title,$info->caption,$info->source,$info->url,$info->permalink,$userinfo->ncUid,$userinfo->u->name,$userinfo->userid,'',$userinfo->votePower,0,0,$info->imageUrl,0,$isBlogEntry);
+		$story=$this->serialize(0,$info->title,$info->caption,$info->source,$info->url,$info->permalink,$userinfo->ncUid,$userinfo->u->name,$userinfo->userid,'',$userinfo->votePower,0,0,$info->imageUrl,0,$isBlogEntry,$info->isFeatureCandidate);
 		// post wire story to content
 		$siteContentId=$this->add($story);		
 		if ($info->videoEmbed<>'') {
@@ -188,8 +189,8 @@ class content {
 		$chkDup=$this->db->queryC("SELECT siteContentId FROM Content WHERE permalink='$story->permalink';");
 		if (!$chkDup) {
 			// insert the story into the table
-			$this_query=$this->db->insert("Content","contentid,title,caption,source,url,permalink,postedById,PostedByName,userid,date,score,isFeatured,imageid,videoid,isBlogEntry",
-				"$story->contentid,'$story->title','$story->caption','$story->source','$story->url','$story->permalink',$story->postedById,'$story->postedByName',$story->userid,'$story->date',$story->score,$story->isFeatured,$story->imageid,$story->videoid,$story->isBlogEntry");
+			$this_query=$this->db->insert("Content","contentid,title,caption,source,url,permalink,postedById,PostedByName,userid,date,score,isFeatured,imageid,videoid,isBlogEntry,isFeatureCandidate",
+				"$story->contentid,'$story->title','$story->caption','$story->source','$story->url','$story->permalink',$story->postedById,'$story->postedByName',$story->userid,'$story->date',$story->score,$story->isFeatured,$story->imageid,$story->videoid,$story->isBlogEntry,$story->isFeatureCandidate");
 			$q=$this->db->query("SELECT siteContentId FROM Content WHERE url='$story->url' AND permalink='$story->permalink';");
 			$data=$this->db->readQ($q);			
 			$contentImageQuery = $this->db->insert("ContentImages", "url, siteContentId, date", "'$story->imageUrl', $data->siteContentId, NOW()");
@@ -226,7 +227,7 @@ class content {
 		$this->db->update("Content","numComments=numComments+1","siteContentId=$siteContentId");
 	}
 
-	function serialize($contentid=0,$title='',$caption='',$source='',$url='',$permalink='',$postedById=0,$postedByName='',$userid=0,$date='',$score=0,$isFeatured=0,$imageid=0, $imageUrl='',$videoid=0,$isBlogEntry=0) {
+	function serialize($contentid=0,$title='',$caption='',$source='',$url='',$permalink='',$postedById=0,$postedByName='',$userid=0,$date='',$score=0,$isFeatured=0,$imageid=0, $imageUrl='',$videoid=0,$isBlogEntry=0,$isFeatureCandidate=0) {
 		// creates an object for an action
 		$data= new stdClass;
 		$data->contentid = $contentid;
@@ -247,6 +248,7 @@ class content {
 		$data->imageid=$imageid;
 		$data->videoid=$videoid;
 		$data->isBlogEntry=$isBlogEntry;
+		$data->isFeatureCandidate=$isFeatureCandidate;
 		if (!is_numeric($data->score)) $data->score=1;
 		if (!is_numeric($data->postedById)) $data->postedById=0;
 		return $data;

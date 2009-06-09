@@ -113,60 +113,46 @@
 		RawSessionTable::createTable($manageResearchObj);
 		$rawSessionTable = new RawSessionTable($manageResearchObj->db);
 		echo "\n	Inserting full data for RawSession table.\n";
-		$rawSessionTable->insertFullData();
-		//$rawSessionTable->insertNewestData();
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- SessionLengths table for the contact us functions
 		require_once(PATH_CORE.'/classes/researchSessionLength.class.php');
 		SessionLengthTable::createTable($manageResearchObj);
 		$sessionLengthTable = new SessionLengthTable($manageResearchObj->db);
-		echo "\n	Inserting full data for SessionLength table.\n";
-		$sessionLengthTable->insertFullData();
-		//$rawSessionTable->insertNewestData();
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- RawExtLinks table for the contact us functions
 		require_once(PATH_CORE.'/classes/researchRawExtLink.class.php');
 		RawExtLinkTable::createTable($manageResearchObj);
 		$rawExtLinkTable = new RawExtLinkTable($manageResearchObj->db);
-		echo "\n	Inserting full data for RawExtLink table.\n";
-		$rawExtLinkTable->insertFullData();
-		//$rawExtLinkTable->insertNewestData();
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- UserCollectives table for the contact us functions
 		require_once(PATH_CORE.'/classes/researchUserCollective.class.php');
 		UserCollectiveTable::createTable($manageResearchObj);
 		$userCollectiveTable = new UserCollectiveTable($manageResearchObj->db);
-		echo "\n	Assimilating user data.\n";
-		$userCollectiveTable->assimilateUsers();
-		//$userCollectiveTable->insertNewestData();
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- Sites table for the contact us functions
 		require_once(PATH_CORE.'/classes/researchSites.class.php');
 		SiteTable::createTable($manageResearchObj);
 		$siteTable = new SiteTable($manageResearchObj->db);
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- Admin_DataStore for the research console
 		require_once(PATH_CORE.'/classes/researchAdminDataStore.class.php');
 		AdminDataStoreTable::createTable($manageResearchObj);
 		$adminDataStoreTable = new AdminDataStoreTable($manageResearchObj->db);
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- Admin_User for the research console
 		require_once(PATH_CORE.'/classes/researchAdminUser.class.php');
 		AdminUserTable::createTable($manageResearchObj);
 		$adminUserTable = new AdminUserTable($manageResearchObj->db);
-		//$rawSessionTable->testPopulate();
 
 		// Create Research -- Log Dumps for the research console
 		require_once(PATH_CORE.'/classes/researchLogDump.class.php');
 		LogDumpTable::createTable($manageResearchObj);
 		$logDumpTable = new LogDumpTable($manageResearchObj->db);
-		$logDumpTable->dumpLogs();
+
+		// Create Research -- SurveyMonkeys for the research console
+		require_once(PATH_CORE.'/classes/researchSurveyMonkey.class.php');
+		SurveyMonkeyTable::createTable($manageResearchObj);
+		$surveyMonkeyTable = new SurveyMonkeyTable($manageResearchObj->db);
 
 //	}
 		echo "\n	End Initializing Research Tables\n";

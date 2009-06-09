@@ -40,6 +40,13 @@ $db->query("UPDATE Content set isFeatured = 1 WHERE siteContentId IN ($story_1_i
 require_once(PATH_CORE.'/classes/template.class.php');
 $templateObj=new template($db);
 $templateObj->resetCache('home_feature');
-//echo "<h1>SQL: $sql</h1>";
+// send feature notifications
+require_once PATH_FACEBOOK."/classes/app.class.php";
+$app=new app(NULL,true);
+$facebook=&$app->loadFacebookLibrary();			
+require_once(PATH_CORE.'/classes/subscriptions.class.php');
+$subObj=new SubscriptionsManager($db);
+$subObj->loadFacebook($facebook);
+$subObj->deliverFeatures();
 
 ?>

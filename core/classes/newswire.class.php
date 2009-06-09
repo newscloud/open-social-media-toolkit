@@ -109,6 +109,30 @@ class newswire {
 		return $code;		
 	}
 
+	function fetchRawStories() {
+		require_once(PATH_CORE.'/classes/template.class.php');
+		$this->templateObj=new template($this->db);
+		$this->templateObj->registerTemplates(MODULE_ACTIVE,'newswire');
+		require_once(PATH_CORE.'/classes/utilities.class.php');
+		$this->utilObj=new utilities($this->db);				
+		$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS * FROM Newswire WHERE date<now() AND date > date_sub(NOW(), INTERVAL ".AGE_STORY_MAX_DAYS." DAY) ORDER BY date DESC LIMIT 50;");
+		$rowTotal=$this->templateObj->db->countFoundRows();
+		$this->templateObj->db->setTemplateCallback('timeSince', array($this->utilObj, 'time_since'), 'date');
+		$this->templateObj->db->setTemplateCallback('caption', array($this->templateObj, 'cleanString'), array('caption', 500));		
+		$this->templateObj->db->setTemplateCallback('safeCaption', array($this, 'encodeCleanString'), array('caption', 500));
+		$this->templateObj->db->setTemplateCallback('safeUrl', array($this, 'encodeUrl'), 'url');
+		$code=$this->templateObj->mergeTemplate($this->templateObj->templates['rawList'],$this->templateObj->templates['autoItem']);			
+		return $code;
+	}
+	
+	function encodeCleanString($str,$cnt) {
+		return urlencode(substr(strip_tags($str), 0, ($cnt - 1)));
+	}
+	
+	function encodeUrl($url) {
+		return urlencode($url);
+	}
+	
 	function fetchNewswirePage($option='all',$filter='all',$memberFriends='',$currentPage=1) {
 		// filter = show posted stories or rss feeds
 		// sort for posted stories: sort by votes, sort by date

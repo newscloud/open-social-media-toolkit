@@ -1,0 +1,9 @@
+/* Equal columns */
+.ecRow { float: left; background: url(/images/ecBottom.gif) bottom left repeat; padding-bottom:1px;} 
+.ecRowNone { float: left; background: url(/images/ecBottom.gif) bottom left repeat; padding-bottom:0px;}
+.ecInner {float: left; overflow: hidden; } 
+.ecInner div { float: left; }
+.pClear {clear: both; padding:0px;margin:0px;}
+.bottomRule {width:994px;height:4px; background: url(/images/bottomRule.gif) bottom left repeat; }
+.greyHr {width:994px;height:1px; background: url(/images/ecBottom.gif) bottom left repeat;margin:0px;padding:0px; }
+.col1,.col2,.col3 {width:30%;margin:10px;}

@@ -1,0 +1,29 @@
+body {
+	font:small verdana;
+	margin:0px;
+	padding:0px;
+}
+a {color:#368dac;}
+#header {
+	margin:0px 0px 0px -5px;
+	padding:0px;
+	background-image:url('http://www.newscloud.com/images/vStrip.gif');
+	background-repeat:repeat-x;
+	background-position:bottom left;
+	height:20px;
+}
+#header h4 {
+margin:0px 0px 0px 0px;
+padding:3px;
+
+}
+#main {
+	width: 320px;
+	margin:0px 5px 5px 5px;
+	padding:0px;
+}
+#content {
+}
+#footer {
+}
+

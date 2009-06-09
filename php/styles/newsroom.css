@@ -1,0 +1,55 @@
+/* content styles */  
+#header .bar {border:#6D84B4;background-color:#6D84B4;height:10px;width:994px;margin:-5px 0px 10px -10px;padding:0px;}
+#header h1 {color:#4E463F;font-size:300%;margin:0px;padding:0px;font-family:tahoma,arial,helvetica;}
+#header p {color:#999999;margin:0px 0px 10px 0px;padding:0px;font-size:150%;font-style:italic;font-family:tahoma,arial,helvetica;}
+#footer .bar {border:#6D84B4;background-color:#6D84B4;height:4px;width:100%;margin:0px;padding:0px;}
+#pageBody {margin:0px 0px 0px 0px;padding:0px;}
+#pageContent {margin:10px 10px 0px 10px;padding:0px;}
+#colAlpha {
+	float:left;
+	width:600px;
+	margin: 0px;
+	padding:0px 0px 5px 0px;
+}
+#colBeta {
+	float:left;
+	width:200px;
+	margin: 0px;
+	padding:0px 0px 5px 0px;
+}
+
+#storyList {margin:0px 5px 5px 5px;padding:0px;clear:left;}
+#colAlpha h2 {margin:0px;}
+ul#storyList {list-style:none;}
+ul#storyList li.title {clear:left;margin:7px 0px 5px 0px;font-size:130%;font-weight:bold;}
+ul#storyList li.title img {float:left; border:1px solid yellow; margin:5px 5px 5px 0px;}
+ul#storyList li.posted {margin:3px 0px 3px 0px;font-size:100%;color:#999;}
+ul#storyList li.caption {margin:3px 0px 3px 0px;font-size:110%;color:#393733;}
+ul#storyList li.commands {margin:3px 0px 10px 0px;font-size:110%;}
+
+ul.sidebarList {margin:15px 5px 5px 5px;padding:0px;clear:left;}
+ul.sidebarList h3 {margin:0px 0px 3px 0px;font-size:110%;font-weight:bold;}
+ul.sidebarList li {list-style:none;margin:0px 0px 7px 0px;}
+ul.sidebarList li h3 {margin:3px 0px 0px 0px;font-size:100%;font-weight:bold;}
+ul.sidebarList li p.commands {margin:3px 0px 3px 0px;font-size:100%;font-weight:normal;}
+
+span.voteLink A {background-position: left 0px; background-repeat:no-repeat; padding:0px 0px 0px 10px; background-image: url(?p=img&img=smVote.gif);}
+span.voteLink A:hover {background-image: url(?p=img&img=smVoteHover.gif);} 
+
+#readStory ul#storyList li.title {font-size:200%;}
+#readStory ul#storyList li.posted {font-size:125%;}
+#readStory ul#storyList li.caption {font-size:150%;}
+#readStory ul#storyList li.commands {font-size:150%;}
+
+#commentThread {margin:0px;padding:0px;}
+#commentThread ul {margin:0px;padding:0px;}
+#commentThread ul li {clear:left;list-style:none;margin:0px 0px 7px 0px;}
+#commentThread ul li p.comments {margin:3px 0px 3px 0px;padding:0px;font-size:100%;color:#393733;}
+#commentThread ul li p.posted {margin:3px 0px 3px 0px;padding:0px;font-size:90%;color:#999;}
+#commentThread ul li img {float:left; border:1px solid yellow; margin:5px 5px 5px 0px;}
+#postCommentForm {clear:both;}
+
+ul.resourceList {margin:15px 10px 15px 10px;padding:0px;clear:left;}
+ul.resourceList h2 {margin:0px 0px 5px 0px;font-size:125%;font-weight:bold;}
+ul.resourceList li {clear:both;list-style:none;margin:0px 0px 7px 0px;}
+ul.resourceList li img {float:left; border:1px solid yellow; margin:0px 5px 10px 0px;}

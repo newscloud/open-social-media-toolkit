@@ -1,0 +1,38 @@
+/* browser compatibility */
+.clearfix {
+}
+html[xmlns] .clearfix {
+	display:block;
+}
+/* defaults and page layout */
+a {color:#368dac;}
+body {
+	margin: 0; background:#0066CC;
+	font:small times;
+}
+#header {
+	margin:0px 5px 0px 5px;
+	padding:5px 5px 10px 5px;
+	clear: both;
+}
+#main {
+	width: 994px;
+	margin: auto;
+	background-color:#fff;
+	padding:0px;
+}
+#content {
+	clear:both;
+	width:994px;
+	background-color:#fff;
+}
+#footer {
+	clear: both;
+	padding:0px 0px 18px 0px;	
+}
+#footer {background:#0066CC; color:#fff;}
+#footer A {color:#ccc;}
+#footer ul {text-align:center;}
+#footer ul li {list-style:none; display:inline; margin-left:10px;}
+#footer ul {margin-bottom:7px;}
+#footer ul li .feedicon {border:0px;margin-bottom:-4px;}

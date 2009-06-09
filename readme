@@ -13,12 +13,65 @@ This program is free software: you can redistribute it and/or modify
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-The GitHub.com releases are set up as branches to keep each update separate.
+Current Release Notes - Jun 9, 2009
+----------------------------------------
+The Facebook release provides the code needed for running Facebook applications similar to Hot Dish and MnDaily (this code does not provide code running NewsCloud.com). Please share your feedback at our Google Groups developer forum below and we will try to integrate documentation and configuration improvements for our beta release at the end of May. 
 
+Please read the setup.txt document in the /docs folder in order to set up and configure your application and its synchronization with the NewsCloud.com API services.
+
+NOTE: This is a complex and sophisticated infrastructure for powering social media news communities. Managing this system requires advanced system administration and Web development expertise. If you are interested in learning about NewsCloud's managed service and consulting services, please visit: http://blog.newscloud.com/services.html 
+
+We encourage you to sign up for our developer forum at Google Groups. Please submit all feedback and questions to the developer community there:
+http://groups.google.com/group/newscloud/
+
+You can get more information by following our blog:
+http://blog.newscloud.com/open-source.html
+
+Release Notes
+---------------------------------------------
+v0.25 - Facebook release - Jun 9, 2009
+- Final MnDaily and Hot Dish code updates from Knight Grant project
+
+v0.20 - Facebook preview beta - May 11, 2009
+
+v0.11 - Updated alpha - November 2008
+	- Requires that you run init database and init cron jobs from your config page
+	* RSS feeds
+	* Mobile pages
+	* Twitter posting
+	* ReCaptcha for registration
+	* Google SiteMaps
+	* Ad Rotator 
+	* Blog page: matrix style display with SimplePie integration
+	
+v0.10 - Original alpha release - October 2008
+
+Explanation of directory layout
+----------------------------------------
+/docs
+	- developer documentation 
+	
+/sites
+	- directory of site specific code for each topic installation
+	- this is the directory tree where you have to set constants can change and customize style sheets, templates
+
+/core
+	- code for the Social Media Toolkit core engine
+	- generally, you won't need to modify this
+
+<<<<<<< HEAD:readme
 Summary of releases
 ---------------------
 may09preview - initial preview release
 http://github.com/newscloud/open-social-media-toolkit/tree/may09preview
  
+=======
+/php
+	- code for the alpha test version of the Social Media Toolkit php engine
+	- generally, you won't need to modify this	
+
+/facebook
+	- code for the Social Media Toolkit facebook client
+>>>>>>> jun09:readme

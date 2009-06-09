@@ -1,0 +1,148 @@
+/*publisher styles*/
+#publisherContent{
+	height:auto;
+	padding:0;
+	margin:0;
+}
+
+#publisherList {
+	overflow-y: auto;
+	width: 500px;
+	height: 300px;
+	padding: 10px;
+	background-color:#fff;
+	border: solid 1px #CCE4F0;
+	border-top: 1px solid #94a3c4;
+	}
+
+#publisherList h2 {
+	font-size: 12px;
+	font-weight: bold;
+	padding: 0 0 6px 0;
+	margin: 0;
+	border-bottom: 1px solid #94A3C4;
+	}
+	
+#publisherList ul {
+	width:475px;
+	margin:0;
+	padding:0;
+}
+
+#publisherList li {
+	width:470px;
+	border-bottom: 1px dashed #CCE4F0;
+	margin: 10px 0 0 0;
+	padding: 0 0 3px 0;
+	}
+
+
+#publisherList .storyBlockWrap {
+	float: left;
+	width: 300px;
+	margin: 0px;
+	padding: 0px;
+	}
+
+#publisherList .btn_radio {
+	float: left;
+	margin: 0;
+	padding: 20px 10px;
+	}
+
+#publisherList .thumb {
+	float: left;
+	margin: 0;
+	padding: 0px 20px 10px 0px;
+	}
+
+#publisherList .thumb img {
+	width: 90px;
+	}
+
+#publisherList .embed_message {
+	width: 380px;
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid #d7d7d7;
+	background-color: #F7F7F7;
+	}
+
+
+
+.panel_block {
+	clear: both;
+	display: inline-block;
+	padding: 0px 0px 3px 0px;
+	}
+	
+.storyHead {
+	font-size: 12px;
+	font-weight: bold;
+	margin:0;
+	padding:0;
+	}
+	
+.storyCaption {
+	clear: both;
+	/*display: inline-block;*/
+	float:left;
+	font-size: 11px;
+	margin:0 0 10px 0;
+	padding:0;
+	}
+	
+.thumb {
+	float: left;
+	margin: 0px 20px 10px 0px;
+	}
+
+.pointValue {
+	color: #ff7a00;
+	font-size: 11px;
+	font-weight: bold;
+	}
+
+.pts {
+	text-transform: uppercase;
+	font-size: 9px;
+	}
+		
+	
+/*tabs*/
+.microTabs  {
+	clear: both;
+	font-size: 10px;
+	color: #333;
+	background-color: #ECEFF5;
+	padding: 2px 0;
+	}
+
+.microTabs a {
+	padding: 1px 5px 2px 5px;
+	}
+
+.microTabs .selected {
+	color: #fff;
+	padding: 1px 5px 2px 5px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-topleft: 4px;
+	/*-webkit-border-top-right-radius: 4px;
+	-webkit-border-top-left-radius: 4px;*/
+	background: #94a3c4;
+	}
+
+.microFeed { }
+
+.microFeed .thumb {
+	margin: 0 8px 8px 0;
+	}
+
+.microFeed .thumb img { width: 50px; }
+
+.microFeed li {
+	padding: 8px 0 0 0;
+	border-bottom: 1px solid #D8DFEA;
+	}
+
+.microFeed .storyBlockWrap {width: 184px;}

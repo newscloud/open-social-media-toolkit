@@ -32,9 +32,30 @@ class UserInfo extends dbRowObject
     		 
   }
   
-	function updateFriends($friends_list) // assumes its been loaded already, friends_list is an array of fbIds
-	{
+	function updateNetworks($resp=null) {
+		if (!is_null($resp)) {
+			//$result['networks']['current_location'] ['city']
+			if (array_key_exists("current_location",$resp['networks'][0])) {
+                $this->city=$resp['networks'][0]['current_location']['city'];
+                $this->state=$resp['networks'][0]['current_location']['state'];
+                $this->country=$resp['networks'][0]['current_location']['country'];
+                $this->zip=$resp['networks'][0]['current_location']['zip'];
+	        } 		
+			//$result['networks']['affiliations'][0,1,2,3] [nid],[name],[type]
+			if (array_key_exists("affiliations",$resp['networks'][0]) AND count($resp['networks'][0]['affiliations'])>0) {
+				$this->networks=serialize($resp['networks'][0]['affiliations']);
+			}
+			//$result['groups'][0,1,2,3] - [gid],[name]
+			if (array_key_exists("groups",$resp) AND count($resp['groups'])>0) {
+				$this->groups=serialize($resp['groups']);
+			}
+			$this->lastNetSync = date('Y-m-d H:i:s', time());
+			return $this->update();
+		}
+	}
 	
+	function updateFriends($friends_list) // assumes its been loaded already, friends_list is an array of fbIds
+	{	
 		if (is_null($friends_list)) return; 		
 		$this->friends = join(',',$friends_list);
 		$this->numFriends = count(explode(',',$this->friends));				
@@ -58,8 +79,6 @@ class UserInfo extends dbRowObject
 		
 		$this->lastUpdated = date('Y-m-d H:i:s', time());
 		return $this->update();
-	
-	
 	}	
 	 
   
@@ -190,6 +209,11 @@ class UserTable
 		} else 
 			return false;	
 	}
+
+	function listAdmins() {
+		$adminStr=$this->db->buildIdList("SELECT userid as id FROM User WHERE isAdmin=1;");
+		return $adminStr;
+	}
 	
 	// this can now be done with just a $user->update
 	function updateNewsCloudInfo($userinfo) {
@@ -227,8 +251,6 @@ class UserTable
 		
 		return $userid;	
 	}	
-	
-	
 	
 };
 
@@ -270,7 +292,11 @@ class UserInfoTable // extra, fb-specific stuff that doesnt belong in the high p
 		"state" => "VARCHAR(255) default ''",
 		"country" => "VARCHAR(255) default ''",
 		"zip" => "VARCHAR(255) default ''",
+		"neighborhood" => "VARCHAR(100) default ''",	
+		"groups" => "TEXT default NULL", 
+		"networks" => "TEXT default NULL", 
 		"refuid" => "BIGINT(20) unsigned default 0",
+		"lastNetSync" => "datetime", // last time locale, groups, networks updateds
 		"cachedFriendsInvited" => "INT(4) default 0",
 		"cachedChallengesCompleted" => "INT(4) default 0",
 		"hideTipStories" => "TINYINT(1) default 0",
@@ -489,8 +515,6 @@ class user {
 			$this->db=$db;
 	}
 
-	
-	
 	// ************************* DJM: IN SURGERY *****************************************
 	function update($user) { 
 		// check for duplicate

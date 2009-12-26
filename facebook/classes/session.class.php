@@ -27,6 +27,7 @@ class session {
 	var $votePower;
 	var $isExpired;
 	var $isLoaded;
+	var $hasSimpleAccess;
 	
 	//var $u; // user row object
 	var $ui; // userinfo row object
@@ -41,6 +42,7 @@ class session {
 	function validateSession($userid=0,$sessionKey='') {
 		$this->isLoaded=false;
 		$this->isExpired=false;
+		$this->hasSimpleAccess=false;
 		if (is_numeric($userid))
 			$q=$this->db->queryC("SELECT *,UNIX_TIMESTAMP(fb_sig_expires) as unixExpire FROM fbSessions WHERE userid=$userid AND fb_sig_session_key='".$sessionKey."' LIMIT 1;");
 		else
@@ -54,14 +56,15 @@ class session {
 			if ($data->unixExpire>time() OR $data->unixExpire==0) { // 0 is infinite session				
 				$this->userid=$data->userid;
 				$this->fbId=$data->fbId;							
-				$this->isLoggedIn = true; 
+				$this->isLoggedIn = true;
+				if (defined('REG_SIMPLE')) $this->hasSimpleAccess=true;
 				$this->lookupUserByFacebookAndCacheUserInfo($data->fbId,true); // sets up session->u and session->ui	
-				$this->votePower=$this->u->votePower; 
+				$this->votePower=1; 
 				$this->name=$this->u->name;
 				$this->isExpired=false;	
 				$this->isLoaded=true;	
-				$this->app->quickLog($data,'session');		
-				
+				$this->isAdmin=$this->u->isAdmin;
+				$this->app->quickLog($data,'session');					
 				return true;
 			} else {
 				$this->isExpired=true;
@@ -77,7 +80,7 @@ class session {
 			$this->sessionKey=$_POST['fb_sig_session_key'];
 			$this->sessionExpires=$_POST['fb_sig_expires'];
 		}
-		if ($_POST['fb_sig_added']) { 
+		if (isset($_POST['fb_sig_added']) AND $_POST['fb_sig_added']==1) { 
 			$this->isAppAuthorized=true;
 			//$this->fbId=$this->facebook->get_loggedin_user();
 			$this->fbId=$_POST['fb_sig_user'];
@@ -92,13 +95,14 @@ class session {
 		if ($this->fbId!==false and is_numeric($this->fbId)) {
 			// user is logged in to facebook
 			$this->isLoggedIn=true;
+			if (defined('REG_SIMPLE')) $this->hasSimpleAccess=true;
 			$data=$this->lookupUserByFacebookAndCacheUserInfo($this->fbId,false);
 			if ($data===false) {				
 				// user doesn't exist, so create them
 				$data=$this->initializeUserInfo($this->fbId,$this->isAppAuthorized);
-			} 
+			}
 			// fetch or create new session db entry
-			if ($this->fetch($data,$this->sessionKey)!==false) {
+			if ($data!==false AND $this->fetch($data,$this->sessionKey)!==false) {
 				if ($data->isMember==0) {
 					$this->isMember=false;		
 				} else {
@@ -114,7 +118,7 @@ class session {
 				else
 					$this->isAdmin=true;								
 				$this->isLoaded=true;
-				$this->isExpired=false;				
+				$this->isExpired=false;
 			}
 		} else {
 			// user is not signed in to facebook - we know nothing about them
@@ -134,6 +138,7 @@ class session {
 		$this->isBlocked=false;
 		$this->isLoaded=false;
 		$this->isExpired=true;
+		$this->hasSimpleAccess=false;
 	}
 
 	function fetch($userinfo=NULL,$sessionKey='') {
@@ -142,8 +147,7 @@ class session {
 		$chkDup=$this->db->queryC("SELECT *,UNIX_TIMESTAMP(fb_sig_expires) as unixExp FROM fbSessions WHERE userid=$userinfo->userid LIMIT 1;");
 		if (!$chkDup) {
 			if ($this->checkSessionLoad()) {
-				$session=$this->serialize(0,$this->userid,$this->fbId,$_POST['fb_sig_session_key'],$_POST['fb_sig_time'],$_POST['fb_sig_expires'],$_POST['fb_sig_profile_update_time']);
-				$q=$this->db->insert("fbSessions","userid,fbId,fb_sig_session_key,fb_sig_time,fb_sig_expires","$userinfo->userid,$userinfo->fbId,'$sessionKey',FROM_UNIXTIME($session->fb_sig_time),FROM_UNIXTIME($session->fb_sig_expires)");				
+				$session=$this->serialize(0,$this->userid,$this->fbId,$_POST['fb_sig_session_key'],$_POST['fb_sig_time'],$_POST['fb_sig_expires'],$_POST['fb_sig_profile_update_time']);					$q=$this->db->insert("fbSessions","userid,fbId,fb_sig_session_key,fb_sig_time,fb_sig_expires","$userinfo->userid,$userinfo->fbId,'$sessionKey',FROM_UNIXTIME($session->fb_sig_time),FROM_UNIXTIME($session->fb_sig_expires)");				
 			} else
 				return false;
 		} else {
@@ -181,7 +185,7 @@ class session {
 	function setAuthLevel() {
 		// determines authLevel setting from current session
 		// anonymous = unknown, not logged in to facebook
-		// notAuthorized = logged in to FB, not yet authorized 
+		// notAuthorized = logged in to FB, not yet authorized application
 		// notMember = authorized app, not yet signed up
 		// member = all signed up
 		if ($this->fbId!==false AND $this->fbId>0) {
@@ -237,8 +241,7 @@ class session {
 		//$before = memory_get_usage();
 		
 		// get User and UserInfo table instances so we can get row objects
-		require_once(PATH_CORE .'/classes/user.class.php');
-		
+		require_once(PATH_CORE .'/classes/user.class.php');		
 		$userTable = new UserTable($this->db); // TODO: cache instances of the tables globally
 		$userInfoTable = new UserInfoTable($this->db);
 		$user = $userTable->getRowObject();
@@ -261,6 +264,12 @@ class session {
 						if (!is_null($this->facebook->api_client->friends_list))
 							$userinfo->updateFriends($this->facebook->api_client->friends_list);
 					}				
+					if (defined('ENABLE_STUFF')) {
+						// check if last sync is out of date
+						// get locale info
+						// to do tbd
+					}
+					
 				}				
 			}
 			
@@ -340,13 +349,13 @@ class session {
 					echo "Failed to create UserInfo row:<br>";				
 					echo '<p>$userInfo:<pre>'. print_r($userInfo, true).'</pre>';
 				}
+				return false;
 			}
 		} else
 		{
 			if ($debug) echo "Failed to insert user!\n";
+			return false;
 		}
-		
-		
 		
 		// merge necessary session data into a results object and return it 
 		$data->isMember		=$user->isMember;

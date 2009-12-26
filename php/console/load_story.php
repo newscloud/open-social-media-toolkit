@@ -48,23 +48,21 @@ else
 $type = preg_replace('/.*?-image-(mini|blurb)$/', '\1', $dropElId);
 
 if ($id != '')
-	$story = mysql_fetch_assoc($db->query("SELECT * FROM Content WHERE siteContentId = $id"));
+	$story = mysql_fetch_assoc($db->query("SELECT Content.*,ContentImages.url as imageUrl FROM Content LEFT JOIN ContentImages ON (Content.siteContentId=ContentImages.siteContentId) WHERE Content.siteContentId = $id"));
 else
 	return false;
 
 //$story['caption'] = cleanDirty($story['caption']);
 $story['caption'] = htmlentities($story['caption'], ENT_QUOTES);
-
-//echo '<img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=180&y=120&fixed=x&crop" />';
-
 $story['title'] = htmlentities($story['title'], ENT_QUOTES);
+
 ?>
 <?php echo "<?xml version=\"1.0\" ?>"; ?>
 <story>
  <?php if ($type == 'mini'): ?>
- 	<image><? echo htmlentities("<img src=\"http://www.newscloud.com/images/scaleImage.php?id={$story['imageid']}&x=40&y=30&fixed=x&crop\" />"); ?></image>
+ 	<image><? echo htmlentities("<img src=\"{$story['imageUrl']}\" />"); // {URL_BASE}/index.php?p=scaleImg&id={$story['imageid']}&x=40&y=30&fixed=x&crop ?></image>
  <?php else: ?>
- 	<image><? echo htmlentities("<img src=\"http://www.newscloud.com/images/scaleImage.php?id={$story['imageid']}&x=180&y=120&fixed=x&crop\" />"); ?></image>
+ 	<image><? echo htmlentities("<img src=\"{$story['imageUrl']}\" />"); // {URL_BASE}/index.php?p=scaleImg&id={$story['imageid']}&x=180&y=120&fixed=x&crop ?></image>
  <?php endif; ?>
  <title><? echo htmlentities('<a href="'.$story['url'].'" target="_cts">'.$story['title'].'</a>', ENT_QUOTES); ?></title>
  <caption><? echo htmlentities((strlen($story['caption']) > 150) ? substr($story['caption'], 0, 150).' ...' : $story['caption'], ENT_QUOTES); ?></caption>

@@ -49,14 +49,13 @@ class LogTable
 		
 	static $fields = array(		
 		"userid1" => "BIGINT(20)default 0",
-		"action" => // NOTE: see mysql docs about ALTER ... MODIFY and enums before attempting to change the spelling of any fields. you will corrupt the existing data!
+		"action" => // IMPORTANT NOTE: see mysql docs about ALTER ... MODIFY and enums before attempting to change the spelling of any fields. you will corrupt the existing data!
 				"ENUM('vote','comment',
 						'readStory','readWire','invite','postStory','publishWire',
 						'publishStory','shareStory','referReader','referToSite',
 						'postTwitter', 'signup', 'acceptedInvite',
 						'redeemed', 'wonPrize', 'completedChallenge', 'addedWidget', 'addedFeedHeadlines',
-						'friendSignup', 'addBookmarkTool',
-						'levelIncrease','sessionsRecent','sessionsHour','pageAdd','chatStory','postBlog'
+						'friendSignup', 'addBookmarkTool',	'levelIncrease','sessionsRecent','sessionsHour','pageAdd','chatStory','postBlog','sendCard','askQuestion','answerQuestion','likeQuestion','likeAnswer','likeIdea','likeStuff','addStuff','storyFeatured','madePredict'
 						) default 'readStory'",
 		"itemid" => "INT(11) default 0",
 		"itemid2" => "INT(11) default 0",
@@ -116,6 +115,64 @@ class LogTable
 
 }
 
+class LogExtraRow extends dbRowObject
+{
+
+}
+
+
+class LogExtraTable
+{
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// standard table fields
+	var $db;	
+	static $tablename="LogExtra";
+	static $idname = "id";
+	static $idtype = "BIGINT(20) unsigned NOT NULL auto_increment";
+	static $dbRowObjectClass = "LogExtraRow";
+		
+	static $fields = array(		
+		"logid" => "BIGINT(20)default 0",
+		"txt" => "TEXT default ''"
+	);
+	static $keydefinitions = array(); 
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	// standard table functions
+	function __construct(&$db=NULL) 
+	{
+		if (is_null($db)) 
+		{ 
+			require_once('db.class.php');
+			$this->db=new cloudDatabase();
+		} else
+			$this->db=$db;		
+	}	
+	// although many functions will be duplicated between table subclasses, having a parent class gets too messy	
+	function getRowObject()
+	{	
+		$classname = self::$dbRowObjectClass; 
+		return new $classname($this->db, self::$tablename, array_keys(self::$fields), self::$idname);
+	}		
+	
+	// generic table creation routine, same for all *Table classes 		
+	static function createTable($manageObj)
+	{			
+		$manageObj->addTable(self::$tablename,self::$idname,self::$idtype,"MyISAM");
+		foreach (array_keys(self::$fields) as $key)
+		{
+			$manageObj->updateAddColumn(self::$tablename,$key,self::$fields[$key]);
+		}
+		foreach (self::$keydefinitions as $keydef)
+		{
+			$manageObj->updateAddKey(self::$tablename,$keydef[0], $keydef[1], $keydef[2], $keydef[3]);
+		}
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+}
+
 
 	class log {
 	
@@ -137,6 +194,13 @@ class LogTable
 		function fetch($id) {
 			// return log item as a data object
 			$this->db->query("SELECT * FROM Log WHERE id=$id;");
+			$data=$this->db->read();
+			return $data;
+		}
+
+		function fetchExtra($id) {
+			// return log item as a data object
+			$this->db->query("SELECT Log.*,LogExtra.txt FROM Log LEFT JOIN LogExtra ON Log.id=LogExtra.logid   WHERE Log.id=$id;");
 			$data=$this->db->read();
 			return $data;
 		}
@@ -331,7 +395,7 @@ class LogTable
 			// process log result and perform appropriate actions
 			// process vote results
 			$votes=$resp['votes'];
-			if (count($votes)>0) {
+			if (count($votes)>0  AND is_array($votes)) {
 				foreach ($votes as $item) {
 					$this->processResultStatus($item[logid],$item[result]);
 					$msg.=$item[logid].'->'.$item[result].'<br />';									
@@ -339,7 +403,7 @@ class LogTable
 			}
 			// process comment results
 			$comments=$resp['comments'];
-			if (count($comments)>0) {
+			if (count($comments)>0  AND is_array($comments)) {
 				foreach ($comments as $item) {
 					$this->processResultStatus($item[logid],$item[result]);
 					// sync NC commentid
@@ -351,7 +415,7 @@ class LogTable
 			}
 			// process readStory results
 			$readStory=$resp['readStory'];
-			if (count($readStory)>0) {
+			if (count($readStory)>0  AND is_array($readStory)) {
 				foreach ($readStory as $item) {
 					$this->processResultStatus($item[logid],$item[result]);
 					$msg.=$item[logid].'->'.$item[result].'<br />';									
@@ -359,7 +423,7 @@ class LogTable
 			}
 			// process pubStory results
 			$pubStory=$resp['pubStory'];
-			if (count($pubStory)>0) {
+			if (count($pubStory)>0  AND is_array($pubStory)) {
 				foreach ($pubStory as $item) {
 					$this->processResultStatus($item[logid],$item[result]);
 					$msg.=$item[logid].'->'.$item[result].'<br />';									
@@ -367,7 +431,7 @@ class LogTable
 			}
 			// process postStory results
 			$postStory=$resp['postStory'];
-			if (count($postStory)>0) {
+			if (count($postStory)>0  AND is_array($postStory)) {
 				foreach ($postStory as $item) {
 					$contentid=$item[contentid];
 					$imageid=$item[imageid];
@@ -381,7 +445,7 @@ class LogTable
 			}
 			// process pubWire results
 			$pubWire=$resp['pubWire'];
-			if (count($pubWire)>0) {
+			if (count($pubWire)>0 AND is_array($pubWire)) {
 				foreach ($pubWire as $item) {
 					$siteContentId=$item[siteContentId];
 					$contentid=$item[contentid];
@@ -395,7 +459,7 @@ class LogTable
 			
 			// process registered users
 			$newUsers=$resp['newUsers'];
-			if (count($newUsers)>0) {
+			if (count($newUsers)>0 AND is_array($newUsers)) {
 				foreach ($newUsers as $item) {
 					$userid=$item[userid];
 					$ncUid=$item[ncUid];
@@ -409,7 +473,7 @@ class LogTable
 			// process level changes
 			$msg.='<h3>User Level Changes</h3>';
 			$levelChanges=$resp['levelChanges'];
-			if (count($levelChanges)>0) {
+			if (count($levelChanges)>0 AND is_array($levelChanges)) {
 				foreach ($levelChanges as $item) {
 					$this->processResultStatus($item[logid],$item[result]);
 					$msg.=$item[logid].'->'.$item[result].'<br />';									
@@ -435,7 +499,6 @@ class LogTable
 			$data->itemid=$itemid;
 			$data->userid2=$userid2;
 			$data->itemid2=$itemid2;
-
 			return $data;
 		}
 				
@@ -443,7 +506,6 @@ class LogTable
 			$log->id = $this->db->insert("Log","itemid,userid1,userid2,action,itemid2,dateCreated","$log->itemid,$log->userid1,$log->userid2,'$log->action',$log->itemid2,NOW()");
 			$this->checkSubmitSiteChallenge($log);
 		}
-		
 		
 		function update($log) {
 			if ($debug) $this->db->log( 'loginfo: <pre>'.print_r($log, true). '</pre>');

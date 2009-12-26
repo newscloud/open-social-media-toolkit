@@ -14,6 +14,15 @@ class systemStatus {
 		} else
 			$this->db=&$db;
 	}
+
+	function checkDatabaseExists() {
+		// check for existence of SystemStatus table
+		$q=$this->db->query("SHOW DATABASES LIKE '".$init['database']."';");
+		if ($this->db->countQ($q)>0)
+			return true;
+		else 
+			return false;	
+	}
 	
 	function checkTable() {
 		// check for existence of SystemStatus table

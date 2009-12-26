@@ -9,10 +9,13 @@ class remotePageProperty extends remoteFileProperty {
 	var $page_url = "";
 	var $page_content = "";
 	var $page_parsed_xml = array();
+	var $minSentenceLength=110;
+	var $contentRetrievalLimit;
 
-	function remotePageProperty($url, $open_socket_on_instantiation = true, $timeout = 10)
+	function remotePageProperty($url, $open_socket_on_instantiation = true, $timeout = 10,$limit=250000)
 	{
 		$this->page_url = $url;
+		$this->contentRetrievalLimit=$limit; // designed to allow retrieval of only first part of page when set
 		if ($open_socket_on_instantiation) {
 			$this->openPage();
 		}
@@ -29,14 +32,44 @@ class remotePageProperty extends remoteFileProperty {
 	
 	function getPageTitle() 
 	{
-		preg_match_all("/<title>([^<]+)<\/title>/i", $this->page_content, $matches);
-		//var_dump($matches);
+		preg_match_all("/<title[^>]*>([^<]+)<\/title>/i", $this->page_content, $matches);
 		if ($matches[1][0]) {
 			return $matches[1][0];
 		} else {
 			return false;
 		}
 	}
+
+	function getPageParagraphs() {
+		require_once(PATH_CORE.'/utilities/class.html2text.inc'); 
+		$regex='/<p[^>]*>([^<]*)<\/p>/i';
+		preg_match_all($regex, $this->page_content, $matches, PREG_PATTERN_ORDER);
+		//	preg_match_all("/<p[\w]*[^>]*>[\n]*(.*)[\n]*<\/p>/i", $this->page_content, $matches, PREG_PATTERN_ORDER);
+		$text='';			
+		foreach ($matches[1] as $e) {
+			$h2t =& new html2text($e);
+			$temp=$h2t->get_text();
+			if (strlen($temp)>$this->minSentenceLength) // only add longer sentences
+				$text.= $temp.' ';
+		}
+		return $text;
+	}
+
+	function getAltPageParagraphs() {
+		require_once(PATH_CORE.'/utilities/class.html2text.inc'); 
+		$regex='/<div[^>]*>([^<]*)<\/div>/i';
+		preg_match_all($regex, $this->page_content, $matches, PREG_PATTERN_ORDER);
+		//	preg_match_all("/<p[\w]*[^>]*>[\n]*(.*)[\n]*<\/p>/i", $this->page_content, $matches, PREG_PATTERN_ORDER);
+		$text='';			
+		foreach ($matches[1] as $e) {
+			$h2t =& new html2text($e);
+			$temp=$h2t->get_text();
+			if (strlen($temp)>$this->minSentenceLength) // only add longer sentences
+				$text.= $temp.' ';
+		}
+		return $text;
+	}
+
 
 	function getPageFeed() 
 	{
@@ -71,7 +104,7 @@ class remotePageProperty extends remoteFileProperty {
 		// remove duplicates
 		$ret = array_unique($ret);
 		// get only JPGs
-		$ret = preg_grep("/\.jpg$/", $ret);
+		$ret = preg_grep("/\.jpg$/i", $ret);
 		
 		return $ret;
 	}	
@@ -83,7 +116,7 @@ class remotePageProperty extends remoteFileProperty {
 		$images = array();
 		$stickem = array();
 		// regex finds image elements
-		// BUG: IS CASE-SENSITIVE
+		// BUG: IS CASE-SENSITIVE - note jr, ius it? /i should be insensitive
 		preg_match_all("/<img([^>]+)/i", $this->page_content, $matches);
 		foreach ($matches[1] as $key => $val) {
 			// regex finds 'attribute=value'
@@ -98,6 +131,77 @@ class remotePageProperty extends remoteFileProperty {
 		}
 		return $images;
 	}
+	
+	function getjpegsize($img_loc) {
+		// note - this function is unreliable and not much faster than getimagesize
+		// can be used to quickly get dimensions for autoposting and help predict best image, doesn't work for gif (which are likely smaller)
+		// Retrieve JPEG width and height without downloading/reading entire image. via http://us.php.net/function.getimagesize
+	    $handle = fopen($img_loc, "rb") or die("Invalid file stream.");
+	    $new_block = NULL;
+	    if(!feof($handle)) {
+	        $new_block = fread($handle, 32);
+	        $i = 0;
+	        if($new_block[$i]=="\xFF" && $new_block[$i+1]=="\xD8" && $new_block[$i+2]=="\xFF" && $new_block[$i+3]=="\xE0") {
+	            $i += 4;
+	            if($new_block[$i+2]=="\x4A" && $new_block[$i+3]=="\x46" && $new_block[$i+4]=="\x49" && $new_block[$i+5]=="\x46" && $new_block[$i+6]=="\x00") {
+	                // Read block size and skip ahead to begin cycling through blocks in search of SOF marker
+	                $block_size = unpack("H*", $new_block[$i] . $new_block[$i+1]);
+	                $block_size = hexdec($block_size[1]);
+	                while(!feof($handle)) {
+	                    $i += $block_size;
+	                    $new_block .= fread($handle, $block_size);
+	                    if($new_block[$i]=="\xFF") {
+	                        // New block detected, check for SOF marker
+	                        $sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
+	                        if(in_array($new_block[$i+1], $sof_marker)) {
+	                            // SOF marker detected. Width and height information is contained in bytes 4-7 after this byte.
+	                            $size_data = $new_block[$i+2] . $new_block[$i+3] . $new_block[$i+4] . $new_block[$i+5] . $new_block[$i+6] . $new_block[$i+7] . $new_block[$i+8];
+	                            $unpacked = unpack("H*", $size_data);
+	                            $unpacked = $unpacked[1];
+	                            $height = hexdec($unpacked[6] . $unpacked[7] . $unpacked[8] . $unpacked[9]);
+	                            $width = hexdec($unpacked[10] . $unpacked[11] . $unpacked[12] . $unpacked[13]);
+	                            return array($width, $height);
+	                        } else {
+	                            // Skip block marker and read block size
+	                            $i += 2;
+	                            $block_size = unpack("H*", $new_block[$i] . $new_block[$i+1]);
+	                            $block_size = hexdec($block_size[1]);
+	                        }
+	                    } else {
+	                        return FALSE;
+	                    }
+	                }
+	            }
+	        }
+	    }
+	    return FALSE;
+	}	
+	
+	function remote_filesize($url, $user = "", $pw = "")
+	{
+		// from http://snipplr.com/view/29/get-remote-filesize/
+		ob_start();
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
+		curl_setopt($ch, CURLOPT_NOBODY, 1);
+
+		if(!empty($user) && !empty($pw))
+		{
+			$headers = array('Authorization: Basic ' .  base64_encode("$user:$pw"));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		}
+
+		$ok = curl_exec($ch);
+		curl_close($ch);
+		$head = ob_get_contents();
+		ob_end_clean();
+
+		$regex = '/Content-Length:\s([0-9].+?)\s/';
+		$count = preg_match($regex, $head, $matches);
+
+		return isset($matches[1]) ? $matches[1] : "unknown";
+	}	
+	
 	
 	function _repairImageURL($url) 
 	{
@@ -120,10 +224,13 @@ class remotePageProperty extends remoteFileProperty {
 	 *
 	 */ 
 	{	
+		
 		$handle = fopen($this->page_url, "r");
 		if ($handle) {
-   			while (!feof($handle)) {
+			$x=0;
+   			while (!feof($handle) ) { // AND $x<$this->contentRetrievalLimit
        			$this->page_content .= fgets($handle, 4096);
+				$x+=4096;
    			}
    		fclose($handle);
   		} else {

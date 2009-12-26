@@ -186,17 +186,13 @@ class shareStories
 '<tr><th></th><td class="editorkit_row">'.$msg.'</td><td class="right_padding"></td></tr>'.
 '<tr><th><label>To:</label></th><td class="editorkit_row"><fb:multi-friend-input border_color="#8496ba" max="'.max($maxSend,30).'" /></td><td class="right_padding"></td></tr>';
 		//$code.='<tr><th><label>Subject:</label></th><td class="editorkit_row"><input name="subject" id="subject" type="text" value="'.$story->title.'" /></td><td class="right_padding"></td></tr>';
-		$code.='<input name="subject" id="subject" type="hidden" value="" />';
 		$code.='<tr><th class="detached_label"><label>Personal Message:</label></th><td class="editorkit_row"><textarea name="msg" id="msg"></textarea></td><td class="right_padding"></td></tr>';
 		$code.='<tr><th class="detached_label"></th><td class="editorkit_row">'.$attach.'</td><td class="right_padding"></td></tr>';
 		$code.='</table>';
 		$code.='<input type="hidden" name="siteContentId" value="'.$itemid.'" /><input type="hidden" name="nextPage" value="'.$returnPage.'" /><input name="embed" type="hidden" value="'.htmlentities($markup).'" >';		
-		$code.='</form>';		
+		$code.='<input name="subject" id="subject" type="hidden" value="" />';
+		$code.='</form>';
 		return $code;
-	/*	old request-form code
-	 * $content = "<fb:name uid=\"".$session->fbId."\" firstnameonly=\"true\" shownetwork=\"false\"/> wants to share a story with you: <a href=\"".URL_CANVAS."?p=read&cid='.$itemid.'&referid='.$session->fbId.'\">".$story->title."</a>\n". "<fb:req-choice url=\"".URL_CANVAS."?p=read\" label=\"Read the story\"/>"; 
-		$code='<fb:request-form action="'.URL_CANVAS.'?p=share" method="post" type="'.SITE_TITLE_SHORT.'" content="'.htmlentities($content).'" image="'.$image.'">  <fb:multi-friend-selector bypass="cancel" showborder="false" actiontext="Select friends you wish to share the story with below:" exclude_ids="" /> </fb:request-form> ';
-		*/
 	}	
 	
 	function buildMarkup($title='',$link='') {

@@ -25,6 +25,7 @@ class FeaturedTemplateTable
 		"story_4_id" =>		"INT unsigned default 0",
 		"story_5_id" =>		"INT unsigned default 0",
 		"story_6_id" =>		"INT unsigned default 0",
+		"t" => "timestamp"
 	);
 
 	static $keydefinitions = array(); 		

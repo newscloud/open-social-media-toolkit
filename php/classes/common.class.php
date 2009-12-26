@@ -92,7 +92,7 @@ class common {
 		// checks if cached file is older then $age minutes
 		// returns true if file is fresh
 		$filename=PATH_CACHE.'/'.$filename.'.cac';
-		if (file_exists($filename) AND !isset($_GET['nc'])) {
+		if (file_exists($filename) AND !isset($_GET['nc']) AND !defined('NO_CACHE')) {
 			// use last cache version for robots
 			if ((time()-(60*$age))<filemtime($filename)) return true; // OR $page->isRobot()
 		}

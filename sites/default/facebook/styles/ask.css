@@ -1,0 +1,12 @@
+.askInputQuestion {font-size:150%;font-weight:bold;}
+
+li.askQuestionWrap {
+	border-bottom:1px solid #E5E5E5;
+}
+.askQuestionHead {
+	font-size: 14px;
+	font-weight: bold;
+}
+.askAnswerCommentThread {
+	margin-left:60px;
+}

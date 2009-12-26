@@ -156,7 +156,7 @@ class teamBackend {
 		return $list;
 	}
 	
-	function cleanupOrphanedUsers($confirm=false)
+	function cleanupOrphanedUsers($confirm=true)
 	{
 		if ($confirm)
 			echo 'Cleaning up users';
@@ -271,16 +271,18 @@ class teamBackend {
 				if ($user->load($data->userid) && $userinfo->load($data->userid))
 				{
 					$x=0;
-					foreach ($levels as $val => $name)
-					{
-						if ($user->cachedPointsEarned >= $val)
+					if (is_array($levels)) {
+						foreach ($levels as $val => $name)
 						{
-							$userLevel = $name;
-							$pointLevel = $val;
-							$votePower= $userLevels->votePowerLevels[$x];
+							if ($user->cachedPointsEarned >= $val)
+							{
+								$userLevel = $name;
+								$pointLevel = $val;
+								$votePower= $userLevels->votePowerLevels[$x];
+							}						
+							$x+=1;
+
 						}						
-						$x+=1;
-						
 					}
 					
 					// minor hack: assume user levels only increase. deducting earned points would require revoking challenges
@@ -449,45 +451,47 @@ class teamBackend {
 		$userinfo = $userinfoTable->getRowObject();
 	
 		
-		
-		foreach ($permissions_info as $permdata)
-		{
-			if ($user->load($userlist[$permdata['uid']]) /*&& $userinfo->load($userlist[$permdata['uid']])*/)
+		if (is_array($permissions_info)) {
+			foreach ($permissions_info as $permdata)
 			{
+				if ($user->load($userlist[$permdata['uid']]) /*&& $userinfo->load($userlist[$permdata['uid']])*/)
+				{
 
-				// ask facebook whether they have - 
-				//  - added to profile box? -- no way to detect this here :(
-				//  - authorized email
-				//  - authorized sms
-				//  - anything else we cant detect as it happens
+					// ask facebook whether they have - 
+					//  - added to profile box? -- no way to detect this here :(
+					//  - authorized email
+					//  - authorized sms
+					//  - anything else we cant detect as it happens
 				
-				/////////////////////////////////////////////////////					
-				// email
+					/////////////////////////////////////////////////////					
+					// email
 				
-				$fbEmail = $permdata['email'];
-				$this->awardOrRevokeChallenge('optInEmail', $user->userid, $user->optInEmail, $fbEmail);
-				$user->optInEmail = $fbEmail;
+					$fbEmail = $permdata['email'];
+					$this->awardOrRevokeChallenge('optInEmail', $user->userid, $user->optInEmail, $fbEmail);
+					$user->optInEmail = $fbEmail;
 			 													
-				// sms
-				$fbSMS = $permdata['sms'];
-				$this->awardOrRevokeChallenge('optInSMS', $user->userid, $user->optInSMS, $fbSMS);
-				$user->optInSMS = $fbSMS;
+					// sms
+					$fbSMS = $permdata['sms'];
+					$this->awardOrRevokeChallenge('optInSMS', $user->userid, $user->optInSMS, $fbSMS);
+					$user->optInSMS = $fbSMS;
 				
 				
 										
-				// more...?
+					// more...?
 				
-				/////////////////////////////////////////////////////
+					/////////////////////////////////////////////////////
 				
-				$user->lastUpdateSiteChallenges = date('Y-m-d H:i:s', time());
-				$user->update();
+					$user->lastUpdateSiteChallenges = date('Y-m-d H:i:s', time());
+					$user->update();
 				
-				//$this->log('updated user '. $user->userid.'');
-			} else
-			{
-				$this->log('updateSiteChallenges: couldnt load user '. $user->userid.'\n');
-			}	
+					//$this->log('updated user '. $user->userid.'');
+				} else
+				{
+					$this->log('updateSiteChallenges: couldnt load user '. $user->userid.'\n');
+				}	
+			}			
 		}
+			
 				
 	}
 	

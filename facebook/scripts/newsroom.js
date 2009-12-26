@@ -1,11 +1,160 @@
 // set the ajax server node for site 
-var ajaxUrl=document.getElementById('ajaxNode').getValue(); // 'http://host.newscloud.com/sites/climate/facebook/index.php';
+var ajaxUrl=document.getElementById('ajaxNode').getValue(); // URL_CALLBACK from constants.php;
 var userid;
 var fbId;
 var sessionKey;
 var sessionExpires;
 var authLevel;
+var hasSimpleAccess;
 var dlg;
+
+function switchPage(name,option,arg3,hack_id) { // hack_id added so setTeamTab calls can pass an id to their targets. 
+	// should really have made setTeamTab and switchPage take the same standard set of arguments.
+	lookupSession();
+	setLoading(document.getElementById('pageContent')); // must happen after lookupSession - it obliterates userid
+	// array doesn't work in FBJS
+	document.getElementById('tabHome').setClassName('');
+	if (document.getElementById('tabWall'))
+	{ 
+	 document.getElementById('tabWall').setClassName('');
+	}
+	if (document.getElementById('tabCards'))
+	{ 
+	 document.getElementById('tabCards').setClassName('');
+	}
+	if (document.getElementById('tabAsk')) // may need in readStory - if news stories appear in this feature
+	{ 
+	 document.getElementById('tabAsk').setClassName('');
+	}
+	if (document.getElementById('tabIdeas')) // may need in readStory - if news stories appear
+	{ 
+	 document.getElementById('tabIdeas').setClassName('');
+	}
+	if (document.getElementById('tabPredict')) // may need in readStory - if news stories appear
+	{ 
+	 document.getElementById('tabPredict').setClassName('');
+	}
+	if (document.getElementById('tabStuff')) // may need in readStory - if news stories appear
+	{ 
+	 document.getElementById('tabStuff').setClassName('');
+	}
+	document.getElementById('tabStories').setClassName('');
+	if (document.getElementById('tabPostStory'))
+		document.getElementById('tabPostStory').setClassName('');
+	document.getElementById('tabProfile').setClassName('');
+	document.getElementById('tabTeam').setClassName('');
+	
+	if (typeof option!='undefined') 
+		opt=option;
+	else
+		opt='';
+	if (typeof arg3!='undefined') 
+		arg3=arg3;
+	else
+		arg3='';
+	if (typeof hack_id!='undefined') 
+		hack_id=hack_id;
+	else
+		hack_id='';
+	
+	switch (name) {
+		case 'home':
+			document.getElementById('tabHome').setClassName('selected');
+		break;
+		case 'stories':
+		case 'read':
+			document.getElementById('tabStories').setClassName('selected');
+		break;
+		case 'postStory':
+			if (document.getElementById('tabPostStory'))
+				document.getElementById('tabPostStory').setClassName('selected');
+		break;
+		case 'profile':
+			document.getElementById('tabProfile').setClassName('selected');			
+			break;
+		case 'team':
+			document.getElementById('tabTeam').setClassName('selected');
+		break;		
+		case 'wall':
+			document.getElementById('tabWall').setClassName('selected');
+		break;
+		case 'cards':
+			document.getElementById('tabCards').setClassName('selected');
+		break;
+		case 'ask':
+			document.getElementById('tabAsk').setClassName('selected');
+		break;
+		case 'ideas':
+			document.getElementById('tabIdeas').setClassName('selected');
+		break;
+		case 'stuff':
+			document.getElementById('tabStuff').setClassName('selected');
+		break;
+		case 'predict':
+			document.getElementById('tabPredict').setClassName('selected');
+		break;
+	}
+	var ajax = new Ajax();
+	if(name in {'home':'','read':'', 'stories':'','team':'','rules':'', 'rewards':'','challenges':'','leaders':'','static':'','links':'','wall':'','stuff':'','ideas':'','ask':'','media':'','micro':'','predict':''}) {
+		// leave it open
+		ajax.requireLogin = false;
+	} else {
+		// requires app to be added
+		if (fb_sig_logged_out_facebook==0)
+			ajax.requireLogin = true;
+		// send to sign up page unless they are a member
+		if (authLevel!='member' && hasSimpleAccess!=true) { 
+			name='signup';
+			option='ajax';
+		}
+	}
+	ajax.responseType = Ajax.FBML;
+	ajax.onerror = function() {
+		// display pop up when session has expired
+		showDialog('nonMember');
+	} 	
+	ajax.ondone = function(data) {
+		document.getElementById('pageName').setValue(name); 
+		document.getElementById('pageContent').setInnerFBML(data);
+	};
+	ajax.post(ajaxUrl+"?p=ajax&m=switchPage" +
+			"&name="+name +"&option="+opt +"&arg3="+arg3+"&id="+hack_id+
+			"&userid="+userid+"&sessionKey="+sessionKey);
+	return false; 	
+}
+
+function readStory(siteContentId) {
+	document.getElementById('tabHome').setClassName('');
+	document.getElementById('tabStories').setClassName('selected');
+	document.getElementById('tabProfile').setClassName('');
+	document.getElementById('tabTeam').setClassName('');	
+	if (document.getElementById('tabAsk'))
+	{ 
+	 document.getElementById('tabAsk').setClassName('');
+	}	
+	if (document.getElementById('tabIdeas'))
+	{ 
+	 document.getElementById('tabIdeas').setClassName('');
+	}	
+	if (document.getElementById('tabStuff'))
+	{ 
+	 document.getElementById('tabStuff').setClassName('');
+	}	
+	setLoading(document.getElementById('pageContent'));
+	lookupSession();
+	log('readStory', siteContentId);
+	var ajax = new Ajax();
+	ajax.requireLogin = false;
+	ajax.responseType = Ajax.FBML;	
+	ajax.ondone = function(data) { 
+		document.getElementById('pageContent').setInnerFBML(data);
+	};
+	document.getElementById('pageName').setValue('read');
+	ajax.post(ajaxUrl+"?p=ajax&m=switchPage&" +
+			"&name=read"+"&option=comments&cid="+siteContentId+
+			"&userid="+userid+"&sessionKey="+sessionKey);
+	return false; 
+}
 
 function setLoading(el) {
 	// sets loading graphic to el element
@@ -25,6 +174,7 @@ function lookupSession() {
 	sessionKey=document.getElementById('sessionKey').getValue();
 	sessionExpires=document.getElementById('sessionExpires').getValue();
 	authLevel=document.getElementById('authLevel').getValue();	
+	hasSimpleAccess=document.getElementById('hasSimpleAccess').getValue();	
 }
 
 function setTeamTab(newTab, idparam) {
@@ -55,28 +205,6 @@ function setTeamTab(newTab, idparam) {
 		return false;
 	}	
 }
-
-function readStory(siteContentId) {
-	document.getElementById('tabHome').setClassName('');
-	document.getElementById('tabStories').setClassName('selected');
-	document.getElementById('tabProfile').setClassName('');
-	document.getElementById('tabTeam').setClassName('');	
-	setLoading(document.getElementById('pageContent'));
-	lookupSession();
-	log('readStory', siteContentId);
-	var ajax = new Ajax();
-	ajax.requireLogin = false;
-	ajax.responseType = Ajax.FBML;	
-	ajax.ondone = function(data) { 
-		document.getElementById('pageContent').setInnerFBML(data);
-	};
-	document.getElementById('pageName').setValue('read');
-	ajax.post(ajaxUrl+"?p=ajax&m=switchPage&" +
-			"&name=read"+"&option=comments&cid="+siteContentId+
-			"&userid="+userid+"&sessionKey="+sessionKey);
-	return false; 
-}
-
 
 function setNewswireTab(newTab) {
 	var newswireWrap=document.getElementById('newswireWrap');
@@ -381,9 +509,7 @@ function addRawToJournal(itemid) {
 
 function recordVote(siteContentId) {
 	lookupSession();
-	if (authLevel!='member') { 
-		showDialog('nonMember');
-	} else {	
+	if (authLevel=='member' || (authLevel=='nonMember' && hasSimpleAccess)) { // either member or authorized app
 		targetDiv=document.getElementById('vl_'+siteContentId);
 		var ajax = new Ajax();
 		ajax.responseType = Ajax.FBML;
@@ -396,7 +522,12 @@ function recordVote(siteContentId) {
 	        targetDiv.setInnerFBML(transport);
 		}	
 		ajax.post(ajaxUrl+"?p=ajax&m=common&cmd=recordVote&siteContentId="+siteContentId+
-				"&userid="+userid+"&sessionKey="+sessionKey);
+				"&userid="+userid+"&sessionKey="+sessionKey);	
+	} else {
+		if (hasSimpleAccess)
+			showDialog('noAuth'); // auth is required
+		else
+			showDialog('nonMember'); // sign up is required
 	}
 	return false;
 }
@@ -475,9 +606,7 @@ function quickLog(log,action,itemid,str) {
 
 function shareStory(context,itemid) {
 	lookupSession();
-	if (authLevel!='member') { 
-		showDialog('nonMember');
-	} else {
+	if (authLevel=='member' || (authLevel=='nonMember' && hasSimpleAccess)) { // either member or authorized app
 		var pageName=document.getElementById('pageName');
 		var ajax = new Ajax();
 		ajax.responseType = Ajax.FBML;
@@ -499,7 +628,12 @@ function shareStory(context,itemid) {
 		    document.getElementById('dialog_content').setInnerFBML(data); 
 	    };
 		ajax.post(ajaxUrl+"?p=ajax&m=shareStory&itemid="+itemid+"&returnPage="+pageName.getValue()+"&userid="+userid+"&sessionKey="+sessionKey);
-	}
+	} else {
+		if (hasSimpleAccess)
+			showDialog('noAuth'); // auth is required
+		else
+			showDialog('nonMember'); // sign up is required
+	}		
 	return false;
 } 	
 
@@ -529,14 +663,11 @@ function shareStorySubmit(oldDialog,formname, rewriteid) {
 }
 
 function postComment(contentid) {
-	lookupSession();
-	
+	lookupSession();	
 	var urlnode ='videoURL';
 	var url = '';
 	if (document.getElementById(urlnode))
 	{	url = document.getElementById(urlnode).getValue(); }
-	
-	
 	var commentMsg=document.getElementById('commentMsg');
 	var queryParams = { "commentMsg" :commentMsg.getValue(), "videoURL": url};
 	// Build the AJAX object to request the dialog contents
@@ -579,92 +710,6 @@ function updateProfileTabName(viewerFbId, targetFbId)
 
 }
 
-function switchPage(name,option,arg3,hack_id) { // hack_id added so setTeamTab calls can pass an id to their targets. 
-												// should really have made setTeamTab and switchPage take the same standard set of arguments.
-	lookupSession();
-	setLoading(document.getElementById('pageContent')); // must happen after lookupSession - it obliterates userid
-	// array doesn't work in FBJS
-	document.getElementById('tabHome').setClassName('');
-	if (document.getElementById('tabWall'))
-	{ 
-	 document.getElementById('tabWall').setClassName('');
-	}
-	if (document.getElementById('tabCards'))
-	{ 
-	 document.getElementById('tabCards').setClassName('');
-	}
-	document.getElementById('tabStories').setClassName('');
-	document.getElementById('tabPostStory').setClassName('');
-	document.getElementById('tabProfile').setClassName('');
-	document.getElementById('tabTeam').setClassName('');
-	
-	if (typeof option!='undefined') 
-		opt=option;
-	else
-		opt='';
-	if (typeof arg3!='undefined') 
-		arg3=arg3;
-	else
-		arg3='';
-	if (typeof hack_id!='undefined') 
-		hack_id=hack_id;
-	else
-		hack_id='';
-
-	
-	switch (name) {
-		case 'home':
-			document.getElementById('tabHome').setClassName('selected');
-		break;
-		case 'stories':
-		case 'read':
-			document.getElementById('tabStories').setClassName('selected');
-		break;
-		case 'postStory':
-			document.getElementById('tabPostStory').setClassName('selected');
-		break;
-		case 'profile':
-			document.getElementById('tabProfile').setClassName('selected');			
-			break;
-		case 'team':
-			document.getElementById('tabTeam').setClassName('selected');
-		break;		
-		case 'wall':
-			document.getElementById('tabWall').setClassName('selected');
-		break;
-		case 'cards':
-			document.getElementById('tabWall').setClassName('selected');
-		break;
-	}
-	var ajax = new Ajax();
-	if(name in {'home':'','read':'', 'stories':'','team':'','rules':'', 'rewards':'','challenges':'','leaders':'','static':'','links':''}) {
-		// leave it open
-		ajax.requireLogin = false;
-	} else {
-		// requires app to be added
-		if (fb_sig_logged_out_facebook==0)
-			ajax.requireLogin = true;
-		// send to sign up page unless they are a member
-		if (authLevel!='member') { 
-			name='signup';
-			option='ajax';
-		}
-	}
-	ajax.responseType = Ajax.FBML;
-	ajax.onerror = function() {
-		// display pop up when session has expired
-		showDialog('nonMember');
-	} 	
-	ajax.ondone = function(data) {
-		document.getElementById('pageName').setValue(name); 
-		document.getElementById('pageContent').setInnerFBML(data);
-	};
-	ajax.post(ajaxUrl+"?p=ajax&m=switchPage" +
-			"&name="+name +"&option="+opt +"&arg3="+arg3+"&id="+hack_id+
-			"&userid="+userid+"&sessionKey="+sessionKey);
-	return false; 	
-}
-
 function showChallengeSubmitDialog(challengeid) {
 	lookupSession();
 	var ajax = new Ajax();
@@ -687,7 +732,7 @@ function showChallengeSubmitDialog(challengeid) {
 
 function requestVerify() {
 	lookupSession();
-	if (authLevel!='member') { 
+	if (authLevel!='member' && hasSimpleAccess!=true) { 
 		showDialog('nonMember');
 	} else {	
 		var ajax = new Ajax();
@@ -750,6 +795,10 @@ function showDialog(mode,title,msg) {
 		case 'nonMember':
 			title='Sign Up is Required';
 			msg=signupMsg;
+		break;
+		case 'noAuth':
+			title='Authorization is Required';
+			msg=signupMsg; // same message 
 		break;
 		default: // pass thru title and msg
 		break;
@@ -840,10 +889,13 @@ function clearTemplate(nodeId, shortName, repopulate)
 			);
 	
 }
-	
+
+function showVideoPreview() {
+	document.getElementById('videoPreview').setClassName(''); // removes hidden class		
+}
+
 function videoURLChanged()
 {
-	//lookupSession();
 	var url;
 	var urlnode ='videoURL';
 	var videoPreviewNode = 'videoPreview';
@@ -863,12 +915,16 @@ function videoURLChanged()
 	ajax.requireLogin = true;
 	ajax.responseType = Ajax.FBML;	
 	ajax.ondone = function(data) { ajaxPreview.setInnerFBML(data);}
-	ajax.post(ajaxUrl+"?p=ajax&m=fetchVideoPreview"// + 
-			//"&fbId="+fbId+
-			//"&bioText="+bio.getValue()
-			//+"&userid="+userid+"&sessionKey="+sessionKey
-			,queryParams
-			); 
-
+	ajax.post(ajaxUrl+"?p=ajax&m=fetchVideoPreview",queryParams); 
 }
 
+function banStoryPoster(cid) {
+	// call ajax to ban poster of story cid
+	var targetDiv=document.getElementById('banStoryPoster');
+	lookupSession();
+    ajax = new Ajax();
+    ajax.responseType = Ajax.FBML;
+    ajax.requireLogin = true;
+	ajax.ondone = function(data) { targetDiv.setInnerFBML(data);}
+	ajax.post(ajaxUrl+"?p=ajax&m=banStoryPoster&cid="+cid+"&userid="+userid+"&sessionKey="+sessionKey); 
+}

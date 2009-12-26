@@ -101,6 +101,21 @@ class cron {
 		// log time of day
 		$entryTime=time();
 		$this->startTime=$entryTime;
+		// reboot dead tasks
+		$this->resetDeadTasks();
+
+		if (defined('ENABLE_MICRO')) {
+			// Always look for micro blog entries 
+			require_once PATH_FACEBOOK."/classes/micro.class.php";
+			$mObj=new micro();
+			try {
+				$mObj->updateRoom();
+				$this->db->update("cronJobs","nextRun=date_sub(NOW(), INTERVAL (0-$job->freqMinutes) MINUTE),lastStart='".date('Y-m-d H:i:s')."',isRunning=0","task='microBlog'");				
+			} catch (Exception $e) {
+				$this->log('Failed running '.$job->task.', Error: '.$e);
+			}				
+		}
+		
 		// FIRST - run any jobs that are set for this particular day of week and time of day
 		if ($this->checkTime()) {
 			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE hourOfDay='".$this->hourOfDay."' AND dayOfWeek='".$this->dayOfWeek."' AND nextRun<=now() AND status='enabled';");
@@ -119,7 +134,7 @@ class cron {
 		//$this->log(date('g:i a \a\t D M n, Y',$entryTime));				
 		// fetch jobs that need to be run
 		if ($this->checkTime()) {
-			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE hourOfDay='' AND dayOfWeek='' AND nextRun<=now() AND status='enabled' ORDER BY nextRun ASC;");
+			$jobList=$this->db->query("SELECT * FROM cronJobs WHERE task<>'microBlog' AND hourOfDay='' AND dayOfWeek='' AND nextRun<=now() AND status='enabled' ORDER BY nextRun ASC;");
 			$this->runJobList($jobList);			
 		} else
 			return;
@@ -129,8 +144,6 @@ class cron {
 
 		// check for dead tasks
 		$this->hasDeadTasks();
-		// reboot dead tasks
-		$this->resetDeadTasks();
 		$exitTime=time();
 		//$this->log('Execution time total: '.(($exitTime-$entryTime)/60).' seconds');
 		//mail('newscloud@gmail.com', 'Job history: '.SITE_TITLE, $this->showHistory(), 'From: support@newscloud.com'."\r\n");
@@ -141,7 +154,7 @@ class cron {
 		while ($job=$this->db->readQ($jobList)) {
 			if ($this->checkTime()) {
 				// reset next run timestamp to a later timestamp based on frequency in minutes
-				echo '<b>Cron: '.$job->task.'</b><br/>';
+				echo '<b>Run task: '.$job->task.'</b><br/>';
 					//$this->log('Run '.$job->task);
 					$startTime=time();
 					try {
@@ -157,16 +170,19 @@ class cron {
 	}
 	
 	function resetDeadTasks() {
-		$whereStr="isRunning=1 AND failureNoticeSent=1 AND status='enabled' AND lastStart<date_sub(NOW(), INTERVAL (freqMinutes+120) MINUTE)";
-		$resultStr=$this->db->buildIdList("SELECT task as id FROM cronJobs WHERE ".$whereStr);
-		if ($result<>'') {
-			$result=$this->db->query("SELECT * FROM cronJobs WHERE ".$whereStr);
+		$whereStr="isRunning=1 AND status='enabled' AND (lastStart IS NULL OR lastStart<date_sub(NOW(), INTERVAL (freqMinutes+15) MINUTE))";
+		$result=$this->db->queryC("SELECT id,task FROM cronJobs WHERE ".$whereStr);
+		$resultStr='';
+		if ($result!==false) {
 			while ($data=$this->db->readQ($result)) {
-				$this->db->update("UPDATE cronJobs SET isRunning=0,failureNoticeSent=0 WHERE id=".$data->id);			
+				$this->db->query("UPDATE cronJobs SET isRunning=0,failureNoticeSent=0 WHERE id=".$data->id);			
+				$resultStr.=$data->task.', ';
 			}
+			$resultStr=trim($resultStr,',');
 			$subject='Alert'.SITE_TITLE.' Cron Jobs Auto Reset';
-			$msg='The following cronJobs have been reset: '.$resultStr.' ';
-			mail('newscloud@gmail.com', $subject, $msg, 'From: support@newscloud.com'."\r\n");
+			$msg='CronJobs reset: '.$resultStr.' ';
+			$this->db->log($msg);
+			//mail('newscloud@gmail.com', $subject, $msg, 'From: support@newscloud.com'."\r\n");
 		}
 	}
 	
@@ -272,9 +288,40 @@ class cron {
 				// post top stories to twitter
 				if (USE_TWITTER) {
 					require_once ('twitter.class.php');
-					$twitterObj=new twitter($this->db);
+					$twitterObj=new twitter_old($this->db);
 					$twitterObj->postFeaturedStories();
 					$twitterObj->postNextTopStory();					
+				}
+			break;
+			case 'microAccountsSync':
+				// sync twitter service accounts for micro blog room - done daily
+				if (defined('ENABLE_MICRO')) {
+					require_once PATH_FACEBOOK."/classes/micro.class.php";
+					$mObj=new micro();
+					$mObj->cleanRoom();
+					try {
+						$mObj->resetFriends(false);
+					} catch (Exception $e) {
+						$this->log('Failed running '.$job->task.', Error: '.$e);
+						// reset this cron task manually because of twitter class trown exceptions
+						$execTime=microtime(true)-$startTime;						
+						$this->db->update("cronJobs","nextRun=date_sub(NOW(), INTERVAL (0-$job->freqMinutes) MINUTE),lastExecTime=$execTime,lastStart='".date('Y-m-d H:i:s',$startTime)."',isRunning=0","id=$job->id");
+					}				
+				}
+			break;
+			case 'microBlog':
+				// post top stories to micro blog room
+				if (defined('ENABLE_MICRO')) {
+					require_once PATH_FACEBOOK."/classes/micro.class.php";
+					$mObj=new micro();
+					try {
+						$mObj->updateRoom();
+					} catch (Exception $e) {
+						$this->log('Failed running '.$job->task.', Error: '.$e);
+						// reset this cron task manually because of twitter class trown exceptions
+						$execTime=microtime(true)-$startTime;						
+						$this->db->update("cronJobs","nextRun=date_sub(NOW(), INTERVAL (0-$job->freqMinutes) MINUTE),lastExecTime=$execTime,lastStart='".date('Y-m-d H:i:s',$startTime)."',isRunning=0","id=$job->id");
+					}				
 				}
 			break;
 			case 'updateCache':
@@ -309,6 +356,7 @@ class cron {
 				}
 			break;
 			case 'syncNewswire':	
+			/* deprecated
 				require_once ('apiCloud.class.php');
 				$apiObj=new apiCloud($this->db,$this->apiKey);
 				$resp=$apiObj->syncNewswire($this->cloudid,$this->timeStrToUnixModB($job->lastItemTime));
@@ -330,6 +378,7 @@ class cron {
 					}
 					$this->db->update("cronJobs","lastItemTime='$lastItemTime'","id=$job->id");
 				}
+				*/
 			break;			
 			case 'syncLog':
 				require_once ('apiCloud.class.php');
@@ -436,14 +485,6 @@ class cron {
 				$result=$apiObj->syncResources($this->cloudid);				
 				$resObj->sync(html_entity_decode($result[items][0][resources]));
 			break;
-			case 'syncFeedList':
-				require_once ('apiCloud.class.php');
-				$apiObj=new apiCloud($this->db,$this->apiKey);				
-				$result=$apiObj->syncFeedList($this->cloudid);
-				require_once('feed.class.php');
-				$feedObj=new feed($this->db);
-				$feedObj->syncFeedList($result[items]);
-			break;
 			case 'updateSiteMap':
 				$currentHour=date('G'); // 0 - 24
 				$currentDayOfWeek=date('w'); // day of week 0-6
@@ -475,7 +516,12 @@ class cron {
 				// import stories from feeds
 				require_once('feed.class.php');
 				$feedObj=new feed($this->db);
+				$feedObj->fetchBookmarks();			
 				$feedObj->fetchFeeds();			
+				$feedObj->fetchImages();
+				if ($feedObj->newStoryLoaded) {
+					// update features
+				}		
 			break;
 			case 'logHourlyStats':
 				require_once('statistics.class.php');
@@ -525,11 +571,13 @@ class cron {
 				$ssObj->processNotifications();
 			break;
 			case 'facebookSendPromos':
+/* not needed for now
 				if (date('G')==0) {
 					require_once PATH_FACEBOOK."/classes/promos.class.php";
 					$promoObj=new promos($this->db);				
 					$promoObj->send();
 				}			
+*/
 			break;
 			case 'insertNewResearchData':
 				require_once PATH_CORE."/classes/researchRawSession.class.php";
@@ -556,10 +604,25 @@ class cron {
 				$stopAfterJob=true;
 				
 			break;
+			case 'autoFeature':
+				require_once(PATH_CORE.'/classes/content.class.php');
+				$cObj=new content($this->db);
+				$cObj->autoFeature();
+			break;
 			case 'cleanup':
 				require_once ('cleanup.class.php');
 				$cleanObj=new cleanup($this->db,'daily');				
 			break;
+			// deprecated
+			case 'syncFeedList':
+				require_once ('apiCloud.class.php');
+				$apiObj=new apiCloud($this->db,$this->apiKey);				
+				$result=$apiObj->syncFeedList($this->cloudid);
+				require_once('feed.class.php');
+				$feedObj=new feed($this->db);
+				$feedObj->syncFeedList($result[items]);
+			break;
+			
 		}
 		$execTime=microtime(true)-$startTime;
 		$this->log('...completed in '.$execTime.' seconds.');
@@ -607,23 +670,20 @@ class cron {
 		// this function adds NewsCloud's cron jobs to the database
 		/* please do not update the frequency of these cron calls without requesting permission from jeff@newscloud.com for your site and topic */
 		$this->addJob("updateCache","Update cached content",15,"disabled");
-		$this->addJob("syncFeedList","Fetch blog list for this cloud",720,"enabled");
-		if (USE_SIMPLEPIE)
-			$this->addJob("fetchFeeds","Fetch blog feeds locally",15,"enabled"); // use simple pie to locally fetch raw feeds
-		else
-			$this->addJob("syncNewswire","Fetch new wire stories for this cloud",15,"enabled"); // sync raw feeds from newscloud
-		$this->addJob("syncContent","Fetch new Content stories for this cloud",60,"enabled");
-		$this->addJob("syncComments","Fetch new comment thread for this cloud",30,"enabled");
-		$this->addJob("syncScores","Update scores for recent stories",20,"enabled");
-		$this->addJob("syncProperties","Synchronize the latest Cloud properties",1440,"enabled");
-		$this->addJob("syncAnnouncements","Synchronize the announcements for this Cloud",1440,"disabled");
-		$this->addJob("cleanup","Cleanup unused tables",1440,"enabled");		
-		$this->addJob("syncLog","Synchronize the log with NewsCloud server",30,"enabled");
-		$this->addJob("syncResources","Fetch folders and links from the cloud",4320,"enabled");
-		$this->addJob("updateTwitter","Update top stories in Twitter",30,"enabled");
-		$this->addJob("updateSiteMap","Update site map for search engines",60,"enabled");
+		//$this->addJob("updateSiteMap","Update site map for search engines",60,"enabled");
 		$this->addJob("calcTeamLeaders","Update team leaders",60,"enabled");
-		$this->addJob("insertNewResearchData","Add in the daily research stat logs",24*60,"enabled",'','03');
+		//if (USE_SIMPLEPIE)
+		$this->addJob("fetchFeeds","Fetch blog feeds locally",15,"enabled"); // use simple pie to locally fetch raw feeds
+		$this->addJob("cleanup","Cleanup unused tables",1440,"enabled");		
+		$this->addJob("updateTwitter","Update top stories in Twitter",30,"enabled");
+		if (defined('ENABLE_MICRO')) {
+			$this->addJob("microBlog","Update microblog",10,"enabled");
+			$this->addJob("microAccountsSync","Update microblog accounts",1440,"enabled");			
+		}
+		if (defined('ENABLE_AUTOFEATURE'))
+			$this->addJob("autoFeature","Update cover features",60,"enabled");
+		$this->addJob("calcTeamLeaders","Update team leaders",60,"enabled");
+		//$this->addJob("insertNewResearchData","Add in the daily research stat logs",24*60,"enabled",'','03'); -- only for hot dish
 		if (MODULE_FACEBOOK) {
 			$this->addJob("facebookProfileBoxes","Update Facebook profile boxes",15,"enabled");
 			$this->addJob("facebookMinifeed","Publish facebook minifeed stories",15,"enabled");
@@ -637,6 +697,15 @@ class cron {
 			$this->addJob("facebookSendNotifications","Deliver notifications",20,"enabled");
 			$this->addJob("facebookSendPromos","Send promotions to new users",24*60,"enabled",'','00');
 		}
+		//else - from not USE_SIMPLEPIE ABOVE 	$this->addJob("syncNewswire","Fetch new wire stories for this cloud",15,"enabled"); // sync raw feeds from newscloud
+		//$this->addJob("syncContent","Fetch new Content stories for this cloud",60,"enabled");
+		//$this->addJob("syncComments","Fetch new comment thread for this cloud",30,"enabled");
+		//$this->addJob("syncScores","Update scores for recent stories",20,"enabled");
+		//$this->addJob("syncProperties","Synchronize the latest Cloud properties",1440,"enabled");
+		//$this->addJob("syncAnnouncements","Synchronize the announcements for this Cloud",1440,"disabled");
+		//$this->addJob("syncLog","Synchronize the log with NewsCloud server",30,"enabled");
+		//$this->addJob("syncResources","Fetch folders and links from the cloud",4320,"enabled");
+		//$this->addJob("syncFeedList","Fetch blog list for this cloud",720,"enabled");
 	}
 	
 	function log($str='') {

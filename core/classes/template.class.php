@@ -36,8 +36,7 @@ class template {
 		return $inside;
 	}
 	
-	function registerTemplates($module='',$group='') {
-		
+	function registerTemplates($module='',$group='') {		
 		// new: (small hack may go better elsewhere) 
 		// make sure dynamic template engine is available
 		require_once(PATH_CORE.'/classes/dynamicTemplate.class.php');
@@ -67,12 +66,24 @@ class template {
 					case 'featuredStories':
 						include PATH_TEMPLATES.'/featuredStories.php';
 					break;
+					case 'ask':
+						include PATH_TEMPLATES.'/ask.php';
+					break;
+					case 'ideas':
+						include PATH_TEMPLATES.'/ideas.php';
+					break;
+					case 'stuff':
+						include PATH_TEMPLATES.'/stuff.php';
+					break;
 					case 'common':
 						include PATH_TEMPLATES.'/common.php';
 					break;
 					case 'read':
 						include PATH_TEMPLATES.'/read.php';
 						include PATH_TEMPLATES.'/comments.php';
+					break;
+					case 'micro':
+						include PATH_TEMPLATES.'/micro.php';
 					break;
 					case 'rewards':
 						include PATH_TEMPLATES.'/rewards.php';
@@ -110,9 +121,15 @@ class template {
 					case 'research':
 						include PATH_TEMPLATES.'/research.php';
 					break;
+					case 'predict':
+						include PATH_TEMPLATES.'/predict.php';
+					break;					
 					case 'winEmail':
 						include PATH_TEMPLATES.'/winEmail.php';
 					break;
+					case 'media':
+						include PATH_TEMPLATES.'/media.php';
+					break;					
 					default:
 						// TODO: Add default template for facebook
 						// do nothing for now
@@ -188,18 +205,40 @@ class template {
 		return $str;
 	}
 	
-	function getLargeStoryImage($imageid=0) {
-		if ($imageid>0) {
-			$temp='<a href="{url}" onclick="quickLog(\'extLink\',\'read\',{siteContentId},\'{url}\');" target="_cts"><img src="http://www.newscloud.com/images/scaleImage.php?id='.$imageid.'&x=640&y=480&fixed=x&crop" alt="story image" /></a>';
+	// new image url code
+	function getLargeStoryImageFromUrl($imageUrl='') {
+		if ($imageUrl<>'') {
+			$temp='<a href="{url}" onclick="quickLog(\'extLink\',\'read\',{siteContentId},\'{url}\');" target="_cts"><img src="'.$imageUrl.'" alt="story image from remote site" /></a>';
 		} else {
 			$temp='';
 		}
 		return $temp;
 	}
 
+	// new image url code
+	function getStoryImageUrl($imageUrl='') {
+		if ($imageUrl<>'') {
+			$temp='<a href="'.URL_PREFIX.'?p=read&{siteContentId}" onclick="readStory({siteContentId});return false;"><img src="'.$imageUrl.'" alt="story image" /></a>';
+		} else {
+			$temp='<img src="'.URL_CALLBACK.'?p=cache&simg=watermark.jpg" alt="spacer" />';
+		}
+		return $temp;
+	}
+
+	// old imageid code
+	function getLargeStoryImage($imageid=0) {
+		if ($imageid>0) {
+			$temp='<a href="{url}" onclick="quickLog(\'extLink\',\'read\',{siteContentId},\'{url}\');" target="_cts"><img src="'.URL_BASE.'/index.php?p=scaleImg&id='.$imageid.'&x=640&y=480&fixed=x&crop" alt="story image" /></a>';
+		} else {
+			$temp='';
+		}
+		return $temp;
+	}
+
+	// old image id code
 	function getStoryImage($imageid=0) {
 		if ($imageid>0) {
-			$temp='<a href="'.URL_PREFIX.'?p=read&{siteContentId}" onclick="readStory({siteContentId});return false;"><img src="http://www.newscloud.com/images/scaleImage.php?id='.$imageid.'&x=120&y=120&fixed=x&crop" alt="story image" /></a>';
+			$temp='<a href="'.URL_PREFIX.'?p=read&{siteContentId}" onclick="readStory({siteContentId});return false;"><img src="'.URL_BASE.'/index.php?p=scaleImg&id='.$imageid.'&x=120&y=120&fixed=x&crop" alt="story image" /></a>';
 		} else {
 			$temp='<img src="'.URL_CALLBACK.'?p=cache&simg=watermark.jpg" alt="spacer" />';
 		}
@@ -257,6 +296,22 @@ class template {
 		return $temp;
 	}
 
+	function checkLocation($city='') {
+		// properly displays city and a comma and state when available, blank when not available
+		$temp='';
+		if ($this->db->row['state']<>'') {
+			$temp.=$this->db->row['state'];
+			if ($city<>'') {
+				$temp=$city.', '.$temp;
+			}
+		} else {
+			if ($city<>'') {
+				$temp=$city;
+			}
+		}
+		return $temp;
+	}
+	
 	function memberImage($userid = 0, $size = false) {
 		$fbId = $this->db->row['fbId'];
 		$userid = $this->db->row['userid'];
@@ -302,7 +357,7 @@ class template {
 	function getAbsoluteStoryImage($imageid=0) {
 		if ($imageid>0) {
 			$theLink=$this->getAbsoluteStoryLink();
-			$temp='<a href="'.$theLink.'"><img src="http://www.newscloud.com/images/scaleImage.php?id='.$imageid.'&x=75&y=75&fixed=x&crop" alt="story image" /></a>';
+			$temp='<a href="'.$theLink.'"><img src="'.URL_BASE.'/index.php?p=scaleImg&id='.$imageid.'&x=75&y=75&fixed=x&crop" alt="story image" /></a>';
 		} else {
 			$temp='';
 		}
@@ -379,7 +434,7 @@ class template {
 	{
 		if ($imageid>0) {
 			$temp='<a href="'.URL_PREFIX.'?p=read&cid='.$storyid.'" onclick="readStory('.$storyid.');return false;">
-			<img src="http://www.newscloud.com/images/scaleImage.php?id='.$imageid.'&x=120&y=120&fixed=x&crop" 
+			<img src="'.URL_BASE.'/index.php?p=scaleImg&id='.$imageid.'&x=120&y=120&fixed=x&crop" 
 				alt="story image" /></a>';
 		} else {
 			$temp='';
@@ -602,6 +657,10 @@ class template {
 				$this->deleteCachePrefix('read_'.$id.'_com_n');
 				$this->deleteCachePrefix('pc_read_'.$id.'_anon');		
 			break;
+			case 'readAll':
+				$this->deleteCachePrefix('read_');
+				$this->deleteCachePrefix('pc_read_');
+			break;
 			case 'newswire':
 				$this->deleteCachePrefix('nw_');
 			break;
@@ -625,12 +684,12 @@ class template {
 	}
 
 	function checkCache($filename,$age=15) {
-		if (ENABLE_TEMPLATE_EDITS) return false; // dont allow any cache fetches during edit mode 
+		if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return false; // dont allow any cache fetches during edit mode 
 		
 		// checks if cached file is older then $age minutes
 		// returns true if file is fresh
 		$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
-		if (file_exists($filename) AND !isset($_GET['nc'])) {
+		if (file_exists($filename) AND !isset($_GET['nc']) AND !defined('NO_CACHE')) {
 			// use last cache version for robots
 			if ((time()-(60*$age))<filemtime($filename)) return true; // OR $page->isRobot()
 		}
@@ -638,7 +697,7 @@ class template {
 	}
 	
 	function fetchCache($filename) {
-		//if (ENABLE_TEMPLATE_EDITS) return 'Error - cannot fetch from cache while site in edit mode'; // dont allow any cache fetches during edit mode 
+		//if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return 'Error - cannot fetch from cache while site in edit mode'; // dont allow any cache fetches during edit mode 
 		
 		$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
 		$fHandle=fopen($filename,'r');
@@ -652,7 +711,7 @@ class template {
 	}
 
 	function cacheContent($filename,$html) {
-		if (ENABLE_TEMPLATE_EDITS) return; 
+		if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return; 
 		
 		// writes the code in $html to $filename in cache directory
 		$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
@@ -675,6 +734,13 @@ class template {
 	
 	}
 	
+	function encodeStr($str) {
+		return rawurlencode($str);
+	}
 	
+	function entitize($str='') {
+		return htmlentities($str,ENT_QUOTES);
+	}
+		
 }	
 ?>

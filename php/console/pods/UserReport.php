@@ -45,6 +45,7 @@ class UserReport extends BasePod {
 			$schema['fields'][] = 'state';
 			$schema['fields'][] = 'country';
 			$schema['fields'][] = 'interestLevel';
+			$schema['fields'][] = 'voteCount';
 			$schema['fields'][] = 'postStoryCount';
 			$schema['fields'][] = 'postCommentCount';
 			$schema['fields'][] = 'postBlogCount';
@@ -73,6 +74,7 @@ class UserReport extends BasePod {
 			$schema['labels'][] = array('key' => 'state', 'label' => 'State');;
 			$schema['labels'][] = array('key' => 'country', 'label' => 'Country');;
 			$schema['labels'][] = array('key' => 'interestLevel', 'label' => 'Interest Level');;
+			$schema['labels'][] = array('key' => 'voteCount', 'label' => 'Vote Count');
 			$schema['labels'][] = array('key' => 'postStoryCount', 'label' => 'Post Story Count');
 			$schema['labels'][] = array('key' => 'postCommentCount', 'label' => 'Post Comment Count');
 			$schema['labels'][] = array('key' => 'postBlogCount', 'label' => 'Post Blog Count');
@@ -151,7 +153,7 @@ class UserReport extends BasePod {
 		}
 		$usersql = "
 			SELECT U.siteid as user_siteid, U.userid as user_userid, U.email as user_email,U.dateRegistered,U.age, U.gender, U.state, U.country, U.researchImportance as interestLevel, U.cachedPointTotal,
-				U.postStoryCount, U.postCommentCount, U.postBlogCount, U.readStoryCount, U.completedChallengeCount, U.wonPrizeCount,
+				U.voteCount,U.postStoryCount, U.postCommentCount, U.postBlogCount, U.readStoryCount, U.completedChallengeCount, U.wonPrizeCount,
 				U.chatStoryCount, U.inviteFriendsCount, U.shareStoryCount, U.tweetCount, U.bookmarkToolAdded, U.friendsSignUpCount,
 				$survey_select
 				(SELECT count(1) FROM SessionLengths WHERE SessionLengths.userid = U.userid AND SessionLengths.siteid = U.siteid $study_sql) as visitsCount,
@@ -179,7 +181,7 @@ class UserReport extends BasePod {
 					'email' => $user['user_email'],
 					'age' => $user['age']
 				);
-			} else if ($view == 'full' || $view == 'csv') {
+			} else if ($view == 'full') {
 				$tmp = array(
 					//'userid' => $user['userid'],
 					'userid' => util_link_for($user['user_userid'], 'members', 'view_member', $user['user_userid']),
@@ -191,15 +193,7 @@ class UserReport extends BasePod {
 					'state' => $user['state'],
 					'country' => $user['country'],
 					'interestLevel' => $user['interestLevel'],
-					'postStoryCount' => $user['postStoryCount'],
-					'postCommentCount' => $user['postCommentCount'],
-					'postBlogCount' => $user['postBlogCount'],
-					'readStoryCount' => $user['readStoryCount'],
-					'completedChallengeCount' => $user['completedChallengeCount'],
-					'wonPrizeCount' => $user['wonPrizeCount'],
-					'chatStoryCount' => $user['chatStoryCount'],
-					'inviteFriendsCount' => $user['inviteFriendsCount'],
-					'shareStoryCount' => $user['shareStoryCount'],
+					'voteCount' => $user['voteCount'],
 					'postStoryCount' => $user['postStoryCount'],
 					'postCommentCount' => $user['postCommentCount'],
 					'postBlogCount' => $user['postBlogCount'],
@@ -220,7 +214,39 @@ class UserReport extends BasePod {
 					'medianSessionTime' => round($user['medianSessionTime'], 2),
 					'usageClass' => $this->getUsageClass($user['avgSessionTime'])
 				);
-				if ($view == 'csv') {
+		} else if ($view == 'csv') {
+			$tmp = array(
+				//'userid' => $user['userid'],
+				'userid' => $user['user_userid'],
+				'siteid' => $user['user_siteid'],
+				'email' => $user['user_email'],
+				'dateRegistered' => $user['dateRegistered'],
+				'age' => $user['age'],
+				'gender' => $user['gender'],
+				'state' => $user['state'],
+				'country' => $user['country'],
+				'interestLevel' => $user['interestLevel'],
+				'voteCount' => $user['voteCount'],
+				'postStoryCount' => $user['postStoryCount'],
+				'postCommentCount' => $user['postCommentCount'],
+				'postBlogCount' => $user['postBlogCount'],
+				'readStoryCount' => $user['readStoryCount'],
+				'completedChallengeCount' => $user['completedChallengeCount'],
+				'wonPrizeCount' => $user['wonPrizeCount'],
+				'chatStoryCount' => $user['chatStoryCount'],
+				'inviteFriendsCount' => $user['inviteFriendsCount'],
+				'shareStoryCount' => $user['shareStoryCount'],
+				'cachedPointTotal' => $user['cachedPointTotal'],
+				'tweetCount' => $user['tweetCount'],
+				'bookmarkToolAdded' => $user['bookmarkToolAdded'],
+				'friendsSignUpCount' => $user['friendsSignUpCount'],
+				'visitsCount' => $user['visitsCount'],
+				'daysOnSiteCount' => $user['daysOnSiteCount'],
+				'avgPageViewVisit' => $user['avgPageViewVisit'],
+				'avgSessionTime' => round($user['avgSessionTime'], 2),
+				'medianSessionTime' => round($user['medianSessionTime'], 2),
+				'usageClass' => $this->getUsageClass($user['avgSessionTime'])
+			);
 					$tmp['q1a'] = $user['q1a'];
 					$tmp['q1b'] = $user['q1b'];
 					$tmp['q1c'] = $user['q1c'];
@@ -345,7 +371,6 @@ class UserReport extends BasePod {
 					$tmp['q38d'] = $user['q38d'];
 					$tmp['q38e'] = $user['q38e'];
 				}
-			}
 			$jsonarr['Results']['data'][] = $tmp;
 			//$jsonarr['Results']['SQL'] = stripslashes(preg_replace(array('/\n/', '/\t/'), array(' ', ' '), $usersql));
 		}

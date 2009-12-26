@@ -3,7 +3,7 @@
 <h2>Story Details: <? echo $story['title']; ?></h2>
 
 <p id="story[imageid]">Story Image: </p>
-<img width="180" height="135" src="http://www.newscloud.com/images/scaleImage.php?id=<? echo $story['imageid']; ?>&x=185&y=130&fixed=x&crop"/>
+<img width="180" height="135" src="<? echo URL_BASE.'/index.php?p=scaleImg&id='.$story['imageid'].'&x=185&y=130&fixed=x&crop'; ?>"/>
 <div class="spacer"></div><br />
 
 <p id="story[date]">Date Posted: <?php echo htmlentities($story['date']); ?></p>

@@ -224,8 +224,11 @@ class account
 		
 		$code.=$this->buildOptInStudyText();
 		$code.=$this->buildAcceptRulesText();
-				
-	    $facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email', $this->session->fbId);	    
+		
+		if ($this->session->isAppAuthorized)
+	    	$facebookEmailPermitted=$this->facebook->api_client->users_hasAppPermission('email', $this->session->fbId);	  
+		else
+			$facebookEmailPermitted=false;
 	   	if (!$facebookEmailPermitted)
 			$code.='<fb:editor-custom><fb:prompt-permission perms="email">Would you like to receive email from us through facebook? (50 pts)</fb:prompt-permission></fb:editor-custom>';
 	    

@@ -3,11 +3,15 @@
 class images {
 	var $db;
 	
-	function __construct() {
-		// do nothing
-		require_once (PATH_CORE.'/classes/db.class.php');
-		$this->db=new cloudDatabase();
-	}
+	function __construct(&$db=NULL) 
+	{
+		if (is_null($db)) 
+		{ 
+			require_once (PATH_CORE.'/classes/db.class.php');
+			$this->db=new cloudDatabase();
+		} else
+			$this->db=$db;		
+	}	
 
 	function fetchImage() {
 	 /* Image server for an image for the story */

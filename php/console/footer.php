@@ -23,7 +23,7 @@
 			</table>
 		<?php endif; ?>
    <br /><br />
-   <div id="ft"><div style="text-align: center;">Footer for the management console</div>
+   <div id="ft"><div style="text-align: center;">Copyright <a href="http://blog.newscloud.com">NewsCloud</a> 2009</div>
 </div>
 </body>
 </html>

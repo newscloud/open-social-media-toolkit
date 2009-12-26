@@ -30,6 +30,10 @@ class newsroomPage extends XHTMLpage {
 		echo $this->getPage();
 	}
 	
+	function buildFrameset($topPage='',$bottomPage='') {
+		
+	}
+	
 	function addToHeader($string)
 	{
 		$this->header .= $string;

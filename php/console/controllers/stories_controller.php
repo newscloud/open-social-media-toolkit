@@ -3,9 +3,23 @@
 Class StoriesController extends AppController {
 	var $name = 'Stories';
 	public function featured() {
-				disp_header('Template Builder', 'template_builder');
-				//require('views/template_builder.php');
-				disp_footer('template_builder');
+		disp_header('Template Builder', 'template_builder');
+		//require('views/template_builder.php');
+		disp_footer('template_builder');
+	}
+
+	public function deliver_featured() {
+		// send feature notifications
+		global $init;
+		require_once PATH_FACEBOOK."/classes/app.class.php";
+		$app=new app(NULL,true);
+		$facebook=&$app->loadFacebookLibrary();			
+		require_once(PATH_CORE.'/classes/subscriptions.class.php');
+		$subObj=new SubscriptionsManager($db);
+		$subObj->loadFacebook($facebook);
+		$subObj->deliverFeatures();
+		set_flash(array('notice' => "Feature notifications sent."));
+		redirect(url_for($this->name, 'index'));
 	}
 
 			/****************************************************************
@@ -130,10 +144,10 @@ Class StoriesController extends AppController {
 				}
 	}
 
-/* Edit Templates */
-public function edittemplates() {
-	redirect(URL_CANVAS. '/?p=admin&o=editTemplates');
-}
+	/* Edit Templates */
+	public function edittemplates() {
+		redirect(URL_CANVAS. '/?p=admin&o=editTemplates');
+	}
 
 
 			/****************************************************************
@@ -561,9 +575,102 @@ public function edittemplates() {
 					redirect(url_for('stories', 'story_posts'));
 				}
 	}
+	
+			/****************************************************************
+			 *  Feeds section
+			 ***************************************************************/
+		public function list_feed() {
+					$list_feed = $this->db->load_all();
+					$this->set('list_feed', $list_feed);
+					$this->render();
+		}
+	
+		public function view_feed() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for($this->name, 'list_feed'));
+				}
+				if (($feed = $this->db->load($id))) {
+					$this->set('feed', $feed);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for($this->name, 'list_feed'));
+				}
+	}
+
+	public function new_feed() {
+				$this->render();
+	}
+
+	public function create_feed() {
+				if (isset($_POST['feed']['title'])) {
+					if (($id = $this->db->insert($_POST['feed'])) > 0) {
+						set_flash(array('notice' => 'Successfully created feed!'));
+						redirect(url_for($this->name, 'view_feed', $id));
+					} else {
+						set_flash(array('error' => 'Could not create your feed! Please try again. '.$id));
+						redirect(url_for($this->name, 'new_feed'));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for($this->name, 'new_feed'));
+				}
+	}
+
+	public function modify_feed() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for($this->name, 'list_feed'));
+				}
+				if (($feed = $this->db->load($id))) {
+					$this->set('feed', $feed);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for('stories', 'list_feed'));
+				}
+	}
+
+	public function update_feed() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for($this->name, 'feeds'));
+				}
+				if (isset($_POST['feed']['title'])) {
+					if (($result = $this->db->update($_POST['feed'])) == 1) {
+						set_flash(array('notice' => 'Successfully updated feed.'));
+						redirect(url_for('stories', 'view_feed', $id));
+					} else {
+						set_flash(array('error' => 'Could not update your feed! Please try again. '.$result));
+						redirect(url_for('stories', 'modify_feed', $id));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('stories', 'modify_feed', $id));
+				}
+	}
+
+	public function destroy_feed() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current feed for id: $id"));
+					redirect(url_for($this->name, 'list_feed'));
+				}
+				if (($result = $this->db->delete($id)) == 1) {
+					set_flash(array('notice' => 'Successfully deleted feed.'));
+					redirect(url_for('stories', 'list_feed'));
+				} else {
+					set_flash(array('error' => 'Could not delete feed. Please try again. '.$result));
+					redirect(url_for('stories', 'list_feed'));
+				}
+	}	
 
 	public function index() {
-				$this->render();
+		$this->render();
 	}
 
 	/******************************************************************************

@@ -21,7 +21,7 @@ html[xmlns] .clearfix {
 .storyCaption {color:#393733;}
 .storyCommands {font-size:100%;}
 .shareButton {margin:1px 0 0 10px;float:left;width:150px;}
-.comment {background:transparent url(http://facebook.com/images/end_quote_small.gif) no-repeat scroll right bottom;color:#666666;font-size:11px;font-style:normal;padding-right:17px;text-align:left;}
+.comment {background:transparent url({URL_BASE}/index.php?p=cache&img=end_quote_small.gif) no-repeat scroll right bottom;color:#666666;font-size:11px;font-style:normal;padding-right:17px;text-align:left;}
 .filterOption {margin:0 3px 0 3px; padding:0px; font-size:120%;}
 .memberIcon {
 	background-position:left bottom;

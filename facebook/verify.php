@@ -1,6 +1,33 @@
 <?php
 	// verify email address 
 	setupAppFramework();
+	if (isset($_GET['test'])) {
+		require_once(PATH_CORE.'/classes/remotefile.class.php');
+		$rfObj = new remotePageProperty($_GET['url']);
+		echo $rfObj->getPageTitle();
+		$matches=$rfObj->getPageParagraphs();
+ 		print_r($matches);
+		require_once(PATH_CORE.'/utilities/calais/opencalais.php');
+		$oc = new OpenCalais($init['calais']);		
+		$entities = $oc->getEntities($matches);
+		foreach ($entities as $idea) {
+			echo $idea . "<br />";
+		}
+		exit;
+		foreach ($entities as $type => $values) {
+
+			echo "<b>" . $type . "</b>";
+			echo "<ul>";
+
+			foreach ($values as $entity) {
+				echo "<li>" . $entity . "</li>";
+			}
+
+			echo "</ul>";
+
+		}
+		exit;
+	}
 	if (!isset($_GET['e']) and !isset($_GET['a'])) {
 		$result=false;
 		$app->facebook->redirect(URL_CANVAS.'?p=home&msgType=error&&msg='.urlencode('There was a problem with your request.'));					

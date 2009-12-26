@@ -1,0 +1,3 @@
+#MAILTO=you@yourdomain.com
+10,20,30,40,50 * * * * <your-user-name-here> /usr/bin/wget -t 2 -o /dev/null -q -O /dev/null -U <your-user-name> "<your-site-url-here>?p=engine&apiKey=<your-api-key-here>"
+

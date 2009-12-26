@@ -1,0 +1,51 @@
+Enabling modules
+
+// tags module
+$crowdTags=array('education','health','music','technology','food','politics','transportation','lifestyle','arts','sports','business','gardening','travel','recreation','government','environment');
+Wall
+----
+
+Ideas
+-----
+Set the constants
+
+define ("ENABLE_IDEAS",true);	
+define ("SITE_IDEAS_TITLE",'Ideas');
+define ("IDEAS_POPULAR_INTERVAL",7); // days
+
+- set up index per doc file
+
+Ask
+---
+define ("SITE_ASK_TITLE",'Answers');
+define ("ENABLE_SIDE_WIRE",true);
+define ("SIDE_WIRE_TITLE",'Around '.SITE_TITLE);	
+- set up index per doc file
+
+
+Stuff
+---
+
+define ("ENABLE_STUFF",true);	
+define ("SITE_STUFF_TITLE",'Ideas');
+- set up index per doc file
+
+Media
+---
+define ("ENABLE_IMAGES",true);
+
+Media Profile
+----
+define ("ENABLE_MEDIA_PROFILE",true);
+
+Micro Blog Tweet Room
+----
+- Run init cron
+// microblog module
+define ("ENABLE_MICRO",true);
+
+define ("ENABLE_AUTOFEATURE",true);
+define ("AUTOFEATURE_INTERVAL",3); // hours
+
+AutoFeatures
+- Run init cron

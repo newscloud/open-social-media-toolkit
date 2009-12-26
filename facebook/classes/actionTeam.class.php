@@ -164,12 +164,14 @@ class actionTeam {
 		// using session and page, it builds a side panel
 		switch ($p) {
 			case 'otherProfile':
-			default:			
-				if ($this->session->isMember) {
-					$code.=$this->fetchProfileSummaryPanelForHomePage($this->session->fbId, true /*testing*/, true);					
-				} else {
-					$code.=$this->fetchTeamIntro();
-				}				
+			default:
+				if (!defined('ENABLE_SIDE_WIRE')) {
+					if ($this->session->isMember) {
+						$code.=$this->fetchProfileSummaryPanelForHomePage($this->session->fbId, true /*testing*/, true);					
+					} else {
+						$code.=$this->fetchTeamIntro();
+					}				
+				}
 			break;
 			case 'myProfile':
 				 // do nothing at top			
@@ -205,17 +207,45 @@ class actionTeam {
 			call_user_func_array( array($this, 'page_' . $this->default_page), NULL );				
 
 		 */
+		// display local blogs
+		if (defined('ENABLE_LOCAL')) {
+			
+			if ($this->session->isLoaded)
+				$cacheName='sideLocal_'.$this->session->userid; // for user's custom neighborhood, change this - change in local.class.php
+			else
+				$cacheName='sideLocal';
+			if ($this->templateObj->checkCache($cacheName,15)) {
+				// still current, get from cache
+				$temp=$this->templateObj->fetchCache($cacheName);
+			} else {
+				$temp=$this->fetchSideWire('local');
+				$this->templateObj->cacheContent($cacheName,$temp);
+			}
+			$code.=$temp;			
+		}
+		// display newswire
+		if (defined('ENABLE_SIDE_WIRE')) {
+			$cacheName='sideWire';
+			if ($this->templateObj->checkCache($cacheName,15)) {
+				// still current, get from cache
+				$temp=$this->templateObj->fetchCache($cacheName);
+			} else {
+				$temp=$this->fetchSideWire('wire');
+				$this->templateObj->cacheContent($cacheName,$temp);
+			}
+			$code.=$temp;			
+		}
 		// to do: loop thru, pick a random number
 		// pick a panel that hasn't been added to panelspicked before
 		// add it based on the random number
 		// continue until you have $numberItems of panels
-			$panelOption=array(3=>'fetchChallenges',2=>'fetchRewardsRandom',1=>'fetchPopularStories',4=>'fetchLeaders');
-			$panelCacheName=array(1=>'sidePopular',3=>'sideChallenges',2=>'sideRewards',4=>'sideLeaders');
+			$panelOption=array(3=>'fetchChallenges',4=>'fetchRewardsRandom',1=>'fetchPopularStories',2=>'fetchLeaders');
+			$panelCacheName=array(1=>'sidePopular',3=>'sideChallenges',4=>'sideRewards',2=>'sideLeaders');
 			$panelsPicked=array();
 			$x=1;
 			while ($x<5) {
 				$cacheName=$panelCacheName[$x];
-				if ($x==2 and $this->session->isMember) $cacheName.='_member'; // for rewards panel with join button
+				if ($x==4 and $this->session->isMember) $cacheName.='_member'; // for rewards panel with join button
 				if ($this->templateObj->checkCache($cacheName,30)) {
 					// still current, get from cache
 					$temp=$this->templateObj->fetchCache($cacheName);
@@ -223,8 +253,8 @@ class actionTeam {
 					$temp=call_user_func_array(array($this,$panelOption[$x]),NULL);
 					$this->templateObj->cacheContent($cacheName,$temp);
 				}
-				// only display rewards for anonymous viewer or team viewer, x=2 is a hack for array placement in panelCacheName				
-				if (!($x==2 AND (!$this->session->isLoaded OR $this->session->u->eligibility<>'team')))
+				// only display rewards for anonymous viewer or team viewer, x=4 is a hack for array placement in panelCacheName				
+				if (!($x==4 AND (!$this->session->isLoaded OR $this->session->u->eligibility<>'team')))
 					$code.=$temp;
 				$x+=1;			
 			}
@@ -297,14 +327,17 @@ class actionTeam {
 		
 					.'<div class="storyBlockWrap">'
 					
-						.'<h2>'.template::buildLocalProfileLink($user->name, $userinfo->fbId).'</h2>'
+						.'<h2>'.template::buildLocalProfileLink($user->name, $userinfo->fbId).'</h2>';
+
+				if ($userinfo->city<>'' AND $userinfo->city<>'Unknown') {
+					$code.="<h3>{$userinfo->city}, {$userinfo->state}</h3>";
+				}
 		
 						//.'<h1><fb:name ifcantsee="Anonymous" uid="'.$userinfo->fbId.'" useyou="false" capitalize="true" firstnameonly="false" linked="false"/></h1>'
-						."<h3>{$userinfo->city}, {$userinfo->state}</h3>"
+						
 			
 								
-					.'</div>' //<div class="storyBlockWrap">'
-				
+				$code.='</div>' //<div class="storyBlockWrap">'			
 						//.$this->fetchProfileSummaryPanelHeaderForProfilePage($user, $userinfo, $selfviewing, $ajaxEnabled)
 						.$this->fetchProfileSummaryPanelBlock($user,$userinfo,$selfviewing,$ajaxEnabled)
 					//.'</div> <!-- end storyBlockWrap-->
@@ -341,13 +374,15 @@ class actionTeam {
 		
 	
 				.'<div class="storyBlockWrap">'
-					.'<h1><fb:name ifcantsee="Anonymous" uid="'.$userinfo->fbId.'" useyou="false" capitalize="true" firstnameonly="false" linked="false"/></h1>'
-					."<h3>{$userinfo->city}, {$userinfo->state}</h3>"
+					.'<h1><fb:name ifcantsee="Anonymous" uid="'.$userinfo->fbId.'" useyou="false" capitalize="true" firstnameonly="false" linked="false"/></h1>';
+			if ($userinfo->city<>'' AND $userinfo->city<>'Unknown') {
+				$code.="<h3>{$userinfo->city}, {$userinfo->state}</h3>";
+			}
+					
 		
 					//.$this->fetchProfileSummaryPanelHeaderForProfilePage($user, $userinfo, $selfviewing, $ajaxEnabled)
-					.$this->fetchProfileSummaryPanelBlock($user,$userinfo,$selfviewing,$ajaxEnabled,true)
-				.'</div> <!-- end storyBlockWrap-->
-			
+					$code.=$this->fetchProfileSummaryPanelBlock($user,$userinfo,$selfviewing,$ajaxEnabled,true)
+				.'</div> <!-- end storyBlockWrap-->			
 			</div><!__end "panel_block"__>
 			';
 		
@@ -365,7 +400,9 @@ class actionTeam {
 		//$code.='<a href="'.URL_CANVAS.'?p=profile&memberid='.$userinfo->fbId.'">'. //<fb:name capitalize="true" firstnameonly="false" uid="'.$fbId.'" linked="false" /></a>';
 			//		 $user->name. '</a>';
 		//$code .='</p>';
-		$code .= "<h3>{$userinfo->city}, {$userinfo->state}</h3>";
+		if ($userinfo->city<>'' AND $userinfo->city<>'Unknown') {
+			$code.="<h3>{$userinfo->city}, {$userinfo->state}</h3>";
+		}
 		//$code .='<p>';
 		if ($selfviewing) $code.=template::buildLocalProfileLink('Edit my profile', $userinfo->fbId); //'<a href="'.URL_CANVAS.'?p=profile&memberid='.$fbId.'">Edit my profile</a> ';		
 		//$code.='</p>';
@@ -541,6 +578,55 @@ class actionTeam {
 		return $code;	
 	}
 	
+	function fetchSideWire($mode='wire') {
+		global $localTags;
+		$this->setupLibraries();
+		$this->templateObj->registerTemplates(MODULE_ACTIVE,'newswire');
+		require_once(PATH_CORE.'/classes/utilities.class.php');
+		$this->utilObj=new utilities($this->db);				
+		switch ($mode) {
+			default: // wire - around
+				$title=SIDE_WIRE_TITLE;
+				$id='wire';
+				$this->templateObj->db->result=$this->templateObj->db->query("select id,title,caption,source,url,wireid	from Newswire WHERE (
+				   select count(*) from Newswire as f WHERE f.feedid= Newswire.feedid AND f.id > Newswire.id ) < 2 AND feedType='wire' ORDER BY id DESC LIMIT 7;");
+				$head ='<div class="panelBar clearfix"><h2>'.$title.'</h2><div class="bar_link"><a href="?p=stories&o=raw" onclick="switchPage(\'stories\',\'raw\');return false;">See all</a></div></div><br />';		
+			break;
+			case 'local':
+				$title='Neighborhoods';
+				$id='Local'; // change this, change in local.js
+				// check session 
+				if ($this->session->isLoaded AND $this->session->ui->neighborhood<>'') {
+					$hood = strtolower(preg_replace("/[^a-zA-Z]/", "",$this->session->ui->neighborhood ));            
+					$q="SELECT id,title,caption,source,url,wireid FROM Newswire WHERE source IN (select title from Feeds WHERE FIND_IN_SET('".$hood."',tagList)) ORDER BY id DESC LIMIT 7;";									
+				}
+				else
+					$q="select id,title,caption,source,url,wireid	from Newswire WHERE (select count(*) from Newswire as f WHERE f.feedid= Newswire.feedid and f.id > Newswire.id ) < 1 AND feedType='localBlog' ORDER BY id DESC LIMIT 7;";
+				$this->templateObj->db->result=$this->templateObj->db->query($q);			
+				$head ='<div class="panelBar clearfix"><h2>'.$title.'</h2><div class="bar_link"><a href="#" onclick="showHoodSelect();return false;">Choose</a></div><br /></div>';		// <span class="pipe">|</span><a href="?p=stories&o=raw" onclick="switchPage(\'stories\',\'raw\');return false;">See all</a></div>
+				$hood='<div id="hoodSelect" class="hidden"><br /><p>Choose your neighborhood:<br /> <select id="newHood" onchange="updateHood();return false;">';
+				$hood.='<option value="all">Browse all neighborhoods</option>';
+				foreach ($localTags as $item) {
+					$key=strtolower(preg_replace("/[^a-zA-Z]/", "", $item));
+					$hood.='<option value="'.$key.'">'.$item.'</option>';
+				} 
+				$hood.='</select></p></div>';
+				$head.=$hood;
+			break;
+		}
+		if ($this->templateObj->db->countQ($this->templateObj->db->result)>0) {
+			$this->templateObj->db->setTemplateCallback('safeTitle', array($this->utilObj, 'encodeCleanString'), array('title', 200));
+			$this->templateObj->db->setTemplateCallback('safeCaption', array($this->utilObj, 'encodeCleanString'), array('caption', 500));
+			$this->templateObj->db->setTemplateCallback('safeUrl', array($this->utilObj, 'encodeUrl'), 'url');
+			$temp=$this->templateObj->mergeTemplate($this->templateObj->templates['sideWireList'],$this->templateObj->templates['sideWireItem']);           
+		} else {
+			$temp='Could not find any stories.';
+		}					
+		$code=$head.'<div id="sideWire_'.$id.'">'.$temp.'<!-- end sideWire_title --></div>';
+		$code = '<div class="panel_2 clearfix">'. $code . '</div>';
+		return $code;	
+	}
+	
 	function fetchPopularStories($mode='random',$limit=5,$includeHeaderBar=true) {
 		if ($mode=='random') {
 			$x=rand(0,2);
@@ -587,7 +673,7 @@ class actionTeam {
 		switch($mode)
 		{
 			case 'read':
-			$storyList=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS count(id) AS pointTotal,Content.title,Content.siteContentId FROM Log LEFT JOIN Content ON Content.siteContentId=Log.itemid WHERE action = 'readStory' AND t>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY) GROUP BY itemid ORDER BY pointTotal DESC LIMIT $startRow,".$rowsPerPage.";");
+			$storyList=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS count(id) AS pointTotal,Content.title,Content.siteContentId FROM Log LEFT JOIN Content ON Content.siteContentId=Log.itemid WHERE isBlocked=0 AND action = 'readStory' AND t>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY) GROUP BY itemid ORDER BY pointTotal DESC LIMIT $startRow,".$rowsPerPage.";");
 			break;
 			case 'rated': 
 			$storyList=$this->templateObj->db->query(
@@ -596,7 +682,7 @@ class actionTeam {
 						AS pointTotal,	
 						title,siteContentId	
 						FROM Content 
-						WHERE date>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY)						
+						WHERE isBlocked=0 AND date>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY)						
 					ORDER BY pointTotal DESC LIMIT $startRow,".$rowsPerPage.";"); 
 			break;
 			case 'discussed':	
@@ -606,7 +692,7 @@ class actionTeam {
 						AS pointTotal,	
 						title,siteContentId	
 						FROM Content 
-						WHERE date>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY)						
+						WHERE isBlocked=0 AND date>DATE_SUB(NOW(), INTERVAL $popularityInterval DAY)						
 					ORDER BY pointTotal DESC LIMIT $startRow,".$rowsPerPage.";"); 
 			break; 
 		}
@@ -714,6 +800,7 @@ class actionTeam {
 			$rowTotal=$this->templateObj->db->countFoundRows();
 			//$pagingHTML=$this->templateObj->paging($currentPage,$rowTotal,$rowsPerPage,'?&p=rewards&sort='.$sort.'&currentPage='); // later put back page->rowsPerPage
 			$this->templateObj->db->setTemplateCallback('pointTotal',array($this, 'checkPointTotal') ,'pointTotal');			
+			$this->templateObj->db->setTemplateCallback('location',array($this->templateObj, 'checkLocation') ,'city');			
 			$code.=$this->templateObj->mergeTemplate(
 				$this->templateObj->templates['leaderList'],$this->templateObj->templates['leaderItem']);           
 		} else {
@@ -833,14 +920,14 @@ class actionTeam {
 	</div><!__end "panelBar"__>
 
 	<div class="panel_block">
-    	<div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-		<div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
-        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onClick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+    	<div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+		<div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
+        <div class="friend" style="float: left; display: inline;"><a href="'.URL_CANVAS.'?p=profile&memberid=1008723516" onclick="return switchPage('profile', '', 1008723516);"><fb:profile_pic uid="1008723516" linked="false" size="square" /></a></div>
 	</div><!__end "panel_block"__>
 </div><!__end "panel_1"__>          
 	*/

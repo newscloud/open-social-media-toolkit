@@ -8,7 +8,13 @@ set_magic_quotes_runtime(0);
 session_start();
 
 //if (!$_SESSION['authed'] && (isset($_GET['e']) && isset($_GET['a']))) {
-if (!$_SESSION['authed']) {
+if (defined('NO_SECURITY') AND NO_SECURITY) {
+	$_SESSION['authed']	= true;
+	$_SESSION['email']	= ADMIN_EMAIL;
+	$_SESSION['userid']	= 1;
+	$_SESSION['name'] 	= 'Installer';
+	$_SESSION['role'] = 'admin';	
+} else if (!$_SESSION['authed']) {
 	$errors = array();
 	if (isset($_GET['e']) && $_GET['e'] != '')
 		$email = $_GET['e'];
@@ -136,9 +142,14 @@ function init_db($ctrl = 'main', $action = 'index') {
 					$db = new dbConsoleModel('Comments', array(), 'siteCommentId');
 			} else if (preg_match('/video/i', $action)) {
 					$db = new dbConsoleModel('Videos', array(), 'id');
+			} else if (preg_match('/feed/i', $action)) {
+					$db = new dbConsoleModel('Feeds', array(), 'id');
 			} else {
 				$db = new dbConsoleModel('all');
 			}
+		break;
+		case 'research':
+			$db = new dbConsoleModel('all');
 		break;
 		case 'admin':
 			if (preg_match('/cronjobs/i', $action)) {
@@ -175,7 +186,13 @@ function init_db($ctrl = 'main', $action = 'index') {
 			} else if (preg_match('/outboundmessage/i', $action)) {
 				$db = new dbConsoleModel('OutboundMessages');
 			} else if (preg_match('/forumtopic/i', $action)) {
-					$db = new dbConsoleModel('ForumTopics');
+				$db = new dbConsoleModel('ForumTopics');
+			} else if (preg_match('/folderlink/i', $action)) {
+				$db = new dbConsoleModel('FolderLinks');
+			} else if (preg_match('/folder/i', $action)) {
+				$db = new dbConsoleModel('Folders');
+			} else if (preg_match('/card/i', $action)) {
+				$db = new dbConsoleModel('Cards');
 			} else {
 				$db = new dbConsoleModel('all');
 			}

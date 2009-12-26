@@ -1,0 +1,246 @@
+Set up and configuration of the NewsCloud Social Media Toolkit
+----------------------------------------------------------------------------------------
+COPYRIGHT (c) 2009 NewsCloud.com
+
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Here are the general steps toward replication for the NewsCloud Social Media Toolkit Facebook application code base. We'll use a site called testsite as an example.
+
+Summary of services you need to sign up for:
+----------------------------------------------------------------------------------------
+
+- Facebook & Developer application (required, for your Facebook application framework)
+
+- NewsCloud.com (required, for creating your cloud and syncing with your API-key)
+
+- Feedburner (optional, for republishing your RSS feed)
+
+- Twitter (optional, for auto-publishing stories to twitter) 
+
+- Google Analytics (optional, for statistics tracking)
+
+- YouTube (optional, if you plan to want to upload a video intro clip)
+
+Set up with NewsCloud.com
+----------------------------------------------------------------------------------------
+- Create an account at NewsCloud http://www.newscloud.com/register
+
+- Confirm your NewsCloud account via the link delivered via email
+
+- Get a NewsCloud API key for your application to synchronize with NewsCloud
+
+http://www.newscloud.com/learn/apidocs/apikey/
+
+- Currently, the system is designed to interoperate and synchronize with NewsCloud's cloud services API. Check with jeff@newscloud.com to either use an existing NewsCloud cloud or create a new one for your group, topic or community. You'll need the cloudid to configure your social media toolkit installation. When you edit your cloud, you'll see the cloudid in the URL e.g. http://www.newscloud.com/edit/group/708, the cloudid is 708. Currently, clouds must be approved and enabled so that our API server will respond to your requests.
+
+- Ask us to update your domain address in the Partners table so that the outbound email verification has the correct address
+
+- Resources for the cloud links page can be added by editing your cloud. e.g. Add Folders and add links.
+
+- RSS feeds for the Facebook application's Stories raw feeds page can be added by editing your cloud. e.g. Add feed.
+
+- RSS feeds and resources will not sync until the cron jobs run 
+
+Set up with Facebook
+----------------------------------------------------------------------------------------
+- Install the developer application on Facebook
+
+http://www.facebook.com/developers/
+
+- Create a new Facebook application framework using the Developer application
+
+You'll need to reserve an available canvas url. This is sort of like a web site domain name url. Many are taken on Facebook already, but the available ones are free. Your application address will be something like http://apps.facebook.com/canvasareaname or http://apps.facebook.com/seattleinsight. You can change it later.
+
+- The api key, secret key and application id from Facebook need to be placed in the initialization e.g. testsite.ini file or in your constants.php file (described below)
+
+Set up your server domain hosting
+----------------------------------------------------------------------------------------
+Map two domains or sub-domains to your server
+
+- Facebook will require what's called a callback url to the address of your server. This is also used to access the backend management tools related to your application. You can use a domain or sub-domain given by your web host or register your own. For example, we might use testsite.newsreel.org to point to our PHP installation of the Social Media Toolkit, the management console and configuration menu, but we use a different domain for the Facebook callbacks. 
+
+1) Set up an Apache site to serve your site subtree
+
+- path for us is http://testsite.newsreel.org/
+
+- directory root is right into the site subtree /var/www/base/current/sites/testsite
+
+- See our install documentation for example configuration files
+
+- enable your site e.g a2ensite testsite.newsreel.org 
+
+- relaunch apache e.g. /usr/sbin/apache2ctl graceful
+
+2) Set up an Apache site to serve your Facebook callbacks
+
+- e.g. http://callbacks.newscloud.com
+
+- directory root is just /var/www/base/current
+
+Set up a Google Analytics account and tracking id for this site (optional)
+----------------------------------------------------------------------------------------
+- If you want to use Google analytics to track your site in Facebook (very useful), sign up for Google Analytics and get your account id and tracking id for this application. These ids need to be placed in the initialization e.g. testsite.ini file or in your constants.php file (described below)
+
+Set up your source code installation on your server
+----------------------------------------------------------------------------------------
+- Download and install the Social Media Toolkit code on your server
+
+- Decide whether to use an initialization file e.g. testsite.ini outside the source code tree or place all your settings in side the constants.php file (not recommended). We will create an ini file called testsite.ini and place settings for Facebook application keys, Analytics ids, NewsCloud API key and Twitter password.
+
+- Update the constants.php file in your sites directory to reflect the application name, topics, settings and other options.
+
+- Copy the site you want to replicate from the sites directory into a new site subtree.
+
+- e.g. cp /sites/climate /sites/testsite
+
+- Do a global replace on the image paths for your CSS stylesheets based on your site installation and domains
+
+- Set up web server permissions for cache and log files
+	- sudo chmod 777 /your-path/sites/cache to allow web server to write to this directory
+	- sudo chmod 777 /your-path/sites/logs to allow web server to write to this directory
+	- sudo touch /var/log/smt.log (or your PATH_LOGFILE) and chmod 777 /var/log/smt.log to allow web server to write
+	- sudo touch /var/log/smtSync.log (or your PATH_LOGFILE) and chmod 777 /var/log/smtSync.log to allow web server to write
+	- optional: sudo chmod 777 /your-path/sites/php to allow web server to write site maps for search engines (register your sitemap at Google's Webmaster Tools http://www.google.com/webmasters/)
+
+Create a new MySQL database for your site
+----------------------------------------------------------------------------------------
+- We will create a new database called testsite. The user name and password for accessing this database via localhost (server) need to be placed in your initialization e.g. testsite.ini file or in your constants.php file.
+
+- Configure your database. One way to do this is to run initialize database from the configuration menu. e.g. http://testsite.newsreel.org/?p=config&apiKey=<your newscloud api key>, select initialize database
+
+- Initialize the cron jobs via the menu
+
+- Set up CRON on your server to run the CRON engine e.g. http://yourdomain.com/?p=engine&apiKey=your-api-key&init 
+
+Set up your admin user
+----------------------------------------------------------------------------------------
+- Visit your Facebook application home page e.g. http://apps.facebook.com/yourcanvasname
+
+- Visit and complete the sign up form
+
+- Click the email verification for this account from NewsCloud in your email (requires that the address of your Facebook site is in the Partners table at NewsCloud.com - see note above) 
+
+- Important: synchronize this account with your system by manually running the cron job
+http://testsite.newsreel.org/?p=engine&apiKey=<your-api-key>&force=syncLog
+
+- Edit the database, User table to make this account an admin, set isAdmin=1
+
+- Once this is done, visit your application in Facebook and look for the Admin link in the right hand side of the page footer. This will allow you to enter the management console for administrating your application.
+
+Begin customizing your content in edit mode
+----------------------------------------------------------------------------------------
+- http://apps.facebook.com/myapp?p=admin&o=editTemplates will help
+
+- You can also edit the Templates table directly in the database
+
+Customizing the graphics for your Facebook application
+----------------------------------------------------------------------------------------
+Image urls for local images
+
+- base (default) images should be fetched via cache&img= but images specific to your site in the sites/xxx/facebook/images directory must use an alternate cache method, cache&simg=imagename.ext
+
+Video URL for Community/Action Team overview page
+----------------------------------------------------------------------------------------
+- Upload a video to YouTube and configure the Action Team overview to display it. Alternately, a static image can be used.
+
+Initialize your feed templates with Facebook
+----------------------------------------------------------------------------------------
+This will support Facebook's mini-feed publishing features. In Mgmt Console, go to Facebook->Register Feed Templates
+
+Feeds.php must also contain a $siteTopics array if you want to keyword match incoming bookmark feeds
+
+Set up with Twitter (optional)
+----------------------------------------------------------------------------------------
+- Register a twitter account for the application to publish to and place the account name in the constants.php file and the password either in the .ini file or in the constants.php file.
+
+Burn your feed with Google Feedburner (optional)
+----------------------------------------------------------------------------------------
+- Register with Google's Feedburner service. Burn your RSS feed (http://callback domain/sites/testsite/facebook/index.php?p=rss). Place your burned feed address in the constants.php file.
+
+Set up an Amazon Associates account (optional)
+----------------------------------------------------------------------------------------
+- If you're offering books, DVDs or other products from Amazon on your Resources/Links page, you may want to create an Amazon Associates account to earn revenue from click thru purchases. Place your associates id in your constants file.
+
+Content Needed for Customizing the Application
+----------------------------------------------------------------------------------------
+The following is a list of materials and content that we need for the initial set up and configuration of a Facebook application based on the Social Media Toolkit.
+
+* Application Name e.g. Hot Dish
+
+* Application Canvas URL e.g. hotdish. This must be reserved through the Facebook Developer application. Many canvas addresses are taken already.
+
+List of graphics
+
+- bg_banner.jpg (formerly bg_header.gif)
+
+A banner for the header background.
+
+- watermark.jpg
+
+A slightly translucent square-ish image about 90x wide to stand-in to the left column when no photo is present for a story
+
+- default_challenge_thumb.jpg (we use watermark.jpg as a placeholder)
+
+- this goes in /sites/climate/facebook/uploads/images
+
+- miniLogo.jpg
+
+16 x 16 icon for the Facebook application favicon
+
+- squareLogo.jpg
+
+75 x 75 icon for the Facebook application directory, et al.
+
+- bg_team.gif
+
+approx 120px wide square for the right background of the community/team over view page
+
+- teamPhoto.jpg (not needed, if using video on this page)
+
+photo image for team page
+
+- you tube video id, You Tube video clip about your site for the Community (or Action Team) overview page - encoded for playback at 320 x 240 (ideally)
+
+- bg_profilebox.gif
+
+required for background of facebook profile box
+
+* Details of the research question we'd like to ask (consult with Dr. Greenhow at U of M) - for Hot Dish, it's what is your interest level in climate change? 1 - 7. 
+
+* Age levels for action team eligibility e.g. for Hot Dish, it's 16 - 25 year olds. Yours may be unrestricted.
+
+* Feedburner RSS address that we can burn your RSS feed to e.g. http://feeds.feedburner.com/HotDish
+
+* Twitter account and password for your site e.g. twitter.com/hotdishnews
+
+* List of RSS feeds that you want to use on your story page - please include site name, url of site, url of rss feed in your list. You can also enter these into the NewsCloud.com site cloud that we set up for your application.
+
+* Categories and links for your optional resources page. You can enter these into the NewsCloud.com site cloud that we set up for your application.
+
+e.g. http://apps.facebook.com/hotdish/?p=links
+
+* List of user levels for your community members based on their points earned for online and offline participation, usually 6 levels
+
+e.g. 'reader','contributor','bronze','silver','gold','platinum'
+
+* Email address to send contact emails. 
+
+* Google analytics site ID to track statistics against, if not in our research
+
+* Template customizations, in files we provide you. These may be different whether you use an action team with challenges and rewards or whether you use only a community page with points/leaders. These include template files for: Terms of Service, Rules, About page, Research consent, Research popup, FAQ, commonTeam, rewards, challenges, home, invite, signup (ask for these when you are ready for them)
+
+Notes:
+----------------------------------------------------------------------------------------
+* Caching does not operate when ENABLE_TEMPLATE_EDITS is on. So, some user interface features may not update when this mode is active
+* ENABLE_TEMPLATE_EDITS does not save changes unless a list of Facebook ids by admins is in the SystemStatus table with name template_editor_fbIds and strValue=comma separated list of admin FBIds

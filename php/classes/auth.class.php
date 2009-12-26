@@ -64,9 +64,11 @@ class auth {
 	}
 
 	function buildConfirmationText($email='',$extraLinks='') {
+/*
+		<li><strong>Please verify your email address</strong>. You will soon receive an email with a link to activate your account.<br/>If you do not receive this email, <i>please check your spam folder for a message from jeff@newscloud.com.</i><br /><br /></li>
+		<li>Need help? <a href="http://www.newscloud.com/register/resendConfirm?email='.$email.'" target="_blank">Request another confirmation email</a>, visit our <a href="http://www.newscloud.com/learn/help" target="_blank">Help page</a> or <a href="mailto:jeff@newscloud.com.">email us</a>.<br /><br /></li>
+		*/
 		$text.='<h1>Thank you for signing up at NewsCloud</h1><ol>
-<li><strong>Please verify your email address</strong>. You will soon receive an email with a link to activate your account.<br/>If you do not receive this email, <i>please check your spam folder for a message from jeff@newscloud.com.</i><br /><br /></li>
-<li>Need help? <a href="http://www.newscloud.com/register/resendConfirm?email='.$email.'" target="_blank">Request another confirmation email</a>, visit our <a href="http://www.newscloud.com/learn/help" target="_blank">Help page</a> or <a href="mailto:jeff@newscloud.com.">email us</a>.<br /><br /></li>
 <li>Jump to the <a href="http://www.newscloud.com" target="_blank">NewsCloud Front Page</a></li></ol>';
 		return $text;
 	}

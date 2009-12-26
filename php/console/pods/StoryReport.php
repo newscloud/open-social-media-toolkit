@@ -143,7 +143,7 @@ class StoryReport extends BasePod {
 						'numComments' => $story['numComments'],
 						'score' => $story['score']
 					);
-				} else if ($view == 'full' || $view == 'csv') {
+				} else if ($view == 'full') {
 					$tmp = array(
 						//'siteContentId' => $story['siteContentId'],
 						'siteContentId' => util_link_for($story['siteContentId'], 'stories', 'view_story', $story['siteContentId']),
@@ -159,6 +159,20 @@ class StoryReport extends BasePod {
 						'numVotes' => $story['numVotes'],
 						'storyUrl' => "<a target=\"_cts\" href=\"{$story['url']}\">{$story['url']}</a>",
 					);
+				} else if ($view=='csv') {
+					$tmp = array(
+						'siteContentId' => $story['siteContentId'],
+						'sitename' => $sitename,
+						'title' => $story['title'],
+						'numComments' => $story['numComments'],
+						'score' => $story['score'],
+						'numReadStory' => $story['numReadStory'],
+						'numFullReadStory' => $story['numFullReadStory'],
+						'numSharedStory' => $story['numSharedStory'],
+						'numVotes' => $story['numVotes'],
+						'storyUrl' => $story['url']
+					);
+					
 				}
 				$jsonarr['Results']['data'][] = $tmp;
 			}

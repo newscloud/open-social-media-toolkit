@@ -48,7 +48,7 @@ function previewBlog() {
 
 	if (typeof(images) =='undefined' || typeof(images.length) == 'undefined' || images.length == 0) total = 0;
 	var story_box = document.getElementById('story_selector_box');
-	story_box.setStyle('display', 'block');
+	//story_box.setStyle('display', 'block');
 
 	var story_title = document.getElementById('story_title');
 	var story_summary = document.getElementById('story_summary');
@@ -94,7 +94,8 @@ function updateStoryData(data,mode) {
 		}
 	}
 	//init_images(data.images);
-	init_images();
+	// temporarily disabled until a fix can be created 12-09
+	// init_images();
 
 	//caption.setClassName('');
 	title.setClassName('');
@@ -102,7 +103,7 @@ function updateStoryData(data,mode) {
 	//imageUrl.setClassName('');
 
 	if (images.length > 0) {
-		story_box.setStyle('display', 'block');
+		//story_box.setStyle('display', 'block');
 	}
 }
 
@@ -171,6 +172,7 @@ function init_images() {
     		img.setSrc(images[k]);
     		img.setStyle('maxWidth', '95px');
     		img.setStyle('maxHeight', '95px');
+			//if (k>0) img.setStyle('display','none');
     		div.appendChild(img);
     		imgdiv.appendChild(div);
         //html.push("<div class=\"thumbnail", k == 0 ? " thumbnail_selected" : " thumbnail_unselected", "\">", "<img class=\"img_loading\" src=\"", images[k], "\" onload=\"adjustImage(this);\" />", "</div>");

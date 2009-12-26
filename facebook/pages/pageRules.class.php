@@ -37,11 +37,12 @@ class pageRules {
 		$inside=$tabs.'<div id="teamWrap">'.$inside.'<!-- end teamWrap --></div>';		
 		if ($this->page->isAjax) return $inside;	
 		
-		// build the prizes page
 		if (isset($_GET['currentPage']))
 			$currentPage=$_GET['currentPage'];
 		else
 			$currentPage=1;			
+		$code=$this->page->constructPage('rules',$inside);
+/* switched out with constructPage above on 7-31-09 by jr
 		$code.=$this->page->buildJavaScript();
 		$code.=$this->page->setHiddenVariables();
 		$code.=$this->page->buildLoadingStatus();
@@ -53,6 +54,7 @@ class pageRules {
 		$code.=$this->page->buildDialog();
 		$code.='</div><!-- end pageContent -->';
 		$code.='</div><!-- end pageBody -->';
+		*/
 		return $code;
 	}
 	

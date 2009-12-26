@@ -1,0 +1,70 @@
+READ ME - NewsCloud Social Media Toolkit
+----------------------------------------
+COPYRIGHT (c) 2009 NewsCloud.com
+
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	----------------------------------------
+
+Last modified: December 2009
+
+* APACHE: Configure your website in Apache using /sites/default/apache_conf_sample as a guide
+  - e.g. we are using default.newsi.us in our example pages
+
+* CONSTANTS: Copy /sites/default/constants_sample.php to /sites/default/constants.php and edit settings to your environment
+
+* DATABASE: Create a database and set permissions
+  - e.g. CREATE DATABASE menagerie; 
+  - e.g. GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
+
+* FACEBOOK: Create a Facebook application 
+  - Use the http://www.facebook.com/developers/ application to set up a new application. You just need to select a name at this time. Other settings will be uploaded during our installation process.
+  - Alternately, you can use the Facebook Connect Wizard http://developers.facebook.com/setup.php
+  - make note of the application id and secret keys for the .ini file you set up below
+
+* INI File: Copy /sites/default/default_sample.ini to ../default.ini on your web server (usually one directory below the site web files)
+  - note: you can also choose not to use a .ini file, but statically set them in your constants.php file
+  - include your Facebook application id and keys
+  - make sure the database, username, password & host is in your ini file 
+
+* CONFIGURATION: Visit the configuration menu
+  - The basic domain should work http://default.newsi.us
+  - but also http://default.newsi.us/?p=config
+  - and once security is turned on, you'll need an apiKey e.g. http://default.newsi.us/?p=config&apiKey=999-default
+  - note: 999-default is our example apiKey, replace this argument with what you used in your .ini file
+
+  - Follow the configuration menu options
+      	> Initialize the database
+		> Populate test data
+		> Upload your application settings to Facebook
+		> Visit your application on Facebook e.g. http://apps.facebook.com/defaultapp
+		> Visit the management console
+		> Remove test data
+		> Configure and turn on security, caching and logging as described
+		> Add your site to our public gallery http://support.newscloud.com/discussions/site-gallery 
+
+* CRON: When ready, copy the /sites/default/cron_sample file to your cron directory and edit settings
+
+RESOURCES
+
+* Consulting - This is a complex and sophisticated infrastructure for powering social media news communities. Managing this system requires advanced system administration and Web development expertise. If you are interested in learning about NewsCloud's managed service and consulting services, please visit: http://blog.newscloud.com/services.html 
+
+* Design - For design customization, consider working with Eye Level, our design partner http://youreyelevel.com/smt/
+	> Or, check out the design kit photoshop files in /docs/designKit
+	> Check out the color and font constant definitions in constants_sample.php
+
+* Support - Visit http://support.newscloud.com and http://opensource.newscloud.com
+
+* Updates - Follow @newscloud on Twitter http://twitter.com/newscloud	
+
+* Update the Facebook developer PHP client libraries here http://wiki.developers.facebook.com/index.php/PHP

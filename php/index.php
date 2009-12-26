@@ -1,15 +1,31 @@
 <?php
 	/* site request handler */
 	// Note: htaccess isn't used because it increases the complexity of the install for some open source users
+	
 	if (isset($_GET['p']))
 		$p=$_GET['p'];
-	else
-		$p='default';
-	if (MODULE_PHP=='FACEBOOK') {
+	else if (defined('NO_SECURITY') AND NO_SECURITY) {
+		$p='config'; // during set up, switch to config menu
+	} else
+		$p='home';
+	if (isset($_GET['x'])) {
+		include_once(PATH_PHP.'/x.php');
+		exit;
+	}
+	if ($_SERVER['QUERY_STRING']=='' OR MODULE_PHP=='FACEBOOK') {
 		// if not a special page, redirect to Facebook application
-		$specialPages = array('x','config','cache','img','process','ajax','sync','engine','console','load_story','load_stories','load_template','save_template','load_statistics'); 
+		$specialPages = array('x','config','cache','img','process','ajax','sync','engine','console','load_story','load_stories','load_template','save_template','load_statistics','rf'); 
 		if (array_search($p,$specialPages)===false) {
-			header('Location: '.URL_CANVAS);	exit;		 
+			if (isset($_GET['o']))
+				$oStr='&o='.$_GET['o'];
+			else
+				$oStr='';			
+			if (isset($_GET['id']))
+				$iStr='&id='.$_GET['id'];
+			else
+				$iStr='';			
+			header('Location: '.URL_CANVAS.'?p='.$p.$oStr.$iStr);
+			exit;
 		}
 	}
 		
@@ -39,6 +55,9 @@
 			ini_set('memory_limit', '32M');		
 			include_once(PATH_CORE.'/engine.php');
 		break;
+		case 'rf':
+			include_once(PATH_PHP.'/rf.php');
+		break;
 		case 'readStory':
 			include_once(PATH_PHP.'/readStory.php');
 		break;
@@ -59,9 +78,6 @@
 		break;
 		case 'rss':
 			include_once(PATH_PHP.'/rss.php');
-		break;		
-		case 'x':
-			include_once(PATH_PHP.'/x.php');
 		break;		
 		case 'console':
 			ini_set('memory_limit', '32M');

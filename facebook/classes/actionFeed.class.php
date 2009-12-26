@@ -40,36 +40,36 @@ class actionFeed
     <div class="subFilter">Filter by:
         <input type="hidden" fbcontext="35ae24e89811" value="all" id="app18743077155_filter"/>
         <input type="hidden" fbcontext="35ae24e89811" value="63" id="app18743077155_filter_userid"/>
-        <a onClick="" href="#" class="feedFilterButton selected">All Actions</a>
-		 <a onClick=" href="#" style="" class="feedFilterButton">Stories</a> 
-		<a onClick="(new Image()).src = '/ajax/ct.php?app_id=18743077155&amp;action_type=3&amp;post_form_id=c824ac961e4bab6aeed9d05eb633ba5f&amp;position=3&amp;' + Math.random();fbjs_sandbox.instances.a18743077155.bootstrap();return fbjs_dom.eventHandler.call([fbjs_dom.get_instance(this,18743077155),function(a18743077155_event) {a18743077155_setFeedFilter('challenges'); return false;},18743077155],new fbjs_event(event));return true;" href="#" style="" class="feedFilterButton">Challenges</a> <a onClick="(new Image()).src = '/ajax/ct.php?app_id=18743077155&amp;action_type=3&amp;post_form_id=c824ac961e4bab6aeed9d05eb633ba5f&amp;position=3&amp;' + Math.random();fbjs_sandbox.instances.a18743077155.bootstrap();return fbjs_dom.eventHandler.call([fbjs_dom.get_instance(this,18743077155),function(a18743077155_event) {a18743077155_setFeedFilter('rewards'); return false;},18743077155],new fbjs_event(event));return true;" href="#" style="" class="feedFilterButton">Rewards</a>
+        <a onclick="" href="#" class="feedFilterButton selected">All Actions</a>
+		 <a onclick=" href="#" style="" class="feedFilterButton">Stories</a> 
+		<a onclick="(new Image()).src = '/ajax/ct.php?app_id=18743077155&amp;action_type=3&amp;post_form_id=c824ac961e4bab6aeed9d05eb633ba5f&amp;position=3&amp;' + Math.random();fbjs_sandbox.instances.a18743077155.bootstrap();return fbjs_dom.eventHandler.call([fbjs_dom.get_instance(this,18743077155),function(a18743077155_event) {a18743077155_setFeedFilter('challenges'); return false;},18743077155],new fbjs_event(event));return true;" href="#" style="" class="feedFilterButton">Challenges</a> <a onclick="(new Image()).src = '/ajax/ct.php?app_id=18743077155&amp;action_type=3&amp;post_form_id=c824ac961e4bab6aeed9d05eb633ba5f&amp;position=3&amp;' + Math.random();fbjs_sandbox.instances.a18743077155.bootstrap();return fbjs_dom.eventHandler.call([fbjs_dom.get_instance(this,18743077155),function(a18743077155_event) {a18743077155_setFeedFilter('rewards'); return false;},18743077155],new fbjs_event(event));return true;" href="#" style="" class="feedFilterButton">Rewards</a>
         </div><!__end "subtitle"__>
 
     <div class="list_stories">            
         <ul>
             <li class="panel_block">
-                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=185&y=130&fixed=x&crop" /></a>
+                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="{URL_BASE}/index.php?p=scaleImg&id=34608&x=185&y=130&fixed=x&crop" /></a>
                 </div>
                 <div class="storyBlockWrap">
-                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onClick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> posted a story</span> 1 hour ago</h3>
+                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onclick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> posted a story</span> 1 hour ago</h3>
                     <p class="storyHead"><a href="http://www.msnbc.msn.com/id/28529073/">Researchers make car parts out of coconuts</a></p>
                     <p class="storyCaption">Researchers in Texas are making car parts out of coconuts.  A team at Baylor University has made trunk liners, floorboards and car <a href="#" class="more_link">&hellip;&nbsp;more</a></p>                
                 </div><!__end "storyBlockWrap"__>
             </li>
             <li class="panel_block">
-                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=185&y=130&fixed=x&crop" /></a>
+                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="{URL_BASE}/index.php?p=scaleImg&id=34608&x=185&y=130&fixed=x&crop" /></a>
                 </div>
                 <div class="storyBlockWrap">
-                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onClick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> posted a video</span> 2 hours ago</h3>
+                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onclick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> posted a video</span> 2 hours ago</h3>
                     <p class="storyHead"><a href="http://www.msnbc.msn.com/id/28529073/">Researchers make car parts out of coconuts</a></p>
                     <p class="storyCaption">Researchers in Texas are making car parts out of coconuts.  A team at Baylor University has made trunk liners, floorboards and car <a href="#" class="more_link">&hellip;&nbsp;more</a></p>                
                 </div><!__end "storyBlockWrap"__>
             </li>
             <li class="panel_block">
-                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=185&y=130&fixed=x&crop" /></a>
+                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="{URL_BASE}/index.php?p=scaleImg&id=34608&x=185&y=130&fixed=x&crop" /></a>
                 </div>
                 <div class="storyBlockWrap">
-                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onClick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> commented on the story <a href="#">It's Time to Aim Low</a></span> on Feb 2, 2009</h3>
+                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onclick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> commented on the story <a href="#">It's Time to Aim Low</a></span> on Feb 2, 2009</h3>
 				<blockquote>
 					<div class="quotes">
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dolor nunc, vehicula et, tristique sed, auctor et, massa.</p>
@@ -138,7 +138,7 @@ class actionFeed
         	if ($key==$filter) $selected='selected';
         	else $selected = '';
         	$code .= '<span class="'.$statelist[$key].'"><a id="'.$key.'FeedFilter" class="feedFilterButton '.$selected.'"  
-        				href="#" onClick="setFeedFilter(\''.$key.'\'); return false;">'.$field.'</a></span> &nbsp;&nbsp;';
+        				href="#" onclick="setFeedFilter(\''.$key.'\'); return false;">'.$field.'</a></span> &nbsp;&nbsp;';
         	
         	//<select name="sort" id="sort" onChange="refreshRewards();">';
             //$code.='<option value="'.$field.'" '.($sort==$field?'SELECTED':'').'>'.$catlist[$field].'</option>';
@@ -670,10 +670,10 @@ class actionFeed
 				/*
 				 * 
 				 *  <li class="panel_block">
-                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=185&y=130&fixed=x&crop" /></a>
+                <div class="thumb"><a href="http://www.msnbc.msn.com/id/28529073/"><img src="{URL_BASE}/index.php?p=scaleImg&id=34608&x=185&y=130&fixed=x&crop" /></a>
                 </div>
                 <div class="storyBlockWrap">
-                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onClick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> commented on the story <a href="#">It's Time to Aim Low</a></span> on Feb 2, 2009</h3>
+                    <h3><span class="bold"><a href="'.URL_CANVAS.'?p=profile&memberid=1180126201" onclick="return switchPage('profile', '', 1180126201);"><fb:name ifcantsee="Anonymous" uid="1180126201" capitalize="true" firstnameonly="false" linked="false" /></a> commented on the story <a href="#">It's Time to Aim Low</a></span> on Feb 2, 2009</h3>
 				<blockquote>
 					<div class="quotes">
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dolor nunc, vehicula et, tristique sed, auctor et, massa.</p>

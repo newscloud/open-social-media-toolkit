@@ -17,15 +17,26 @@ class pageRead {
 	}
 
 	function fetch($option = 'comments', $cid = 0) {
+		// to do - remove, temp for vanishteam
+		if (CACHE_PREFIX=='van' AND !$this->session->isAppAuthorized) {
+			$fHandle=fopen(PATH_SERVER_LOGS.'edr.log','a');
+			fwrite($fHandle,'Required to authorize:'.$_SERVER['HTTP_X_FB_USER_REMOTE_ADDR']."\n");
+			$this->facebook=$this->session->app->loadFacebookLibrary();
+			$user = $this->facebook->require_login();
+		}
 		// build the read story page		
 		require_once(PATH_CORE.'/classes/read.class.php');
 		$readObj = new read($this->db,$this->session);
 		$readObj->setPageLink($this);
 		require_once(PATH_FACEBOOK.'/classes/actionTeam.class.php');
 		$this->teamObj = new actionTeam($this->page);		
+		if (isset($_GET['cid']) AND !is_numeric($_GET['cid'])) $this->page->decloak();
 		if ($cid==0) {
 			// need for ajax readStory script
-			if (isset($_GET['cid'])) $cid=$_GET['cid'];
+			if (isset($_GET['cid']) AND is_numeric($_GET['cid']))
+				$cid=$_GET['cid'];
+			else
+				exit('error2');
 		}
 		$referid=$this->page->fetchReferral();		
 		if ($referid!==false && is_numeric($referid)) {
@@ -37,7 +48,7 @@ class pageRead {
 					$this->facebook=$this->session->app->loadFacebookLibrary();
 					$user = $this->facebook->require_login();
 				}
-				if ($_POST['fb_sig_added']) { 
+				if (isset($_POST['fb_sig_added']) AND $_POST['fb_sig_added']==1) {  
 					$targetfbId=$_POST['fb_sig_user'];
 				} else if (isset($_POST['fb_sig_canvas_user'])) {
 					$targetfbId=$_POST['fb_sig_canvas_user'];			
@@ -92,6 +103,14 @@ class pageRead {
 		$inside .= $readObj->fetchReadStory($cid, $option);
 		$inside.='</div><!-- end left side -->';
 		$inside .= '<div id="col_right">';
+		if ($this->session->isAdmin) {
+			$inside.= '<div class="panel_1"><div class="panelBar clearfix">';
+			$inside.= '<h2>Administrative Options</h2>';
+			$inside.= '</div><!-- end panelBar -->';
+			$inside .= '<div class="panel_block">';
+			$inside.='<ul><li><span id="banStoryPoster"><a href="#" onclick="banStoryPoster('.$cid.');return false;">Ban Member</a></span></li></ul>'; // <span id="blockStory"><a href="#" onclick="blockStory('.$cid.');return false;">Block story</a></span><span class="pipe">|</span>
+			$inside .= '</div><!-- end panel_block --></div><!-- end panel_1 -->';
+		} 
 		$inside .= $readObj->fetchReadSidePanel($cid, $this->session,$this->page->isAjax);
 		if (defined('ADS_ANY_SIDEBAR_BOTTOM')) {
 			$inside.=str_replace("{ad}",'<fb:iframe src="'.URL_CALLBACK.'?p=cache&m=ad&locale=anySidebarBottom" frameborder="0" scrolling="no" style="width:180px;height:600px;padding:0px;margin:-5px 0px 0px 0px;"/>',$this->common['adWrapTallSidebar']);

@@ -1,4 +1,5 @@
 <?php
+
 /* site request handler */
 if (isset($_GET['p'])) {
 	$p=$_GET['p'];
@@ -10,12 +11,14 @@ if (isset($_GET['o'])) {
 } else
 	$o='';
 // ajax request - return only an fbml component
-if (isset($_GET['ajax'])) {
+if (isset($_GET['ajax']) OR $p=='ajax') {
 	$ajax=true;
-} else
+} else {
 	$ajax=false;
+	if (isset($_GET['id']) AND !is_numeric($_GET['id'])) { aLog(); }
+}
 
-if (ENABLE_TEMPLATE_EDITS)
+if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE))
 {
 	require_once(PATH_CORE .'/classes/dynamicTemplate.class.php');						
 	$dynTemp = dynamicTemplate::getInstance();
@@ -24,7 +27,7 @@ if (ENABLE_TEMPLATE_EDITS)
 }
 	
 // these don't require full page load
-$partialPages=array('cache','ajax','engine','postAuth','rss', 'postAlt','ver');
+$partialPages=array('cache','ajax','engine','postAuth','rss', 'postAlt','ver','grad','scaleImg');
 // determine whether authentication is required for this page
 if (array_search($p,$partialPages)!==false) {
 	switch ($p) {		
@@ -49,12 +52,30 @@ if (array_search($p,$partialPages)!==false) {
 		case 'ver':
 			include_once(PATH_FACEBOOK.'/verify.php');
 		break;
+		case 'grad':
+			include_once(PATH_FACEBOOK.'/images/gradient.php');
+		break;
+		case 'scaleImg':
+			include_once(PATH_FACEBOOK.'/images/scaleImage.php');
+		break;
 	}
 	exit;
 }
 
-// use pre caching
-if (isset($_POST['fb_sig_logged_out_facebook']) AND array_search($p,array('home','read','team'))!==false) {
+// to do - remove after EDR
+// and remove all refs to neverCache and mustAdd below
+$tempid=0;
+$neverCache=false;
+$mustAdd='';
+if (isset($_POST['fb_sig_user']) AND is_numeric($_POST['fb_sig_user'])) { 
+	$tempid=$_POST['fb_sig_user'];
+} else if (isset($_POST['fb_sig_canvas_user']) AND is_numeric($_POST['fb_sig_canvas_user'])) {
+	$tempid=$_POST['fb_sig_canvas_user'];
+}
+$neverCache=true;
+
+if (!$neverCache) 
+if (isset($_POST['fb_sig_logged_out_facebook']) AND array_search($p,array('home','read','team'))!==false) { 	// use pre caching
 	if ($p=='read')
 		$preCacheName='pc_'.$p.'_'.$_GET['cid'].'_anon';
 	else
@@ -85,13 +106,22 @@ if (array_search($p,$pageNoFacebookLoad)===false) {
 /* initialize the SMT Facebook appliation class */
 require_once PATH_FACEBOOK."/classes/app.class.php";
 $app=new app($facebook);
+// to do - clean up when arrays get posted
+if (isset($_POST['ids'])) {
+	$tempArr=$_POST['ids'];
+	$_POST = $app->db->mysql_real_escape_array($_POST);
+	$_POST['ids']=$tempArr;
+} else {
+	$_POST = $app->db->mysql_real_escape_array($_POST);	
+}
+$_GET = $app->db->mysql_real_escape_array($_GET);
 if ($app->siteStatus=='offline') 
 	$p='offline';
 else if ($app->session->maxSessionsReached) 
 	$p='maxSessions';
 else if (!isset($_POST['ids']) && $_GET['c']=='skipped' && $p=='invite') 
 	$p='home';
-else if ($app->session->isMember===false AND ($p=='home')) { //  OR $p=='read' and 'team'	wait for components
+else if (!$neverCache AND $app->session->isMember===false AND ($p=='home')) { //  OR $p=='read' and 'team'	wait for components
 	if ($p=='read')
 		$preCacheName='pc_'.$p.'_'.$_GET['cid'].'_anon';
 	else
@@ -107,12 +137,11 @@ else if ($app->session->isMember===false AND ($p=='home')) { //  OR $p=='read' a
 		$cachePage=true;
 }
 
-if (ENABLE_TEMPLATE_EDITS)
+if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE))
 {
 	//require_once(PATH_CORE .'/classes/dynamicTemplate.class.php');						
 	//$dynTemp = dynamicTemplate::getInstance();
-	$dynTemp->authEnableEditMode($app->session); // retry authorization if theres a live session
-		
+	$dynTemp->authEnableEditMode($app->session); // retry authorization if theres a live session	
 }
 
 /* begin building page response */
@@ -122,7 +151,6 @@ $pagesObj=new pages($app,$user);
 // check that current session authLevel allows viewing the page or needs redirect
 if ($pagesObj->authenticateForPage($p,$app->session)===false) 
 	$p='signup';
-//if (TEST_MODE=='PRE_ALPHA') $pagesObj->authenticateTesters($app->session); // sandbox mode: check facebook user against our debug list	
 switch ($p) {
 	default: // home
 		$code=$pagesObj->fetch('home');
@@ -169,8 +197,23 @@ switch ($p) {
 		$code=$pagesObj->fetch('wall');
 		break;
 	case 'cards':
-			$code=$pagesObj->fetch('cards',$o);
-			break;
+		$code=$pagesObj->fetch('cards',$o);
+		break;
+	case 'media':
+		$code=$pagesObj->fetch('media',$o);
+		break;
+	case 'ask':
+		$code=$pagesObj->fetch('ask',$o);
+		break;
+	case 'ideas':
+		$code=$pagesObj->fetch('ideas',$o);
+		break;
+	case 'tweets':
+		$code=$pagesObj->fetch('micro',$o);
+		break;
+	case 'things':
+		$code=$pagesObj->fetch('stuff',$o);
+		break;
 	case 'rules':
 		$code=$pagesObj->fetch('rules');
 		break;
@@ -201,6 +244,9 @@ switch ($p) {
 	case 'postStory':
 		$code=$pagesObj->fetch('postStory',$o);		
 	break;
+	case 'predict':
+		$code=$pagesObj->fetch('predict',$o);
+	break;
 	case 'admin':
 		$code=$pagesObj->fetch('admin',$o);		
 	break;
@@ -215,30 +261,33 @@ switch ($p) {
 	case 'maxSessions':
 	case 'eqex':
 	case 'cbd':
+	case 'setAdmin':
 		$code=$pagesObj->fetch('static',$p);
 		break;
 	case '404':
 		$code=$pagesObj->fetch('404');
-	break;			
+	break;	
 	case 'design': // to do - remove at end of project cycle  
 		$code=$pagesObj->fetch('design',$o);
 		echo $code;
 		exit;
-		break;	
+	break;	
 }
+
 if (!$ajax) {
 	// build the header and navigation above the constructed body
 	$header=$pagesObj->buildStyles($p);
 	if ($p<>'signup') {
-		$header.=$pagesObj->buildHeader();
+		$header.=$pagesObj->buildHeader($p);
 	}		
 	$code='<div id="pageBodyWrap">'.$code.'<!-- AJAX wrapper around page body --></div>';
 	$code.=$pagesObj->setHiddenSession();	
 	$code='<div id="appFrame">'.$code.'<!-- end appFrame --></div>';
+	if ($neverCache) $code.=$mustAdd;
 	$footer=$pagesObj->buildFooter().$pagesObj->addAnalytics($init['fbAnalytics'],$p);
 	$code=$header.$code.$footer;	
 }
-if ($cachePage) {
+if (!$neverCache AND $cachePage) {
 	if (isset($_POST['fb_sig_logged_out_facebook'])) $code = preg_replace('/on[cC]lick="[^"]+"/', '', $code); // remove jscript
 	cacheContent($preCacheName,$code);	
 	if (isset($_GET['referid'])) {
@@ -249,11 +298,11 @@ $pagesObj->display($code);
 // $pagesObj->debug();
 
 function checkCache($filename,$age=15) {
-	if (ENABLE_TEMPLATE_EDITS) return false;
+	if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return false;
 	// checks if cached file is older then $age minutes
 	// returns true if file is fresh
 	$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
-	if (file_exists($filename) AND !isset($_GET['nc'])) {
+	if (file_exists($filename) AND !isset($_GET['nc']) AND !defined('NO_CACHE')) {
 		// use last cache version for robots
 		if ((time()-(60*$age))<filemtime($filename)) return true; // OR $page->isRobot()
 	}
@@ -261,7 +310,7 @@ function checkCache($filename,$age=15) {
 }
 
 function fetchCache($filename) {
-	//if (ENABLE_TEMPLATE_EDITS) return 'Error - cannot fetch from cache while site in edit mode'; // dont allow any cache fetches during edit mode 
+	//if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return 'Error - cannot fetch from cache while site in edit mode'; // dont allow any cache fetches during edit mode 
 	$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
 	$fHandle=fopen($filename,'r');
 	$fSize=filesize($filename);
@@ -274,7 +323,7 @@ function fetchCache($filename) {
 }
 
 function cacheContent($filename,$html) {
-	if (ENABLE_TEMPLATE_EDITS) return; // NEVER let editing code enter the cache  
+	if (ENABLE_TEMPLATE_EDITS OR (defined('NO_CACHE') AND NO_CACHE)) return; // NEVER let editing code enter the cache  
 	
 	// writes the code in $html to $filename in cache directory
 	$filename=PATH_CACHE.'/'.CACHE_PREFIX.'_'.$filename.'.cac';
@@ -297,6 +346,24 @@ function iLog() {
 		fwrite($fHandle,$str."\n");
 		fclose($fHandle);
 	}			
+}
+
+function aLog() {
+	if (isset($_POST['fb_sig_added']) AND $_POST['fb_sig_added']==1) {  
+		$tempid=$_POST['fb_sig_user'];
+	} else if (isset($_POST['fb_sig_canvas_user'])) {
+		$tempid=$_POST['fb_sig_canvas_user'];
+	} else {
+		$tempid=0;
+	}						
+	$logMessage = "IP:".$_SERVER['HTTP_X_FB_USER_REMOTE_ADDR'].' ('. date('Y-m-d H:i:s', time()) .') '. " FBID: ".$tempid." QS:".$_SERVER['QUERY_STRING'];
+	$logHash = hash('md5',$logMessage);
+	$fHandle=fopen(PATH_SERVER_LOGS.'attacks.log','a');
+	if ($fHandle!==false) {		
+		fwrite($fHandle,"[$logHash] $logMessage \n");
+		fclose($fHandle);
+	}			
+	exit();
 }
 
 ?>

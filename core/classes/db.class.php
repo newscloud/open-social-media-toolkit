@@ -13,7 +13,7 @@ class cloudDatabase {
 	var $init;
 	var $row;
 	var $ui; // user information
-	var $debug;
+	var $debug=false;
 	var $logInserts=false;
 	
 	// current raw database handler
@@ -39,7 +39,7 @@ class cloudDatabase {
 		$this->selectDB($this->database);
 	}
 	
-	function _connect() 
+	function _connect()
 	{
 		$this->handle = mysql_pconnect($this->hostname, $this->username, $this->password) or die(mysql_error());
 	}
@@ -57,6 +57,7 @@ class cloudDatabase {
 	
 	function query($q_string) 
 	{
+		if (stristr($q_string,'load_file')) exit;
 		if ($this->debug) 
 			$this->log($q_string);
 			
@@ -72,10 +73,10 @@ class cloudDatabase {
 	   			echo "<p><h2> Query String: </h2>$q_string</p><br />";
 	   			
 	   		$error = mysql_error();
-	   		$logMessage = '('. date('Y-m-d H:i:s', time()) .') '. "$error ... Query String: $q_string"; 
-	   		$logHash = hash('md5',$logMessage);
-	   		$this->log("[$logHash] $logMessage"); // embed unique hash (hopefully) in log message
-	   		die("<h2>MySQL Error Encountered</h2> <p>Please notify site admins and show them this message (refence code: $logHash)</p>");		
+	   		$logMessage = '('. date('Y-m-d H:i:s', time()) .') '. "IP:".$_SERVER['HTTP_X_FB_USER_REMOTE_ADDR']." qs:".$_SERVER['QUERY_STRING']." $error ... Query String: $q_string";
+			$logHash = hash('md5',$logMessage);			
+			$this->log($logHash.' '.$logMessage);
+			die("<h2>MySQL Error Encountered</h2> <p>Please notify site admins and show them this message (reference code: $logHash)</p>");				
 		}
 		return $this->result;
 	}
@@ -84,8 +85,7 @@ class cloudDatabase {
 	function queryC($q_string) {
 		// queries and counts, returns false if empty
 		if ($this->debug) 
-			$this->log($q_string);
-		
+			$this->log($q_string);		
 		$this->query($q_string);
 		$this->cnt=$this->count();
 		if ($this->cnt==0)
@@ -128,6 +128,7 @@ class cloudDatabase {
 	
 	function insert($table,$columns,$values) {
 		//echo "INSERT INTO $table ($columns) VALUES ($values);";
+		if (stristr($values,'load_file')) exit;		
 		$error = false;
 		if (mysql_query("INSERT INTO $table ($columns) VALUES ($values);"))
 			$result = $this->getId();
@@ -141,6 +142,7 @@ class cloudDatabase {
 	}
 
 	function update($table,$setList,$whereList='') {
+		if (stristr($whereList,'load_file')) exit;
 		if ($whereList<>'') $whereList="WHERE $whereList";
 
 		//echo "UPDATE $table SET $setList $whereList;"; // bear with me for a sec guys :)
@@ -190,6 +192,16 @@ class cloudDatabase {
 		// remove trailing comma
 		$str=trim($str,',');
 		return $str;
+	}
+	
+	function buildWhereStr($where,$joinWith='AND') {
+		// construct where str
+		if (count($where)) {
+			$whereStr = ' WHERE '.join(' '.$joinWith.' ', $where);
+		} else {
+			$whereStr = '';
+		}
+		return $whereStr;
 	}
 	
 	function paging($pageCurrent=1,$rowLimit=10,$link='',$jscriptFunction='refreshPage',$ajaxOn=false,$nav=NULL) {
@@ -401,7 +413,12 @@ class cloudDatabase {
 		return $str;
 	}
 
+	function mysql_real_escape_array($t) { 
+	    return array_map("mysql_real_escape_string",$t); 
+	}
+	
 	function log($str='Empty log string',$filename=PATH_LOGFILE) {
+		if (defined('NO_LOGGING') AND NO_LOGGING) return false;
 		// write to newscloud log file for debugging
 		// must touch and permission file at PATH_LOGFILE for this to work		
 		$fHandle=fopen($filename,'a');
@@ -414,7 +431,7 @@ class cloudDatabase {
 			fclose($fHandle);
 		}
 	}	
-	
+		
 	function setDebug($status=true) {
 		$this->debug=$status;
 	}

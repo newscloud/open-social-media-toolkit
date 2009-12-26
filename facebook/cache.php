@@ -13,7 +13,6 @@
 	{
 		$img=$_GET['simg'];	
 		exportFile(PATH_SITE_IMAGES.'/'.$img);			
-	
 	} else if (isset($_GET['img'])) 
 	{
 		$img=$_GET['img'];	
@@ -21,14 +20,27 @@
 	} else if (isset($_GET['pdf'])) {
 		$pdf=$_GET['pdf'];	
 		exportFile(PATH_TEMPLATES.'/'.$pdf.'.pdf');
+	} else if (isset($_GET['erd'])) {
+		//define ('PATH_TMP',SRC_ROOT.'/sites/tmp/');
+		$erd=rawurldecode($_GET['erd']);	// export research data
+/*
+		if (file_exists($erd)) {
+			$pi=pathinfo($erd);
+			var_dump($pi);
+		} else {
+			echo $erd.'does not exst'; 
+		}		*/
+		exportFile($erd);
+		unlink($erd);
 	} else if (isset($_GET['m'])) {
 		$m=$_GET['m'];
 		switch ($m) {
 			case 'widget':
 				// local iframe - from widget
 				if (isset($_GET['id'])) {
+					if (!is_numeric($_GET['id'])) exit();
 					require_once(PATH_CORE.'/classes/widgets.class.php');
-					$wt=new WidgetsTable();
+					$wt=new WidgetsTable();					
 					$code.=$wt->fetchWidgetCode($_GET['id']);								
 				} else {
 					$code='Error No widget specified.';
@@ -41,14 +53,11 @@
 			break;
 			case 'ad':
 				$locale=$_GET['locale'];
+				if (strlen($locale)>35) exit;
 				// deliver ad in iframe
 				require_once(PATH_CORE.'/classes/adCode.class.php');
 				$adObj=new AdCodeTable();
 				$code=$adObj->fetch($locale);			
-			break;
-			case 'seesmic':
-				include_once(PATH_TEMPLATES.'/seesmic.php');
-				exit;
 			break;
 			case 'scaleImg':
 				// scale image request
@@ -83,6 +92,10 @@
 				break;
 				case 'pdf':
 					$contentType='application/pdf';
+					header('Content-Disposition: attachment; filename="'.$pi['filename'].'.'.$pi['extension'].'"');					
+				break;
+				case 'txt':
+					$contentType='text/plain';					
 					header('Content-Disposition: attachment; filename="'.$pi['filename'].'.'.$pi['extension'].'"');					
 				break;
 			}

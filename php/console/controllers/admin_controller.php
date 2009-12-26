@@ -32,6 +32,15 @@ Class AdminController extends AppController {
 		redirect(url_for($this->name, 'cronjobs'));
 	}
 
+	public function export_users() {
+		global $init;
+		require_once (PATH_CORE.'/classes/research.class.php');
+		$rObj=new research();
+		$str=$rObj->exportUsers();
+		set_flash(array('notice' => $str));
+		redirect(url_for($this->name, 'index'));
+	}
+	
 	public function cloud_properties() {
 				$this->render('not_implemented');
 	}
@@ -40,12 +49,8 @@ Class AdminController extends AppController {
 				$this->render('not_implemented');
 	}
 
-	public function feed_list() {
-				$this->render('not_implemented');
-	}
-
 	public function index() {
-				$this->render();
+		$this->render();
 	}
 
 	public function flushfeeds() {

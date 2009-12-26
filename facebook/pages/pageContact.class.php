@@ -70,7 +70,6 @@ class pageContact {
 		$code.=' <fb:editor-custom label="Topic"><select name="topic">';
 		$code.='<option value="general">General</option>';
 		$code.='<option value="editorial">Letter to the Editor</option>';
-		// if (ENABLE_ACTION_TEAM)
 		$code.='<option value="team">'.SITE_TEAM_TITLE.'</option>';
 		if (ENABLE_ACTION_CHALLENGES)		
 			$code.='<option value="team">Suggest an '.SITE_TEAM_TITLE.' challenge</option>';

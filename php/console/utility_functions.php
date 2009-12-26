@@ -95,7 +95,7 @@ function disp_header($title = "Newscloud Management Console", $action = 'index')
 	require_once (PATH_PHP.'/classes/page.class.php');
 	$page=new XHTMLpage();
 	$page->pkgScripts(CACHE_PREFIX.'nrConsole',array(PATH_PHP_SCRIPTS.'/template.js'));
-	//$template_src = '<script src="http://hotdish.newsi.us/?p=cache&type=js&cf=template.js&v=1.002"></script>';
+	//$template_src = '<script src="http://hotdish.org/?p=cache&type=js&cf=template.js&v=1.002"></script>';
 	//$page->addScript(PATH_PHP_SCRIPTS.'/template.js');
 
 	// hack: djm - dont know correct way to incorporate this

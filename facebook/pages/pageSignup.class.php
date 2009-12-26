@@ -118,7 +118,10 @@ class pageSignup {
 		$inside.='</div> <!-- end right side -->';
 		
 		if ($this->page->isAjax) return $inside;
-		$code='<img src="'.URL_CALLBACK.'?p=cache&simg=bg_banner.jpg" alt="'.SITE_TITLE.' header"/><br /><br />';
+		
+		if (file_exists(PATH_SITE_IMAGES.'bg_banner.gif')) {
+			$code='<img src="'.URL_CALLBACK.'?p=cache&simg=bg_banner.gif" alt="'.SITE_TITLE.' header"/><br /><br />';
+		} 
 		$code.=$this->page->constructPage('signup',$inside,'',false);				
 		return $code;
 	}
@@ -129,7 +132,9 @@ class pageSignup {
 		$log = $this->app->getActivityLog();
 		$log->add($log->serialize(0, $this->session->userid, 'signup', 0, 0));
 
-		$this->sendEmailVerification($email);
+		// turned off now that we're doing only local sync
+		// to do - do email verification locally
+		// $this->sendEmailVerification($email);
 		
 		// to do - when refuid is zero, we should look up last invitation
 		

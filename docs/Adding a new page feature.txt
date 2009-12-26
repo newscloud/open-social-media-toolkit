@@ -1,0 +1,119 @@
+How to add a new page
+
+- Set up a constant for the feature e.g. ENABLE_IDEAS,SITE_IDEAS_TITLE for the tab name
+
+- Add support for the page tab in newsroom.js
+
+a) Switch Page Function
+if (document.getElementById('tabIdeas')) // may need in readStory - if news stories appear
+{ 
+ document.getElementById('tabIdeas').setClassName('');
+}
+and
+b) 
+case 'ideas':
+	document.getElementById('tabIdeas').setClassName('selected');
+break;
+
+and, if a public place in open name array for auth level
+if(name in {'home':'','read':'', 'stories':'','team':'','rules':'', 'rewards':'','challenges':'','leaders':'','static':'','links':'','wall':'',}) {
+	// leave it open
+
+
+c)  may be needed in readstory function, if you are linking to news stories with ajax from the feature
+e.g. related news items to this idea
+
+if (document.getElementById('tabIdeas'))
+{ 
+ document.getElementById('tabIdeas').setClassName('');
+}	
+
+d) In ajax.php, add the public page to the list in switch page
+	case 'switchPage':
+		$name=requestStr('name');
+		$option=requestStr('option');
+		$arg3 = requestStr('arg3');
+		require_once(PATH_FACEBOOK.'/classes/pages.class.php');
+		$pagesObj=new pages($app,$user,true);
+		// hybrid session requirement - some pages need session
+		$publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links','micro','stuff','ask','ideas','media','wall');
+		if ($isSessionValid OR array_search($name,$publicPages)!==false) {
+			$code=$pagesObj->fetch($name,$option,$arg3);
+		} else {
+			$code = fetchSessionAlert();	
+		}								
+	break;				
+
+- Add the page to index.php
+
+case 'ideas':
+	$code=$pagesObj->fetch('ideas',$o);
+	break;
+
+- Add the feature to tab navigation in pages.class.php, I include for testing a check for admin
+
+if (defined('ENABLE_IDEAS') AND $this->session->isAdmin==693311688) {
+	$tabs.='<li ><a id="tabIdeas" href="?p=ideas&o=browse" onclick="switchPage(\'ideas\');return false;" class="'.($current=='ideas'?'selected':'').'">'.SITE_IDEAS_TITLE.'</a></li>';
+}
+
+- add page to fetch function
+	case 'ideas':
+		require_once(PATH_FACEBOOK.'/pages/pageIdeas.class.php');
+		$iObj=new pageIdeas($this);
+		$code=$iObj->fetch($option);
+		break;
+
+- set Authentication permissions for the page
+	authenticateForPage function in pages.class.php
+	e.g. $publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links','tos','consent','maxSessions');
+	
+
+- If needed, add to javascript and css bundle code in pages.class.php
+if (defined('ENABLE_IDEAS'))
+	$scripts=array_merge(array(PATH_SCRIPTS.'/ideas.js'),$scripts);
+if (defined('ENABLE_IDEAS'))
+	$sheets=array_merge(array(PATH_STYLES.'/ideas.css'),$sheets);
+	
+- create a template file in site/sea/facebook/templates e.g. ideas.php
+
+- add a case statement for your template in templates.class.php so that it is registered
+case 'ideas':
+	include PATH_TEMPLATES.'/ideas.php';
+break;
+
+- code your /facebook/pages/pageIdeas.class.php
+
+- code your ideas.class.php including the database creation
+
+- add creation of the database to the proper initDatabase file
+if (defined('ENABLE_IDEAS')) {
+	// Ideas Table
+	require_once(PATH_FACEBOOK.'/classes/ideas.class.php');
+	ideasTable::createTable($manageObj);
+}
+
+- add any event or action enum types to the log table in log.class.php
+	"action" => 
+			"ENUM('vote','comment',
+					'readStory','readWire','invite','postStory','publishWire',
+					'publishStory','shareStory','referReader','referToSite',
+					'postTwitter', 'signup', 'acceptedInvite',
+					'redeemed', 'wonPrize', 'completedChallenge', 'addedWidget', 'addedFeedHeadlines',
+					'friendSignup', 'addBookmarkTool',
+					'levelIncrease','sessionsRecent','sessionsHour','pageAdd','chatStory','postBlog','sendCard','askQuestion','answerQuestion','likeQuestion','likeAnswer','likeIdea'
+					) default 'readStory'",
+
+- if this feature needs a cron job, add to cron.classes.php
+
+add to initJobs 
+	$this->addJob("microBlog","Update microblog",10,"enabled");
+
+add to cron switch 
+case 'microBlog':
+	// post top stories to twitter
+	if (ENABLED_MICRO) {					
+		require_once PATH_FACEBOOK."/classes/micro.class.php";;
+		$mObj=new micro($this->db);
+		$mObj->update();
+	}
+break;

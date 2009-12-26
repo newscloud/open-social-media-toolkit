@@ -2,12 +2,27 @@
 
 	class dbManage {
 		var $db;
+		var $ssObj;
 		var $debug;
-
+		
 		function dbManage($debug=false) {
 			require_once('db.class.php');
 			$this->db=new cloudDatabase();
 			$this->debug=$debug;
+			require_once (PATH_CORE.'/classes/systemStatus.class.php');
+			$this->ssObj=new systemStatus($this->db);			
+		}
+		
+		function modifyLibrary($path='',$lib='') {
+			$lastModified=$this->ssObj->getState('dm_'.$lib);
+			if ($lastModified=='' OR intval($lastModified)<filemtime($path.$lib)) {
+				$this->ssObj->setState('dm_'.$lib,time()); // add or update in sysStatus
+				$this->db->log('NEED TO UPDATE:'.$lib);
+				return true; // file is out of date
+			} else {
+				$this->db->log('OK:'.$lib);		
+				return false;
+			}
 		}
 		
 		function addColumn($table,$column,$column_info) {

@@ -203,9 +203,11 @@
 	$page->display();	
 
 	function buildConfirmationText($email='',$extraLinks='') {
+/*		<li><b>Please verify your email address</b>. You will soon receive an email with a link to activate your account.<br/>If you do not receive this email, <i>please check your spam folder.</i></li>
+		<li>Need help? <a href="'.URL_SMT_SERVER.'/register/resendConfirm?email='.$email.'">Request another confirmation email</a>, visit our <a href="'.URL_SMT_SERVER.'/learn/help">Help page</a>.</li>
+		*/
+
 		$text='<h1>Thank you for signing up</h1><ol class="list">
-<li><b>Please verify your email address</b>. You will soon receive an email with a link to activate your account.<br/>If you do not receive this email, <i>please check your spam folder.</i></li>
-<li>Need help? <a href="'.URL_SMT_SERVER.'/register/resendConfirm?email='.$email.'">Request another confirmation email</a>, visit our <a href="'.URL_SMT_SERVER.'/learn/help">Help page</a>.</li>
 <li>Return to the <a href="'.URL_HOME.'">Front Page</a></li>';
 		$text.=$extraLinks;
 		$text.='</ol>';	

@@ -177,7 +177,7 @@ class publisher
 	}
 
 	function buildFBJS(){
-		$js='<fb:js-string var="loading"><div id="loadingStatus"><img src="http://www.newscloud.com/static/facebook/images/loading.gif"><!-- end loading status div --></div></fb:js-string>';
+		$js='<fb:js-string var="loading"><div id="loadingStatus"><img src="'.URL_BASE.'/index.php?p=cache&img=loading.gif"><!-- end loading status div --></div></fb:js-string>';
 		$js.="<script>\n <!--\n ";
 		$js.='function setPublisherTab(newTab){ 
 				var pubContent=document.getElementById("publisherList");

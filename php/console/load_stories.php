@@ -1,7 +1,7 @@
 <?php
 require_once(PATH_CORE.'/classes/db.class.php');
 $db=new cloudDatabase();
-$results = $db->query("SELECT SQL_CALC_FOUND_ROWS Content.*, UserInfo.fbId FROM Content LEFT JOIN UserInfo ON Content.postedById = UserInfo.userid ORDER BY date DESC LIMIT 20");
+$results = $db->query("SELECT SQL_CALC_FOUND_ROWS Content.*,ContentImages.url as imageUrl,UserInfo.fbId FROM Content LEFT JOIN UserInfo ON Content.postedById = UserInfo.userid LEFT JOIN ContentImages ON (Content.siteContentId=ContentImages.siteContentId) ORDER BY Content.date DESC LIMIT 20");
 $stories = array();
 $story_ids = array();
 while ($row = mysql_fetch_assoc($results))
@@ -12,9 +12,9 @@ while ($row = mysql_fetch_assoc($results))
 	<?php $story_id = "story_".$story['siteContentId'];
 		  $story_ids[] = "'$story_id'"; ?>
 	<div class="story" id="<? echo $story_id; ?>" style="border: 1px solid black; margin: 10px; padding: 10px;">
-		<?php if ($story['imageid'] > 0): ?>
-			<img alt="story image" src="http://www.newscloud.com/images/scaleImage.php?id=<? echo $story['imageid']; ?>&x=60&y=60&fixed=x&crop"/>
-		<?php endif; ?>
+		<?php if ($story['imageUrl'] <> ''):  ?>
+			<img alt="story image" style="max-width:100px;max-height:100px;" src="<? echo $story['imageUrl']; ?>"/>
+		<?php endif; // if ($story['imageid'] > 0):  {URL_BASE}/index.php?p=scaleImg&id=<? echo $story['imageid']; ..missing question and close tag. &x=60&y=60&fixed=x&crop ?>
 		<? /*<span class="storyHead"><a href="<? echo $story['url']; ?>" target="_cts"><? echo $story['title']; ?></a></span><br /> */ ?>
 		<span class="storyHead" style="font-size: 80%;"><? echo $story['title']; ?></span><br />
 		<p style="font-size: 70%;">Posted by: <? echo $story['postedByName']; ?></p>
@@ -55,7 +55,7 @@ while ($row = mysql_fetch_assoc($results))
 	<span class="storyCaption">Global Warming, er FREEZING TEMPERATURES making like difficult in Alaska. &quot;Alaskans are accustomed to subzero temperatures but the prolonged conditions have folks wondering what's going on with winter less than a month old.&quot;<br /></span>
 	</p></div>
 	<div class="story" id="story_7">
-<p style="clear:both;"><a href="/index.php?p=readStory&permalink=Researchers_make_car_parts_out_of_coconuts"><img src="http://www.newscloud.com/images/scaleImage.php?id=34608&x=120&y=120&fixed=x&crop" alt="story image" /></a><span class="storyHead"><a href="?p=read&o=comments&cid=918&record">Researchers make car parts out of coconuts</a><br /></span>
+<p style="clear:both;"><a href="/index.php?p=readStory&permalink=Researchers_make_car_parts_out_of_coconuts"><img src="{URL_BASE}/index.php?p=scaleImg&id=34608&x=120&y=120&fixed=x&crop" alt="story image" /></a><span class="storyHead"><a href="?p=read&o=comments&cid=918&record">Researchers make car parts out of coconuts</a><br /></span>
 	<div class="profilePic"><a href="http://www.newscloud.com/journal/{submitBy}"><img src="http://www.newscloud.com/images/usericon.php?uid={ncId}" alt="Photo of {submitBy}" /></a></div><br /><span class="storyPosted">Posted by <a href="http://www.newscloud.com/journal/{submitBy}">{timeSince}</a>, ago</span><br />
 	<span class="storyCaption">Researchers in Texas are making car parts out of coconuts.  A team at Baylor University has made trunk liners, floorboards and car_door interior covers using fibers from the outer husks of coconuts, replacing the synthetic polyester fibers typically...<br /></span>
 	</p></div>

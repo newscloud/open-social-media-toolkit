@@ -155,7 +155,7 @@ class comments {
 		$data->contentid = $contentid;
 		$data->siteContentId = $siteContentId;
 		$data->siteCommentId=$siteCommentId;
-		$data->comments=$this->db->safe($comments);
+		$data->comments=mysql_real_escape_string($comments);
 		$data->postedById = $postedById;
 		$data->userid = $userid;
 		$data->postedByName = $postedByName;

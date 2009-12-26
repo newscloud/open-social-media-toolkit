@@ -11,6 +11,7 @@ $site_roles = array(
 			'admin.*',
 			'facebook.*',
 			'settings.*',
+			'research.*'
 		),
 		'model_auth' => array(
 			'*.*'
@@ -25,7 +26,8 @@ $site_roles = array(
 			'stories.*',
 			'members.*',
 			'street_team.*',
-			'dashpods.*'
+			'dashpods.*',
+			'research.*'
 		),
 		'model_auth' => array(
 			'*.*'
@@ -59,7 +61,11 @@ $site_roles = array(
 			'stories.video_posts',
 			'stories.widgets',
 			'stories.edittemplates',
+			'stories.feeds',
 			'members.index',
+			'members.folders',
+			'members.folderlinks',
+			'members.cards',
 			'members.member_emails',
 			'members.outboundmessages',
 			'street_team.*'
@@ -70,18 +76,6 @@ $site_roles = array(
 		'filter_auth' => array(
 			'*.*'
 		)
-	),
-	'default' => array(
-		'name' => 'default',
-		'ctrl_auth' => array(
-			'stories.index'
-		),
-		'model_auth' => array(
-			'*.*'
-		),
-		'filter_auth' => array(
-			'*.*'
-		)		
 	)
 );
 

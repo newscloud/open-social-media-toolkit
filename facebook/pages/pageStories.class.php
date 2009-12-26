@@ -37,6 +37,10 @@ class pageStories {
 		$inside.=$stories;
 		$inside.='<!-- end newswireWrap --></div>';		
 		$inside.='<!-- end left side --></div><div id="col_right">';
+		$inside.='<div id="introPanel">';
+		$inside.='<p><a href="?p=postStory" onclick="switchPage(\'postStory\');return false;" class="btn_1">Post a story</a></p>';			
+		$inside.='<!-- end of introPanel --></div>';
+		
 		$inside.=$this->teamObj->fetchSidePanel('stories');
 		$inside.='</div> <!-- end right side -->';
 		if ($this->page->isAjax) return $inside;

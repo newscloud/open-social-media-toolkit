@@ -1,9 +1,10 @@
 <?php
 
 define ("MIN_BLOG_LENGTH",250);
+define ("MIN_FRIENDS",10);
 define ("MAX_BLOG_LENGTH",5000);
 define ("CAPTION_LENGTH",250);
-define ("MAX_CAPTION_LENGTH",350);
+define ("LENGTH_LONG_CAPTION",700);
 
 class pagePostStory {
 
@@ -414,10 +415,27 @@ class pagePostStory {
 			if (isset($_GET['u'])) {
 				$fData->isBookmarklet=true; 
 				$fData->url  = urldecode($_GET['u']);
-				isset($_GET['t'])  ? ($fData->title   = strip_tags(stripslashes(urldecode( $_GET['t'])))): $fData->title='';
-				isset($_GET['c']) ? ($fData->caption = strip_tags(stripslashes(urldecode( $_GET['c'] )))): $fData->caption = '';
-				//isset($_GET['t'])  ? ($fData->title = urldecode($_GET['t'])): $fData->title='';
-				//isset($_GET['c']) ? ($fData->caption = urldecode($_GET['c'])): $fData->caption = '';
+				require_once(PATH_CORE.'/classes/parseStory.class.php');
+				$psObj = new parseStory($fData->url);
+				if (isset($_GET['t'])) {
+					$title=strip_tags(stripslashes(urldecode( $_GET['t'])));
+					$fData->title=$psObj->cleanTitle($title);
+				} else 
+					$fData->title='';
+				if (isset($_GET['c']) AND $_GET['c']<>'') {
+					$fData->caption = strip_tags(stripslashes(urldecode( $_GET['c'] )));
+				} else {
+					require_once(PATH_CORE.'/classes/remotefile.class.php');
+					$rfObj = new remotePageProperty($psObj->url);					
+					$temp = $rfObj->getPageParagraphs();
+					if (strlen($temp)>LENGTH_LONG_CAPTION) {
+						require_once(PATH_CORE.'/classes/utilities.class.php');
+						$utilObj=new utilities($this->db);
+						$temp=$utilObj->shorten($temp,LENGTH_LONG_CAPTION);					
+					}
+					$fData->caption=$temp;
+					//$psObj->log('Caption from gPP: '.$temp);
+				}					
 			} else {
 				$fData->isBookmarklet=false;
 				$fData->url= '';
@@ -507,7 +525,7 @@ class pagePostStory {
 		$bad = array('`','’','„','‘','’','´');
 		$good = array('\'','\'',',','\'','\'','\'');
 		$title = str_replace($bad, $good, $_POST['title']);
-		$fData->title=mysql_real_escape_string(stripslashes(strip_tags($title)), $this->db->handle);
+		$fData->title=stripslashes(strip_tags($title)); // took out mysql_real_escape
 		$fData->tags=$_POST['tags'];
 		$fData->mediatype=$_POST['mediatype'];
 		if (isset($_POST['isFeatureCandidate']) AND $_POST['isFeatureCandidate']=='on') {
@@ -519,6 +537,8 @@ class pagePostStory {
 		$fData->showPreview=false;
 		$fData->alert='';
 		
+		$fData->title=stripslashes(strip_tags($_POST['title']));
+		$fData->caption=stripslashes($_POST['caption']);
 		//$fData->title=mysql_real_escape_string(addslashes(stripslashes(strip_tags($_POST['title']))));
 		//$fData->caption=mysql_real_escape_string(stripslashes($_POST['caption']), $this->db->handle);
 		
@@ -534,8 +554,8 @@ class pagePostStory {
 					$fData->alert='Please provide a short caption for your entry.';
 					$fData->result=false;
 				}
-				if (strlen($fData->caption)>MAX_CAPTION_LENGTH) {
-					$fData->alert='Please shorten your caption to '.MAX_CAPTION_LENGTH.' characters. Current length: '.strlen($fData->caption);
+				if (strlen($fData->caption)>(LENGTH_LONG_CAPTION+5)) {
+					$fData->alert='Please shorten your caption to '.LENGTH_LONG_CAPTION.' characters. Current length: '.strlen($fData->caption);
 					$fData->result=false;
 				}				
 			break;
@@ -543,8 +563,8 @@ class pagePostStory {
 				if (isset($_POST['blogid'])) $fData->blogid=$_POST['blogid'];
 				$fData->status='draft';				
 				// only allowable html, fbml
-				$fData->entry=mysql_real_escape_string(stripslashes(strip_tags($_POST['entry'],'<p><a><i><br><em><strong><img>')),$this->db->handle); // <fb:photo><fb:mp3><fb:swf><fb:flv><fb:silverlight>
-				$fData->caption=mysql_real_escape_string(stripslashes(strip_tags($_POST['caption'])),$this->db->handle);
+				$fData->entry=stripslashes(strip_tags($_POST['entry'],'<p><a><i><br><em><strong><img>')); // <fb:photo><fb:mp3><fb:swf><fb:flv><fb:silverlight>
+				$fData->caption=stripslashes(strip_tags($_POST['caption']));
 				if ($fData->entry=='' or strlen($fData->entry)<MIN_BLOG_LENGTH) {
 					$fData->alert='Please compose a blog post of at least '.MIN_BLOG_LENGTH.' characters (not counting HTML tags). Current length: '.strlen($fData->entry);
 					$fData->result=false;
@@ -557,8 +577,8 @@ class pagePostStory {
 				}				
 				if ($fData->caption<>'') {				
 					// if it exists already, then check that it meets the minimum length requirements
-					if (strlen($fData->caption)>MAX_CAPTION_LENGTH) {						
-						$temp=$utilObj->shorten($_POST['caption'],MAX_CAPTION_LENGTH);
+					if (strlen($fData->caption)>(LENGTH_LONG_CAPTION+5)) {						
+						$temp=$utilObj->shorten($_POST['caption'],LENGTH_LONG_CAPTION);
 						$fData->caption=$temp;
 					}
 				} else {
@@ -583,6 +603,12 @@ class pagePostStory {
 		}
 * 
  */	
+		// check user has minimum # of friends - to prevent spam
+		if (isset($_POST['fb_sig_friends']) AND count(explode(',',$_POST['fb_sig_friends']))<MIN_FRIENDS) {
+			// suspiciously low # of friends to be posting
+			$fData->alert='Please add more friends to your Facebook profile before you post stories here. This helps us minimize spam. Sorry for the inconvenience.';
+			$fData->result=false;						
+		}
  		//title 
 		if (strcmp(strtoupper($fData->title),$fData->title)==0) {
 			$fData->title=$temp=ucwords(strtolower($fData->title));
@@ -673,11 +699,12 @@ class pagePostStory {
 
 	function buildImageSelector($mode='link') {
 		// Code for image selector
-		$code = '<fb:editor-custom><div id="story_selector_box" class="attachment_stage" style="display: none;">';
+		$code='<div class="hidden">';
+		$code .= '<fb:editor-custom><div id="story_selector_box" class="attachment_stage" style="display: none;">';
 		$code .= '<div id="attachment_stage_area" class="attachment_stage_area">';
 		$code .= '<div class="stage_internal share_media">';
 		$code .= '<div class="external_stage has_image">';
-		$code .= '<div class="thumbnail_viewer" id="thumbnail_viewer993568">';
+		$code .= '<div class="thumbnail_viewer" id="thumbnail_viewer">';
 		$code .= '<div class="thumbnail_stage">';
 		$code .= '<h4>Choose a Thumbnail</h4>';
 		$code .= '<div class="selector clearfix">';
@@ -705,6 +732,7 @@ class pagePostStory {
 		$code .= '</div>';
 		$code .= '</div><!-- end attachment_stage_area -->';
 		$code .= '</div><!-- end story_selector_box --></fb:editor-custom>';
+		$code.='</div>';
 		return $code;
 	}	
 	

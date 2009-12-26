@@ -27,10 +27,10 @@ class newswire {
 	
 	function add($wire) {
 		// check for duplicate
-		$chkDup=$this->db->queryC("SELECT id FROM Newswire WHERE url='$wire->url';");
+		$chkDup=$this->db->queryC("SELECT id FROM Newswire WHERE url='$wire->url' AND feedType='$wire->feedType';");
 		if (!$chkDup) {
 			// insert the story into the table
-			$this_query=$this->db->insert("Newswire","title,caption,source,url,date,wireid,feedType","'$wire->title','$wire->caption','$wire->source','$wire->url','$wire->date',$wire->wireid,'$wire->feedType'");
+			$this_query=$this->db->insert("Newswire","title,caption,source,url,date,wireid,feedType,feedid","'$wire->title','$wire->caption','$wire->source','$wire->url','$wire->date',$wire->wireid,'$wire->feedType',$wire->feedid");
 			$newId=$this->db->getId();
 			return $newId;	
 		} else 
@@ -41,26 +41,36 @@ class newswire {
 		require_once(PATH_CORE.'/classes/content.class.php');
 		$cObj=new content($this->db);
 		$info=$this->getWireStory($wireid);
+		require_once(PATH_CORE.'/classes/parseStory.class.php');
+		$psObj = new parseStory();
+		require_once(PATH_CORE.'/classes/utilities.class.php');
+		$this->utilObj=new utilities($this->db);						
+		$info->title=stripslashes($info->title);
+		$info->caption=stripslashes($this->utilObj->shorten($info->caption));
+		// to do - replace proxy feed urls with final redirect
+		$info->title=$psObj->cleanTitle($info->title);		
 		// create permalink	
 		$info->permalink=$cObj->buildPermalink($info->title);
-		$this->db->log($info->permalink);
 		// serialize the content
+		$info->title=mysql_real_escape_string($info->title);
+		$info->caption=mysql_real_escape_string($info->caption);
 		$story=$cObj->serialize(0,$info->title,$info->caption,$info->source,$info->url,$info->permalink,$userinfo->ncUid,$userinfo->name,$userinfo->userid,'',$userinfo->votePower,0,0);
 		// post wire story to content
-		$siteContentId=$cObj->add($story);		
+		$siteContentId=$cObj->add($story);
 		return $siteContentId;
 	}								
 		
-	function serialize($title='',$caption='',$source='',$url='',$date='',$wireid=0,$feedType='wire') {
+	function serialize($title='',$caption='',$source='',$url='',$date='',$wireid=0,$feedType='wire',$feedid=0) {
 		// creates an object for an action
 		$data= new stdClass;
-		$data->title=$this->db->safe($title);
-		$data->caption=$this->db->safe($caption);
+		$data->title=mysql_real_escape_string($title);
+		$data->caption=mysql_real_escape_string($caption);
 		$data->source=$source;
-		$data->url=$url;
+		$data->url=mysql_real_escape_string($url);
 		$data->date=$date;
-		$data->wireid=$wireid;
+		$data->wireid=$wireid; // deprecated
 		$data->feedType=$feedType;
+		$data->feedid=$feedid;
 		return $data;
 	}
 
@@ -115,7 +125,9 @@ class newswire {
 		$this->templateObj->registerTemplates(MODULE_ACTIVE,'newswire');
 		require_once(PATH_CORE.'/classes/utilities.class.php');
 		$this->utilObj=new utilities($this->db);				
-		$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS * FROM Newswire WHERE date<now() AND date > date_sub(NOW(), INTERVAL ".AGE_STORY_MAX_DAYS." DAY) ORDER BY date DESC LIMIT 50;");
+		$this->templateObj->db->result=$this->templateObj->db->query("select id,title,caption,source,url,wireid	from Newswire where (
+		   select count(*) from Newswire as f where f.wireid= Newswire.wireid and f.id > Newswire.id 
+		) < 5 ORDER BY id DESC;");
 		$rowTotal=$this->templateObj->db->countFoundRows();
 		$this->templateObj->db->setTemplateCallback('timeSince', array($this->utilObj, 'time_since'), 'date');
 		$this->templateObj->db->setTemplateCallback('caption', array($this->templateObj, 'cleanString'), array('caption', 500));		
@@ -207,7 +219,7 @@ class newswire {
 						break;
 						default:
 							// to do - remove broken postedbyid = userid join
-							$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS Content.*,UserInfo.fbId FROM Content LEFT JOIN UserInfo ON (Content.userid = UserInfo.userid) WHERE date>date_sub(NOW(), INTERVAL ".AGE_STORY_MAX_DAYS." DAY) ORDER BY date DESC LIMIT $startRow,".ROWS_PER_PAGE.";");
+							$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS Content.*,UserInfo.fbId FROM Content LEFT JOIN UserInfo ON (Content.userid = UserInfo.userid) WHERE date>date_sub(NOW(), INTERVAL ".AGE_STORY_MAX_DAYS." DAY) AND isBlocked=0 ORDER BY date DESC LIMIT $startRow,".ROWS_PER_PAGE.";");
 							$rowTotal=$this->templateObj->db->countFoundRows();
 							$pagingHTML=$this->templateObj->paging($currentPage,$rowTotal,ROWS_PER_PAGE,'?p=stories&o=all&filter=all&currentPage=');			
 							$this->templateObj->db->setTemplateCallback('storyImage', array($this->templateObj, 'getStoryImage'), 'imageid');
@@ -284,12 +296,12 @@ class newswire {
 		$this->templateObj->db->setTemplateCallback('caption', array($this->templateObj, 'cleanString'), 'caption');
 		$code=$this->templateObj->mergeTemplate($this->templateObj->templates['postedList'],$this->templateObj->templates['postedItem']);
 
-		$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS * FROM Content WHERE  siteContentId=".$cid." LIMIT 1");
+		$this->templateObj->db->result=$this->templateObj->db->query("SELECT SQL_CALC_FOUND_ROWS Content.*,ContentImages.url FROM Content LEFT JOIN ContentImages ON (Content.siteContentId=ContentImages.siteContentId) WHERE  Content.siteContentId=".$cid." LIMIT 1");
 		$storyInfo=$this->templateObj->db->read();
 		
 		$retArray=array('title'=>trim($storyInfo->title),
 						'storyLink'=>URL_CANVAS.'?p=read&o=comments&cid='.$cid.'&record',
-						'image'=>'http://www.newscloud.com/images/scaleImage.php?id='.$storyInfo->imageid.'&x=120&y=120&fixed=x&crop',
+						'image'=>$storyInfo->imageUrl,
 						'story'=>$code
 						);		
 

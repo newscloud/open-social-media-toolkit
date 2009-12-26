@@ -65,8 +65,8 @@ class pageTeam {
 				$inside .= 'Nuking....';
 				$inside .= $this->debugNukeUser();
 			} */	
-			if (isset($_GET['newsignup'])) {
-				$inside=$this->page->buildMessage('success','Please verify your email address','<p>You will soon receive an email with a link to verify your email address. If you do not receive this email, <i>please check your spam folder.</i></p>').$inside;
+			if (isset($_GET['newsignup'])) {				
+				//$inside=$this->page->buildMessage('success','Please verify your email address','<p>You will soon receive an email with a link to verify your email address. If you do not receive this email, <i>please check your spam folder.</i></p>').$inside;
 				mail('newscloud@gmail.com', SITE_TITLE.' Sign Up By '.$this->page->session->u->email, 'No more to say.', 'From: support@newscloud.com'."\r\n");									
 			}			
 		} 				
@@ -234,8 +234,8 @@ class pageTeam {
 		if ($userid)
 			$memberfriends = pageTeam::getMemberFriends($db, $userid);
 		$code =	'<div class="panelBar clearfix"><h2>'.$panelTitle.' ('.count($memberfriends).')</h2>';		
-		$code .=  '<div class="bar_link"><a href="?p=invite" onclick="switchPage(\'invite\');return false;">Invite more</a></div><div id="friendsSeeAll" class="bar_link '.($state=='collapsed'?'':'hidden').'"><a href="#" onClick="refreshTeamFriendsList(\'expanded\');return false;">See all</a></div>';
-		$code .=  '<div id="friendsSeeFewer" class="bar_link '.($state=='collapsed'?'hidden':'').'"><a class="" href="#" onClick="refreshTeamFriendsList(\'collapsed\');return false;">See fewer</a></div>';
+		$code .=  '<div class="bar_link"><a href="?p=invite" onclick="switchPage(\'invite\');return false;">Invite more</a></div><div id="friendsSeeAll" class="bar_link '.($state=='collapsed'?'':'hidden').'"><a href="#" onclick="refreshTeamFriendsList(\'expanded\');return false;">See all</a></div>';
+		$code .=  '<div id="friendsSeeFewer" class="bar_link '.($state=='collapsed'?'hidden':'').'"><a class="" href="#" onclick="refreshTeamFriendsList(\'collapsed\');return false;">See fewer</a></div>';
 		if ($state == 'collapsed')
 		{
 			$maxfriends = 6;

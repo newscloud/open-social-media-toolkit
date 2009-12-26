@@ -2,6 +2,11 @@
 
 Class MembersController extends AppController {
 	var $name = 'Members';
+
+	public function index() {
+				$this->render();
+	}
+
 			/****************************************************************
 			 *  Manage Members section
 			 ***************************************************************/
@@ -646,9 +651,287 @@ Class MembersController extends AppController {
 				}
 	}
 
-
-	public function index() {
+	/****************************************************************
+	 *  Manage Cards section
+	 ***************************************************************/
+	public function cards() {
+				$cards = $this->db->load_all();
+				$this->set('cards', $cards);
 				$this->render();
+	}
+	
+	public function view_card() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for($this->name, 'cards'));
+				}
+				if (($card = $this->db->load($id))) {
+					$this->set('card', $card);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for('members', 'cards'));
+				}
+	}
+
+	public function new_card() {
+				$this->render();
+	}
+
+	public function create_card() {
+				if (isset($_POST['card']['name'])) {
+					if ($_POST['card']['dateAvailable'] == '')
+						$_POST['card']['dateAvailable'] = date("Y-m-d H:i:s", time());
+					if (($id = $this->db->insert($_POST['card'])) > 0) {
+						set_flash(array('notice' => 'Successfully created card!'));
+						redirect(url_for('members', 'cards', $id));
+					} else {
+						set_flash(array('error' => 'Could not create your card! Please try again. '.$id));
+						redirect(url_for('members', 'new_card'));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'new_card'));
+				}
+	}
+
+	public function modify_card() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for($this->name, 'cards'));
+				}
+				if (($card = $this->db->load($id))) {
+					$this->set('card', $card);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for('members', 'cards'));
+				}
+	}
+
+	public function update_card() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for($this->name, 'cards'));
+				}
+				if (isset($_POST['card']['name'])) {
+					if (($result = $this->db->update($_POST['card'])) == 1) {
+						set_flash(array('notice' => 'Successfully updated card.'));
+						redirect(url_for('members', 'cards', $id));
+					} else {
+						set_flash(array('error' => 'Could not update your card! Please try again. '.$result));
+						redirect(url_for('members', 'modify_card', $id));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'modify_card', $id));
+				}
+	}
+
+	public function destroy_card() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current card for id: $id"));
+					redirect(url_for($this->name, 'cards'));
+				}
+				if (($result = $this->db->delete($id)) == 1) {
+					set_flash(array('notice' => 'Successfully deleted card.'));
+					redirect(url_for('members', 'cards'));
+				} else {
+					set_flash(array('error' => 'Could not delete card. Please try again. '.$result));
+					redirect(url_for('members', 'cards'));
+				}
+	}
+
+	/****************************************************************
+	 *  Manage folders section
+	 ***************************************************************/
+	public function folders() {
+				$folders = $this->db->load_all();
+				$this->set('folders', $folders);
+				$this->render();
+	}
+
+	public function view_folders() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for($this->name, 'folders'));
+				}
+				if (($folder = $this->db->load($id))) {
+					$this->set('folder', $folder);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for('members', 'folders'));
+				}
+	}
+
+	public function new_folder() {
+				$this->render();
+	}
+
+	public function create_folder() {
+				if (isset($_POST['folder']['title'])) {
+					if (($id = $this->db->insert($_POST['folder'])) > 0) {
+						set_flash(array('notice' => 'Successfully created folder!'));
+						redirect(url_for('members', 'folders', $id));
+					} else {
+						set_flash(array('error' => 'Could not create your folder! Please try again. '.$id));
+						redirect(url_for('members', 'new_folder'));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'new_folder'));
+				}
+	}
+
+	public function modify_folder() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for($this->name, 'folders'));
+				}
+				if (($folder = $this->db->load($id))) {
+					$this->set('folder', $folder);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for('members', 'folders'));
+				}
+	}
+
+	public function update_folder() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for($this->name, 'folders'));
+				}
+				if (isset($_POST['folder']['title'])) {
+					if (($result = $this->db->update($_POST['folder'])) == 1) {
+						set_flash(array('notice' => 'Successfully updated folder.'));
+						redirect(url_for('members', 'folders', $id));
+					} else {
+						set_flash(array('error' => 'Could not update your folder! Please try again. '.$result));
+						redirect(url_for('members', 'modify_folder', $id));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'modify_folder', $id));
+				}
+	}
+
+	public function destroy_folder() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folder for id: $id"));
+					redirect(url_for($this->name, 'folders'));
+				}
+				if (($result = $this->db->delete($id)) == 1) {
+					set_flash(array('notice' => 'Successfully deleted folder.'));
+					redirect(url_for('members', 'folders'));
+				} else {
+					set_flash(array('error' => 'Could not delete folder. Please try again. '.$result));
+					redirect(url_for('members', 'folders'));
+				}
+	}
+
+	/****************************************************************
+	 *  Manage folderlinks section
+	 ***************************************************************/
+	public function folderlinks() {
+				$folderlinks = $this->db->load_all();
+				$this->set('folderlinks', $folderlinks);
+				$this->render();
+	}
+
+	public function view_folderlink() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for($this->name, 'folderlinks'));
+				}
+				if (($folderlink = $this->db->load($id))) {
+					$this->set('folderlink', $folderlink);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for('members', 'folderlinks'));
+				}
+	}
+
+	public function new_folderlink() {
+				$this->render();
+	}
+
+	public function create_folderlink() {
+				if (isset($_POST['folderlink']['title'])) {
+					$_POST['folderlink']['url']=trim($_POST['folderlink']['url']);
+					if (($id = $this->db->insert($_POST['folderlink'])) > 0) {
+						set_flash(array('notice' => 'Successfully created folderlink!'));
+						redirect(url_for('members', 'folderlinks', $id));
+					} else {
+						set_flash(array('error' => 'Could not create your folderlink! Please try again. '.$id));
+						redirect(url_for('members', 'new_folderlink'));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'new_folderlink'));
+				}
+	}
+
+	public function modify_folderlink() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for($this->name, 'folderlinks'));
+				}
+				if (($folderlink = $this->db->load($id))) {
+					$this->set('folderlink', $folderlink);
+					$this->render();
+				} else {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for('members', 'folderlinks'));
+				}
+	}
+
+	public function update_folderlink() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for($this->name, 'folderlinks'));
+				}
+				if (isset($_POST['folderlink']['title'])) {
+					$_POST['folderlink']['url']=trim($_POST['folderlink']['url']);
+					if (($result = $this->db->update($_POST['folderlink'])) == 1) {
+						set_flash(array('notice' => 'Successfully updated folderlink.'));
+						redirect(url_for('members', 'folderlinks', $id));
+					} else {
+						set_flash(array('error' => 'Could not update your folderlink! Please try again. '.$result));
+						redirect(url_for('members', 'modify_folderlink', $id));
+					}
+				} else {
+					set_flash(array('error' => 'Form data not submitted properly, please try again.'));
+					redirect(url_for('members', 'modify_folderlink', $id));
+				}
+	}
+
+	public function destroy_folderlink() {
+				$id = $this->params['id'];
+				if ($id === 0) {
+					set_flash(array('error' => "Sorry no current folderlink for id: $id"));
+					redirect(url_for($this->name, 'folderlinks'));
+				}
+				if (($result = $this->db->delete($id)) == 1) {
+					set_flash(array('notice' => 'Successfully deleted folderlink.'));
+					redirect(url_for('members', 'folderlinks'));
+				} else {
+					set_flash(array('error' => 'Could not delete folderlink. Please try again. '.$result));
+					redirect(url_for('members', 'folderlinks'));
+				}
 	}
 
 }

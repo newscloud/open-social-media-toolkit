@@ -308,8 +308,27 @@ class VideoTable
 		
 		// service is left to default since an embed code was specified, we dont really need to know...
 		
-		return $video->insert();
-		
+		return $video->insert();		
+	}
+
+	function createVideoForIdea($userid=0,$embedcode='',$title='Idea Video')
+	{
+		$video = self::getRowObject();
+		$video->title = $title;
+		$video->userid = $userid;
+		$video->embedCode = $embedcode;
+		$video->dateCreated = date('Y-m-d H:i:s', time());
+		$video->status = 'pending';
+		// look for duplicate
+		$chkDup=$this->db->queryC("SELECT id FROM Videos WHERE embedCode='$embedcode' AND userid=$userid");
+		if ($chkDup===false) {
+			// service is left to default since an embed code was specified, we dont really need to know...
+			return $video->insert(); // returns id of new video
+		} else {
+			$d=$this->db->readQ($chkDup);
+			return $d->id;
+		}
+  			
 	}
 	
 	function getVideosForCompletedChallenge($completedid)

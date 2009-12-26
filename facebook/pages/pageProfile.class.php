@@ -145,19 +145,7 @@ class pageProfile {
 		*/
 		if ($this->page->isAjax) return $inside;
 		// build the profile page	
-	/*	$code.=$this->page->setHiddenVariables('profile');			
-
-		$code.='<div id="pageBody">';
-		$code.=$this->page->buildJavaScript();
-		$code.=$this->page->buildPageTabs('profile');
-
-		$code.='<div id="pageContent">';
-		$code.=$inside;		
-		
-		$code.='</div><!-- end pageContent -->';
-		$code.=$this->page->buildDialog();
-		$code.='</div><!-- end pageBody -->';
-*/
+	
 		$code=$this->page->constructPage('profile',$inside);
 		
 		

@@ -162,14 +162,14 @@ img{border:0px;}
 .bold { font-weight: bold; }
 
 blockquote {
-	background: transparent url(http://www.facebook.com/images/start_quote_small.gif) no-repeat scroll -1px 0;
+	background: transparent url({URL_BASE}/index.php?p=cache&img=start_quote_small.gif) no-repeat scroll -1px 0;
 	color:#333333;
 	line-height: 14px;
 	margin: 0 0 10px 0;
 	padding: 0 0 0 16px; } 
 
 blockquote .quotes {
-	background:transparent url(http://www.facebook.com/images/end_quote_small.gif) no-repeat scroll right bottom;
+	background:transparent url({URL_BASE}/index.php?p=cache&img=end_quote_small.gif) no-repeat scroll right bottom;
 	padding: 0 15px 0 0; } 
 
 .bullet_list ul {
@@ -338,7 +338,7 @@ a.powered:hover {
 	width: 100%;
 	height: 25px;
 	position: relative;
-	top: -26px;
+	top: -22px;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	float: right;
@@ -350,7 +350,7 @@ a.powered:hover {
 #pageTabs .tabs {
 	border-bottom: 1px solid #1d7195;
 	width: 100%;
-	height: 23px;
+	height: 19px;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px; }
 
@@ -404,7 +404,8 @@ a.powered:hover {
 	font-weight: bold;
 	font-size: 12px;
 	line-height: normal;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;	}
+	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
+	display: inline; }
 
 .ie6 .toggle_tabs li a, .ie7 .toggle_tabs li a {display:inline-block;}
 
@@ -433,7 +434,7 @@ a.powered:hover {
 #subNav {
 	clear: both;
 	width: 100%;
-	height: 20px;
+	height: 1.5em;
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	display: inline-block;
@@ -472,7 +473,7 @@ a.powered:hover {
 	font-weight: bold;
 	font-size: 11px;
 	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
-	}
+	display: inline; }
 
 #subNav .toggle_tabs li a.selected {
 	margin: 0px 0px 0px 0px;
@@ -1270,8 +1271,6 @@ li {
 }
 
 .list_stories .profilePicLarger img { /* djm: need a small profile pic for action feed that doesnt override fb pic sizes */
-	/*width: 30px;
-	height: 30px;*/
 }
 
 .storyBlockMeta {
@@ -1625,3 +1624,6 @@ li {
 	text-align:center;
 	margin:0px 0px 10px 0px;
 }
+
+#accountAgeSpecificOptInText {display:none;}
+.inputLinkNoBorder {border:none;width:100%;}

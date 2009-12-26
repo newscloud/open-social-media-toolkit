@@ -33,20 +33,11 @@ else
 
 $db->query("UPDATE Content set isFeatured = 0 WHERE isFeatured = 1");
 $sql = sprintf("REPLACE INTO FeaturedTemplate SET id = 1, template = '%s', story_1_id = %s, story_2_id = %s, story_3_id = %s, story_4_id = %s, story_5_id = %s, story_6_id = %s", $template, $story_1_id, $story_2_id, $story_3_id, $story_4_id, $story_5_id, $story_6_id);
-
 $db->query($sql);
 $db->query("UPDATE Content set isFeatured = 1 WHERE siteContentId IN ($story_1_id, $story_2_id, $story_3_id, $story_4_id, $story_5_id, $story_6_id)");
 // clear out the cache of the home top stories
 require_once(PATH_CORE.'/classes/template.class.php');
 $templateObj=new template($db);
 $templateObj->resetCache('home_feature');
-// send feature notifications
-require_once PATH_FACEBOOK."/classes/app.class.php";
-$app=new app(NULL,true);
-$facebook=&$app->loadFacebookLibrary();			
-require_once(PATH_CORE.'/classes/subscriptions.class.php');
-$subObj=new SubscriptionsManager($db);
-$subObj->loadFacebook($facebook);
-$subObj->deliverFeatures();
 
 ?>

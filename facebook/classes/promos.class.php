@@ -11,7 +11,7 @@ class promos {
 	{
 		if (is_null($db)) 
 		{ 
-			require_once('db.class.php');
+			require_once(PATH_CORE.'classes/db.class.php');
 			$this->db=new cloudDatabase();
 		} else
 			$this->db=$db;		
@@ -22,7 +22,6 @@ class promos {
 		// only at 12 am hour
 		// gets a list of those who have registered between day x and day y
 		// sends them a promo notification in blocks of 100		
-		$this->db->log('inside promo send');
 		require_once(PATH_CORE.'/classes/template.class.php');
 		require_once PATH_FACEBOOK."/classes/app.class.php";
 		$this->templateObj=new template($this->db);						

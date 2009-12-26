@@ -73,7 +73,7 @@ class pageLeaders {
         	if ($key==$view) $selected='selected';
         	else $selected = '';
         	$code .= '<a id="'.$key.'LeaderView" class="feedFilterButton '.$selected.'"  
-        				href="#" onClick="setLeaderView(\''.$key.'\'); return false;">'.$field.'</a> &nbsp;&nbsp;';        	
+        				href="#" onclick="setLeaderView(\''.$key.'\'); return false;">'.$field.'</a> &nbsp;&nbsp;';        	
         }
 
         if (ENABLE_ACTION_REWARDS)
@@ -84,7 +84,7 @@ class pageLeaders {
 	        	if ($key==$filter) $selected='selected';
 	        	else $selected = '';
 	        	$code .= '<a id="'.$key.'LeaderFilter" class="feedFilterButton '.$selected.'"  
-	        				href="#" onClick="setLeaderFilter(\''.$key.'\'); return false;">'.$field.'</a> &nbsp;&nbsp;';        	
+	        				href="#" onclick="setLeaderFilter(\''.$key.'\'); return false;">'.$field.'</a> &nbsp;&nbsp;';        	
 	        }
         }
         

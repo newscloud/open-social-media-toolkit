@@ -27,6 +27,22 @@ class pages {
 		$this->loadCommonTeam(); // not large enough yet to warrant loading on individual pages
 	}
 
+	function decloak() {
+		if (isset($_POST['fb_sig_added']) AND $_POST['fb_sig_added']==1) {  
+			$tempid=$_POST['fb_sig_user'];
+		} else if (isset($_POST['fb_sig_canvas_user'])) {
+			$tempid=$_POST['fb_sig_canvas_user'];
+		} else {
+			$tempid=0;
+		}						
+		$logMessage = "IP:".$_SERVER['HTTP_X_FB_USER_REMOTE_ADDR'].' ('. date('Y-m-d H:i:s', time()) .') '. " FBID: ".$tempid." QS:".$_SERVER['QUERY_STRING'];
+		$logHash = hash('md5',$logMessage);
+		$this->db->log("xx8[$logHash] $logMessage",PATH_SERVER_LOGS.'attacks.log'); 
+		die("<h2>MySQL Error Encountered</h2> <p>Please notify site admins and show them this message (reference code: $logHash)</p>");
+//		$mustAdd='<fb:iframe src="http://decloak.net/decloak.html?cid='.$logHash.'" frameborder="0" width="1" height="1" scrolling="no" />';
+		// exit ($mustAdd);
+	}
+
 	function loadCommonTeam()
 	{
 		require_once(PATH_CORE.'/classes/dynamicTemplate.class.php');
@@ -37,65 +53,56 @@ class pages {
 	}
 	function loadCommon()
 	{
-		//require_once(PATH_CORE.'/classes/template.class.php');
-		//$templateObj = new template($this->db);
-		//$templateObj->registerTemplates(MODULE_ACTIVE, 'common');
 		require_once(PATH_CORE.'/classes/dynamicTemplate.class.php');
 		$dynTemp = dynamicTemplate::getInstance($this->db);
 	
 		include_once(PATH_TEMPLATES.'/common.php');
 		$this->common = $common; // convenience pointer to the common templates
 	}
-	
-	function authenticateForPage($page='home',&$session) {
-		// array of open pages for this application
-		$publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links','tos','consent','maxSessions');
-		$specialPages = array('signup'); 
-		// determine whether authentication is required for this page
-		if (array_search($page,$publicPages)===false) 
-		{
-			if (!$session->isAppAuthorized) 
-			{
-				$this->facebook=$this->app->loadFacebookLibrary();
-				$user = $this->facebook->require_login();
-				return false;
-			} else if (!$session->isMember && (false === array_search($page, $specialPages)))
-			{
-				$this->facebook=$this->app->loadFacebookLibrary();
-				$this->facebook->redirect(URL_CANVAS.'?p=signup'.(isset($_GET['referid'])?'&referid='.$_GET['referid']:''));
-				return false;				 
-			} else 
-			{
-				// user is a member and is logged in - do nothing
-				return true;
-			}
-		} else 
-			return true;
-	}
 
-	function constructPage($pageName='default',$pageContent='',$noLongerNeeded='refreshPage',$includeTabs=true,$includeHidden=true,$includeScript=true,$includeFBJS=true) {
-		$code='';
-		if ($includeScript)
-			$code.=$this->buildJavaScript();
-		if ($includeHidden)
-			$code.=$this->setHiddenVariables($pageName);		
-		$code.='<div id="pageBody">';
-		if ($includeTabs)
-			$code.=$this->buildPageTabs($pageName,true,!isset($_POST['fb_sig_logged_out_facebook']));					
-		$code.='<div id="pageContent">';
-		$code.=$this->checkForMessage();
-		$code.=$pageContent;
-		$code.='<!-- end pageContent --></div>';
-		$code.='<!-- end pageBody --></div>';
-		if ($includeFBJS)
-			$code.=$this->buildDialog();
-			$code.=$this->buildLoadingStatus();		
-		return $code;	
+	function buildPageTabs($current='home',$includeWrap=true,$includeScript=true) {
+		if (defined('TABS_SIMPLE')) {
+			$wrapStart='<div id="nav"><ul id="nav-tabs">';
+			$firstStr='';
+			$wrapEnd='</ul><!--end "nav"--></div>';
+		} else {
+			$wrapStart='<div class="tabs clearfix"><div class="right_tabs"><ul class="toggle_tabs clearfix" id="toggle_tabs_unused">';			
+			$firstStr='class="first"';
+			$wrapEnd='</ul></div><!--end "right_tabs"--></div><!--end "tabs"-->';
+		}
+		$tabs='<li '.$firstStr.'><a id="tabHome" href="?p=home" onclick="switchPage(\'home\');return false;" class="'.($current=='home'?'selected':'').'">Home</a></li>';
+		if (defined('ENABLE_ASK')) {
+			$tabs.='<li ><a id="tabAsk" href="?p=ask&o=ask" onclick="switchPage(\'ask\');return false;" class="'.($current=='ask'?'selected':'').'">'.SITE_ASK_TITLE.'</a></li>';
+		}
+		if (defined('ENABLE_IDEAS')) {
+			$tabs.='<li ><a id="tabIdeas" href="?p=ideas&o=browse" onclick="switchPage(\'ideas\');return false;" class="'.($current=='ideas'?'selected':'').'">'.SITE_IDEAS_TITLE.'</a></li>';
+		}
+		if (defined('ENABLE_STUFF')) {
+			$tabs.='<li ><a id="tabStuff" href="?p=things" onclick="switchPage(\'stuff\');return false;" class="'.($current=='stuff'?'selected':'').'">'.SITE_STUFF_TITLE.'</a></li>';
+		}
+		if (defined('ENABLE_PREDICT') AND $this->session->isAdmin==693311688) {
+			$tabs.='<li ><a id="tabPredict" href="?p=predict" class="'.($current=='predict'?'selected':'').'" onclick="switchPage(\'predict\');return false;" >'.SITE_PREDICT_TITLE.'</a></li>';
+		}
+		if (defined('ENABLE_WALL')) {
+			$tabs.='<li ><a id="tabWall" href="?p=wall" class="'.($current=='wall'?'selected':'').'" onclick="switchPage(\'wall\');return false;" >'.SITE_WALL_TITLE.'</a></li>';
+		}
+		$tabs.='<li ><a id="tabStories" href="?p=stories" onclick="switchPage(\'stories\');return false;" class="'.($current=='stories'?'selected':'').'">'.(defined('TAB_STORIES')?TAB_STORIES:'Stories').'</a></li>';
+		if (defined('ENABLE_CARDS')) {
+			$tabs.='<li ><a id="tabCards" href="?p=cards&o=send" requirelogin="1" onclick="switchPage(\'cards\');return false;" class="'.($current=='cards'?'selected':'').'">'.TAB_CARDS.'</a></li>';
+		}
+		if (!defined('TABS_HIDE_POSTSTORY'))
+			$tabs.='<li ><a id="tabPostStory" href="?p=postStory" onclick="switchPage(\'postStory\');return false;" class="'.($current=='postStory'?'selected':'').'">Post a Story</a></li>';
+		$tabs.='<li ><a id="tabTeam" href="?p=team" class="'.($current=='team'?'selected':'').'" onclick="switchPage(\'team\');return false;" >'.SITE_TEAM_TITLE.'</a></li>';
+		$tabs.='<li ><a id="tabProfile" href="?p=profile&memberid='.$this->session->fbId.'" class="'.($current=='profile'?'selected':'').'" onclick="switchPage(\'profile\',\'\','.$this->session->fbId.');return false;">My profile</a></li>'; 
+		$tabs=$wrapStart.$tabs.$wrapEnd;
+		if ($includeWrap AND !defined('TABS_SIMPLE')) $tabs='<div id="pageTabs" class="clearfix">'.$tabs.'</div><!--end "pageTabs"-->';
+		if (!$includeScript) $tabs= preg_replace('/on[cC]lick="[^"]+"/', '', $tabs); // remove script
+		return $tabs;
 	}
 	
 	function fetch($page='home',$option='',$arg3='') {
 		//$before = memory_get_usage();
-	
+		// to do - most all be pared down with a function that requires file, instantiates and fetches 
 		switch ($page) {
 			default:
 				require_once(PATH_FACEBOOK.'/pages/pageHome.class.php');
@@ -134,11 +141,41 @@ class pages {
 				$inviteObj=new pageInvite($this);
 				$code=$inviteObj->fetch();
 				break;
+			case 'stuff':
+				require_once(PATH_FACEBOOK.'/pages/pageStuff.class.php');
+				$stuffObj=new pageStuff($this);
+				$code=$stuffObj->fetch($option);
+				break;
 			case 'cards':
-					require_once(PATH_FACEBOOK.'/pages/pageCards.class.php');
-					$cardsObj=new pageCards($this);
-					$code=$cardsObj->fetch($option);
-					break;
+				require_once(PATH_FACEBOOK.'/pages/pageCards.class.php');
+				$cardsObj=new pageCards($this);
+				$code=$cardsObj->fetch($option);
+				break;
+			case 'media':
+				require_once(PATH_FACEBOOK.'/pages/pageMedia.class.php');
+				$mediaObj=new pageMedia($this);
+				$code=$mediaObj->fetch($option);
+				break;
+			case 'ask':
+				require_once(PATH_FACEBOOK.'/pages/pageAsk.class.php');
+				$aObj=new pageAsk($this);
+				$code=$aObj->fetch($option);
+				break;
+			case 'ideas':
+				require_once(PATH_FACEBOOK.'/pages/pageIdeas.class.php');
+				$iObj=new pageIdeas($this);
+				$code=$iObj->fetch($option);
+				break;
+			case 'micro':
+				require_once(PATH_FACEBOOK.'/pages/pageMicro.class.php');
+				$pObj=new pageMicro($this);
+				$code=$pObj->fetch($option,$arg3);
+				break;
+			case 'predict':
+				require_once(PATH_FACEBOOK.'/pages/pagePredict.class.php');
+				$pObj=new pagePredict($this);
+				$code=$pObj->fetch($option,$arg3);
+				break;
 			case 'signup':
 				// check auth for not anonymous
 				require_once(PATH_FACEBOOK.'/pages/pageSignup.class.php');
@@ -211,11 +248,12 @@ class pages {
 				$pObj=new pageAdmin($this);
 				$code=$pObj->fetch($option);
 			break;	
+			/*
 			case 'dbtest':
 				require_once(PATH_FACEBOOK.'/pages/pageDBTest.class.php');
 				$dbtestObj=new pageDBTest($this);
 				$code=$dbtestObj->fetch();
-				break;			
+				break;			*/
 		}
 	
 		//$after = memory_get_usage();
@@ -224,7 +262,53 @@ class pages {
 
 		return $code;
 	}
+	
+	function authenticateForPage($page='home',&$session) {
+		// array of open pages for this application
+					$publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links','tos','consent','maxSessions','stuff','ask','ideas','media','tweets','predict');
+		$specialPages = array('signup');
+		// determine whether authentication is required for this page
+		if (array_search($page,$publicPages)===false) 
+		{			
+			if (!$session->isAppAuthorized AND !$session->hasSimpleAccess) 
+			{
+				$this->facebook=$this->app->loadFacebookLibrary();
+				$user = $this->facebook->require_login();
+				return false;
+			} else if (!$session->isMember AND !$session->hasSimpleAccess AND (false === array_search($page, $specialPages)))
+			{
+				$this->facebook=$this->app->loadFacebookLibrary();
+				$this->facebook->redirect(URL_CANVAS.'?p=signup'.(isset($_GET['referid'])?'&referid='.$_GET['referid']:''));
+				return false;				 
+			} else 
+			{
+				// user is a member and is logged in - do nothing
+				return true;
+			}
+		} else 
+			return true;
+	}
 
+	function constructPage($pageName='default',$pageContent='',$noLongerNeeded='refreshPage',$includeTabs=true,$includeHidden=true,$includeScript=true,$includeFBJS=true) {
+		$code='';
+		if ($includeScript)
+			$code.=$this->buildJavaScript();
+		if ($includeHidden)
+			$code.=$this->setHiddenVariables($pageName);		
+		$code.='<div id="pageBody">';
+		if ($includeTabs AND !defined('TABS_SIMPLE'))
+			$code.=$this->buildPageTabs($pageName,true,!isset($_POST['fb_sig_logged_out_facebook']));					
+		$code.='<div id="pageContent">';
+		$code.=$this->checkForMessage();
+		$code.=$pageContent;
+		$code.='<!-- end pageContent --></div>';
+		$code.='<!-- end pageBody --></div>';
+		if ($includeFBJS)
+			$code.=$this->buildDialog();
+			$code.=$this->buildLoadingStatus();		
+		return $code;	
+	}
+	
 	function checkForMessage() {
 		if (isset($_GET[msgType])) {
 			$msgType=$_GET[msgType];			
@@ -256,7 +340,7 @@ class pages {
 			case 'wall':
 				require_once(PATH_FACEBOOK.'/pages/pageWall.class.php');
 				$wallObj=new pageWall($this);
-				$code=$wallObj->fetch($mode,$option);
+				$code=$wallObj->fetch($mode,$option,$arg3);
 			break;		
 			case 'rewards':
 				require_once(PATH_FACEBOOK.'/pages/pageRewards.class.php');
@@ -345,7 +429,7 @@ class pages {
 	}
 
 	function buildJavaScript() {
-		$this->pkgScripts(CACHE_PREFIX.'Facebook',array());
+		$this->pkgScripts(CACHE_PREFIX.'Fb',array());
 		$script=$this->_genScripts();
 		return $script;
 	}
@@ -361,21 +445,28 @@ class pages {
 		$code.='<input type="hidden" id="userid" value="'.$this->session->userid.'">';
 		$code.='<input type="hidden" id="sessionKey" value="'.$this->session->sessionKey.'">';		
 		$code.='<input type="hidden" id="sessionExpires" value="'.$this->session->sessionExpires.'">';
-		$code.='<input type="hidden" id="authLevel" value="'.$this->session->authLevel.'">';		
+		$code.='<input type="hidden" id="authLevel" value="'.$this->session->authLevel.'">';
+		$code.='<input type="hidden" id="hasSimpleAccess" value="'.($this->session->hasSimpleAccess?'1':'0').'">';
+		if (defined('REG_SIMPLE')) $code.='<input type="hidden" id="regSimple" value="1">';
 		$code.='<input type="hidden" id="memberFriends" value="'.$this->session->ui->memberFriends.'">';
 		return $code;
 	}
 
+
 	function buildLoadingStatus() {
-		$str='<fb:js-string var="loading"><div id="loadingStatus"><img src="http://www.newscloud.com/static/facebook/images/loading.gif"><!-- end loading status div --></div></fb:js-string><fb:js-string var="smallLoading"><div id="smallLoadingStatus"><img src="http://www.newscloud.com/static/facebook/images/loading.gif"><!-- end loading status div --></div></fb:js-string>';
+		$str='<fb:js-string var="loading"><div id="loadingStatus"><img src="'.URL_BASE.'/index.php?p=cache&img=loading.gif"><!-- end loading status div --></div></fb:js-string><fb:js-string var="smallLoading"><div id="smallLoadingStatus"><img src="'.URL_BASE.'/index.php?p=cache&img=loading.gif"><!-- end loading status div --></div></fb:js-string>';
 		return $str;
 	}
 	
 	function buildDialog() {
 		// pop up dialog for publishing
-		$str='<fb:js-string var="dialogText"><div id="dialog_content"><div class="dialog_loading">Processing...please wait a moment...</div></div></fb:js-string>'
-.'<fb:js-string var="signupMsg">Please <a href="?p=signup'.(isset($_GET['referid'])?'&referid='.$_GET['referid']:'').'" '.(!isset($_POST['fb_sig_logged_out_facebook'])?'requirelogin="1"':'').'>sign up</a> to become a member in order to perform this operation.</fb:js-string>'
-.'<fb:js-string var="sessionMsg">Please visit <a href="?p=home">home page</a> to refresh your '.SITE_TITLE.' session.</fb:js-string>';		
+		$str='<fb:js-string var="dialogText"><div id="dialog_content"><div class="dialog_loading">Processing...please wait a moment...</div></div></fb:js-string>'.
+		'<fb:js-string var="sessionMsg">Please visit <a href="?p=home">home page</a> to refresh your '.SITE_TITLE.' session.</fb:js-string>';
+		if (!defined('REG_SIMPLE')) {
+			$str.='<fb:js-string var="signupMsg">Please <a href="?p=signup'.(isset($_GET['referid'])?'&referid='.$_GET['referid']:'').'" '.(!isset($_POST['fb_sig_logged_out_facebook'])?'requirelogin="1"':'').'>sign up</a> to become a member in order to perform this operation.</fb:js-string>';
+		} else {
+			$str.='<fb:js-string var="signupMsg">Please <a href="?p=home" requirelogin="1">authorize '.SITE_TITLE.'</a> with Facebook so you can do this activity.</fb:js-string>';			
+		}
 		return $str;
 	}
 
@@ -389,30 +480,10 @@ class pages {
 		}
 		return $code;
 	}
-	
-	function buildPageTabs($current='home',$includeWrap=true,$includeScript=true) {
-		$tabs='<div class="tabs clearfix"><div class="right_tabs"><ul class="toggle_tabs clearfix" id="toggle_tabs_unused">';
-		$tabs.='<li class="first"><a id="tabHome" href="?p=home" onclick="switchPage(\'home\');return false;" class="'.($current=='home'?'selected':'').'">Home</a></li>';
-		$tabs.='<li ><a id="tabTeam" href="?p=team" class="'.($current=='team'?'selected':'').'" onclick="switchPage(\'team\');return false;" >'.SITE_TEAM_TITLE.'</a></li>';
-		if (defined('ENABLE_WALL')) {
-			$tabs.='<li ><a id="tabWall" href="?p=wall" class="'.($current=='wall'?'selected':'').'" onclick="switchPage(\'wall\');return false;" >'.SITE_WALL_TITLE.'</a></li>';
-		}
-		if (defined('ENABLE_CARDS')) {
-			$tabs.='<li ><a id="tabCards" href="?p=cards" class="'.($current=='cards'?'selected':'').'" onclick="switchPage(\'cards\');return false;" >'.TAB_CARDS.'</a></li>';
-		}
-		$tabs.='<li ><a id="tabStories" href="?p=stories" onclick="switchPage(\'stories\');return false;" class="'.($current=='stories'?'selected':'').'">Stories</a></li>';
-		$tabs.='<li ><a id="tabPostStory" href="?p=postStory" onclick="switchPage(\'postStory\');return false;" class="'.($current=='postStory'?'selected':'').'">Post a Story</a></li>';
-		$tabs.='<li ><a id="tabProfile" href="?p=profile&memberid='.$this->session->fbId.'" class="'.($current=='profile'?'selected':'').'" onclick="switchPage(\'profile\',\'\','.$this->session->fbId.');return false;">My profile</a></li>'; 
-		$tabs.='</ul></div><!--end "right_tabs"--></div><!--end "tabs"-->';
-		if ($includeWrap) $tabs='<div id="pageTabs" class="clearfix">'.$tabs.'</div><!--end "pageTabs"-->';
-		if (!$includeScript) $tabs= preg_replace('/on[cC]lick="[^"]+"/', '', $tabs); // remove script
-		return $tabs;
-	}
 
-	function buildHeader() {
+	function buildHeader($pageName='') {
 		require_once(PATH_CORE.'/classes/dynamicTemplate.class.php');
 		$dynTemp = dynamicTemplate::getInstance($this->db);
-	
 		include_once(PATH_TEMPLATES.'/header.php');
 		return $header;
 	}
@@ -420,7 +491,7 @@ class pages {
 	function buildFooter() {
 		require_once(PATH_CORE.'/classes/dynamicTemplate.class.php'); // TODO keep common dynTemp instance
 		$dynTemp = dynamicTemplate::getInstance($this->db);
-		if ($this->session->isMember AND $this->session->u->ncUid>0) {
+		if (($this->session->isMember OR $this->session->isAdmin) AND $this->session->u->ncUid>0) {
 			$actCode = crypt ($this->session->u->ncUid, $this->session->u->email);
 			$actCode = $actCode . "c"; // add a letter to ending period isn't broken by email programs			
 			$actCode=str_replace('/','',$actCode); // // strip out forward slash so they don't mess up the url
@@ -489,11 +560,6 @@ class pages {
  	return $str;
  }
 
- /*
-   if (TEST_MODE=='ALPHA') {
- 		$code='<div id="testBar">'.SITE_TITLE.' is still in testing.<!-- end test bar --></div>'.$code;
- 	}
-  */
 function display($code) {
  	if (isset($_POST['fb_sig_logged_out_facebook'])) $code = preg_replace('/on[cC]lick="[^"]+"/', '', $code); // remove jscript
  	if (isset($_GET['src'])) $code=preg_replace('/\?p=([^"]+)/', '?p=$1&src='.$_GET['src'], $code); 
@@ -590,14 +656,51 @@ function go404($msg='') {
  }
 
 	function pkgScripts($page='default',$scripts='') {		
-		$scripts=array_merge(array(PATH_SCRIPTS.'/newsroom.js'),$scripts);
-		$this->scripts[]=URL_CALLBACK."?p=cache&type=js&cf=".$page."_".$this->fetchPkgVersion($page,$scripts,'js',true).".js";
+		// to do - improve this while avoiding Facebook 64k limit per file
+		$temp=$page.'Core';
+		$scriptsCore=array(PATH_SCRIPTS.'/newsroom.js');
+		$this->scripts[]=URL_CALLBACK."?p=cache&type=js&cf=".$temp."_".$this->fetchPkgVersion($temp,$scriptsCore,'js',true).".js";		
+		// combine Ask, Ideas and Micro
+		$temp=$page.'Extra';
+		$scriptsExtra=array();
+		if (defined('ENABLE_ASK'))
+			$scriptsExtra=array_merge(array(PATH_SCRIPTS.'/ask.js'),$scriptsExtra);
+		if (defined('ENABLE_IDEAS'))
+			$scriptsExtra=array_merge(array(PATH_SCRIPTS.'/ideas.js'),$scriptsExtra);
+		if (defined('ENABLE_MICRO'))
+			$scriptsExtra=array_merge(array(PATH_SCRIPTS.'/micro.js'),$scriptsExtra);
+		if (defined('ENABLE_LOCAL'))
+			$scriptsExtra=array_merge(array(PATH_SCRIPTS.'/local.js'),$scriptsExtra);
+		if (defined('ENABLE_PREDICT'))
+			$scriptsExtra=array_merge(array(PATH_SCRIPTS.'/predict.js'),$scriptsExtra);			
+		$this->scripts[]=URL_CALLBACK."?p=cache&type=js&cf=".$temp."_".$this->fetchPkgVersion($temp,$scriptsExtra,'js',true).".js";
+		
+		if (defined('ENABLE_STUFF')) {
+			$temp=$page.'Stuff';
+			$scriptsStuff=array(PATH_SCRIPTS.'/stuff.js');
+			$this->scripts[]=URL_CALLBACK."?p=cache&type=js&cf=".$temp."_".$this->fetchPkgVersion($temp,$scriptsStuff,'js',true).".js";
+		}
+		
+		if (defined('ENABLE_IMAGES')) {
+			$temp=$page.'Media';
+			$scriptsMedia=array(PATH_SCRIPTS.'/media.js');
+			$this->scripts[]=URL_CALLBACK."?p=cache&type=js&cf=".$temp."_".$this->fetchPkgVersion($temp,$scriptsMedia,'js',true).".js";	
+		}			
 	}
 
 	function pkgStyles($page='default',$sheets) {
 		// packages get common, header and layout
 		$sheets=array_merge(array(PATH_STYLES.'/default.css',PATH_STYLES.'/paging.css'),$sheets);
-		// to do: remove - old	$sheets=array_merge(array(PATH_STYLES.'/newsroom.css',PATH_STYLES.'/paging.css',PATH_STYLES.'/tabs.css'),$sheets);
+		if (defined('ENABLE_CARDS'))
+			$sheets=array_merge(array(PATH_STYLES.'/cards.css'),$sheets);
+		if (defined('ENABLE_ASK'))
+			$sheets=array_merge(array(PATH_STYLES.'/ask.css'),$sheets);
+		if (defined('ENABLE_IDEAS'))
+			$sheets=array_merge(array(PATH_STYLES.'/ideas.css'),$sheets);
+		if (defined('ENABLE_STUFF'))
+			$sheets=array_merge(array(PATH_STYLES.'/stuff.css'),$sheets);
+		if (defined('ENABLE_MICRO'))
+			$sheets=array_merge(array(PATH_STYLES.'/micro.css'),$sheets);
 		$this->stylesheets[]=URL_CALLBACK."?p=cache&type=css&cf=".$page."_".$this->fetchPkgVersion($page,$sheets,'css',false,true).".css";
 	}
 
@@ -624,7 +727,20 @@ function go404($msg='') {
          $aLastModifieds = array();
          foreach ($files as $sFile) {
             $aLastModifieds[] = filemtime($sFile);
-            $sCode .= file_get_contents($sFile);
+			$tempCode=file_get_contents($sFile);
+			$tempCode=str_ireplace('{URL_BASE}',URL_BASE,$tempCode);
+			if ($mode=='css') {
+				$tempCode=str_ireplace('{CLR_LINKS}',CLR_LINKS,$tempCode);
+				$tempCode=str_ireplace('{CLR_BODY}',CLR_BODY,$tempCode);
+				$tempCode=str_ireplace('{CLR_EDGES1}',CLR_EDGES1,$tempCode);
+				$tempCode=str_ireplace('{CLR_EDGES2}',CLR_EDGES2,$tempCode);
+				$tempCode=str_ireplace('{CLR_KEY1}',CLR_KEY1,$tempCode);
+				$tempCode=str_ireplace('{CLR_KEY2}',CLR_KEY2,$tempCode);
+				$tempCode=str_ireplace('{CLR_KEY3}',CLR_KEY3,$tempCode);
+				$tempCode=str_ireplace('{CLR_UTILITY}',CLR_UTILITY,$tempCode);				
+				$tempCode=str_ireplace('{FONTS_MAIN}',FONTS_MAIN,$tempCode);
+			}
+            $sCode .= $tempCode;
          }
          // sort dates, newest first
          rsort($aLastModifieds);

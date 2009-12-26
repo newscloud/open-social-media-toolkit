@@ -1,0 +1,15 @@
+// Apache MOD_REWRITE is required
+// http://httpd.apache.org/docs/1.3/mod/mod_rewrite.html
+
+// URLs for Redirects and Console
+<VirtualHost *>
+   ServerName default.com
+   ServerAdmin admin@default.com
+    DocumentRoot /var/www/sites/default/
+    DefaultType text/html
+    ErrorLog /var/log/apache2/error.log
+    CustomLog /var/log/apache2/access.log combined
+    RewriteEngine on
+    RewriteRule ^(.*)\.ini$ [F]
+</VirtualHost>
+

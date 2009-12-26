@@ -26,7 +26,8 @@ class ForumTopicsTable
 		"intro" => 			"TEXT default ''",
 		"lastChanged" => 		"DATETIME",
 		"numPostsToday" => 	"INT(4) default 0",
-		"numViewsToday" => 	"INT(4) default 0"
+		"numViewsToday" => 	"INT(4) default 0",
+		"isHidden" => "TINYINT(1) default 0"
 	);
 
 	static $keydefinitions = array(); 		
@@ -63,15 +64,29 @@ class ForumTopicsTable
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	function testPopulate()
+	function initialize()
 	{
-		
-		$Forum = $this->getRowObject();
-		$Forum->title = 'Rescue a cute animal from a politically incorrect predicament';
-		$Forum->pointValue = 100;
-		$Forum->dateStart = date('Y-m-d H:i:s', time());
-		if (!self::checkForumExistsByTitle($Forum->title)) $Forum->insert();
-		
+		// initialize first topic if none exist	
+  		$chkDup=$this->db->queryC("SELECT ".self::$idname." FROM ".self::$tablename);
+		if ($chkDup===false) {
+			$Forum = $this->getRowObject();
+			$Forum->title = 'General';
+			$Forum->intro = 'Talk about anything related to '.SITE_TOPIC;
+			$Forum->numPostsToday = 0;
+			$Forum->numViewsToday = 0;
+			$Forum->lastChanged=date('Y-m-d H:i:s', time());
+			$Forum->insert();			
+		}
+  		$chkDup=$this->db->queryC("SELECT ".self::$idname." FROM ".self::$tablename." WHERE title='Feedback';");
+		if ($chkDup===false) {
+			$Forum = $this->getRowObject();
+			$Forum->title = 'Feedback';
+			$Forum->intro = 'Please share your feedback with us for '.SITE_TITLE;
+			$Forum->numPostsToday = 0;
+			$Forum->numViewsToday = 0;
+			$Forum->lastChanged=date('Y-m-d H:i:s', time());
+			$Forum->insert();			
+		}
 	}
 	
 	

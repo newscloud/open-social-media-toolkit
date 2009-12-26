@@ -176,7 +176,7 @@ class ChallengeTable
 						
 						array("submission","addAppTab","Add App Tab to profile","Add the ".SITE_TITLE." application tab to your Facebook profile so your friends can see what you've been up to. See <a href=\"".URL_CANVAS."?p=faq\">the FAQ</a> for details. Then send us a screenshot of the tab on your profile! File size must be under 2mb. (Don't know how to take a screenshot? Once again, <a href=\"".URL_CANVAS."?p=faq\">hit up the FAQ</a>.)","0","0","100","1","0","0","disabled"),
 						array("submission","profileBoxWall","Add profile box to your wall",'To add the profile box to your profile, visit settings -> application settings, then Edit Settings for ".SITE_TITLE.". Click the Profile tab and "add" next to Box to add the profile box to your profile. Then, move the profile box to your wall page. (If you don\'t see the button, you may have already added this.) Send us a screenshot (file size under 2mb) of the box on your profile! (Don\'t know how to take a screenshot? <a href="'.URL_CANVAS.'?p=faq">Hit up the FAQ</a>.)
-						<div><fb:add-section-button section="profile" /><br clear="all" /></div>',"0","0","100","1","1","0","enabled"),
+						<div><fb:add-section-button section="profile" /><br clear="all" /></div>',"0","0","100","1","1","0","disabled"),
 						array("submission","blog","Blog about ".SITE_TITLE."","Forget blogging about what you had for lunch. We know you love ".SITE_TITLE." -- so why not write a post about it on your blog and send us the link?","0","0","75","25","1","0","disabled"),						
 						
 						);

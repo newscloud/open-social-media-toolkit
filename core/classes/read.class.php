@@ -1,5 +1,7 @@
 <?php
-// TEST
+
+define ("LENGTH_SHORT_CAPTION",350);
+define ("LENGTH_LONG_CAPTION",700);
 
 class read {
 	
@@ -49,6 +51,7 @@ class read {
 			$code=$this->templateObj->fetchCache($cacheName);
 		} else {		
 			$code='';
+			if (!is_numeric($cid)) exit ('error3');
 			$q=$this->db->query("SELECT isBlogEntry,url,videoid,widgetid FROM Content WHERE siteContentId=$cid");
 			$data=$this->db->readQ($q);
 			$isBlogEntry=$data->isBlogEntry;
@@ -56,7 +59,7 @@ class read {
 			$widgetid=$data->widgetid;
 			$url=$data->url;
 			$this->templateObj->db->setTemplateCallback('submitBy', array($this->templateObj, 'submitBy'), 'postedByName');
-			$this->templateObj->db->setTemplateCallback('caption', array($this->templateObj, 'cleanString'), array('caption', 350));
+			$this->templateObj->db->setTemplateCallback('caption', array($this->templateObj, 'cleanString'), array('caption', LENGTH_LONG_CAPTION));
 			$this->templateObj->db->setTemplateCallback('cmdVote', array($this->templateObj, 'commandVote'), 'siteContentId');
 			$this->templateObj->db->setTemplateCallback('cmdComment', array($this->templateObj, 'commandComment'), 'siteContentId');
 			$this->templateObj->db->setTemplateCallback('mbrLink', array($this->templateObj, 'memberLink'), 'userid');
@@ -64,9 +67,9 @@ class read {
 			$this->templateObj->db->setTemplateCallback('timeSince', array($this->utilObj, 'time_since'), 'date');
 			$this->templateObj->db->setTemplateCallback('cmdRead', array($this->templateObj, 'commandRead'), 'permalink');
 			$this->templateObj->db->setTemplateCallback('videoIntro', array($this, 'getVideoIntro'), 'videoIntroId');
-			$this->templateObj->db->result=$this->templateObj->db->query("SELECT Content.*, UserInfo.fbId FROM Content LEFT JOIN UserInfo ON (Content.userid = UserInfo.userid OR Content.postedById = UserInfo.userid) WHERE siteContentid=$cid");
+			$this->templateObj->db->result=$this->templateObj->db->query("SELECT Content.*,ContentImages.url as imageUrl,UserInfo.fbId FROM Content LEFT JOIN UserInfo ON (Content.userid = UserInfo.userid OR Content.postedById = UserInfo.userid) LEFT JOIN ContentImages ON (ContentImages.siteContentId=Content.siteContentId) WHERE Content.siteContentId=$cid");
 			if ($isBlogEntry==0) {
-				$this->templateObj->db->setTemplateCallback('storyImage', array($this->templateObj, 'getLargeStoryImage'), 'imageid');
+				$this->templateObj->db->setTemplateCallback('storyImage', array($this->templateObj, 'getLargeStoryImageFromUrl'), 'imageUrl');
 				$code.=$this->templateObj->mergeTemplate($this->templateObj->templates['readStoryList'],$this->templateObj->templates['readStoryItem']);				
 			} else {
 				// blog entry
@@ -152,11 +155,13 @@ class read {
 		$q=$this->db->query("SELECT title,caption FROM Content WHERE siteContentId=$cid");
 		$data=$this->db->readQ($q);
 		$title=htmlentities($this->templateObj->ellipsis($data->title),ENT_QUOTES);
-		$caption=htmlentities($this->templateObj->ellipsis($data->caption,350),ENT_QUOTES);
+		$caption=htmlentities($this->templateObj->ellipsis($data->caption,LENGTH_SHORT_CAPTION),ENT_QUOTES);
+		$tweetStr=$this->templateObj->ellipsis($data->title,80).' '.URL_HOME.'?x='.base_convert($cid,10,36).' '.(defined('TWITTER_HASH')?TWITTER_HASH:'');
+		$tweetThis='<a class="tweetButton" href="http://twitter.com/?status='.rawurlencode($tweetStr).'" target="_blank"><img src="'.URL_CALLBACK.'?p=cache&img=tweet_button.gif" alt="tweet this" /></a>';		
 		$shareButton='<div style="float:left;padding:0px 5px 0px 0px;display:inline;"><fb:share-button class="meta"><meta name="title" content="'.$title.'"/><meta name="description" content="'.$caption.'" /><link rel="target_url" href="'.$storyLink.'"/></fb:share-button><!-- end share button wrap --></div>';
- 		$code = '<div  id="actionLegend">'.$shareButton.'<p class="bold">Link to this story </p>';
+ 		$code = '<div  id="actionLegend">'.$shareButton.'<p class="bold">'.$tweetThis.' Link to this story </p>';
           $code.= '<div class="pointsTable"><table cellspacing="0"><tbody>'.
-				'<tr><td>'.$storyLink.'</td></tr>'.
+				'<tr><td><input class="inputLinkNoBorder" type="text" value="'.$storyLink.'" onfocus="this.select();" /></td></tr>'.
 				'</tbody></table></div><!-- end points Table --></div><!-- end story link box -->';
  		return $code;	
  	}			
@@ -174,7 +179,6 @@ class read {
 
 	function fetchComments($cid) 
 	{
-		
 		$this->initObjs();
 		$this->templateObj->db->result = $this->templateObj->db->query("SELECT Comments.*, UserInfo.fbId, Videos.embedCode FROM Comments LEFT JOIN UserInfo ON Comments.userid = UserInfo.userid LEFT JOIN Videos ON Comments.videoid=Videos.id WHERE siteContentId=$cid AND isBlocked = 0 ORDER BY date ASC");
 		$commentTotal = $this->templateObj->db->countFoundRows();
@@ -197,11 +201,10 @@ class read {
 		$code .= $this->fetchVideoCommentForm($cid);
 		$code .= '<div class="panel_block">';
 		//$code .= '<form name="commentForm" action="?p=read&o=comments&cid='.$cid.'" method="post">'; // </form>
-		if ($this->session->isMember) {
+		// REG_SIMPLE
+		if ($this->session->isMember OR (defined('REG_SIMPLE') AND $this->session->isLoggedIn)) {
 			$code .= '<div id="commentMsgDiv" style="overflow: hidden"><textarea name="commentMsg" class="formfield comments" id="commentMsg" rows="8"></textarea></div><br clear="all"/>';
 			$code .= '<input type="button" class="btn_1" value="Post your comment" onclick="postComment('.$cid.');">';
-			
-			
 		} else {
 			$code .= '<a '.(!isset($_POST['fb_sig_logged_out_facebook'])?'requirelogin="1"':'').' href="?p=signup'.(isset($_GET['referid'])?'&referid='.$_GET['referid']:'').'" class="btn_1">Join the '.SITE_TEAM_TITLE.' to post comments!</a>';
 		}
@@ -213,7 +216,6 @@ class read {
 	{
 		require_once(PATH_CORE .'/classes/video.class.php');
 		$code =  '<div style="text-align:center;">'. videos::buildPlayerFromLink($videoURL, $width, $height) .'</div>';
-			
 		return $code;
 	}
 	
@@ -303,7 +305,7 @@ class read {
 						//'<span class="pipe">|</span>'.
 						//'<input type="hidden" id="facebook_link" value="http://www.facebook.com/home.php?filter=app_2392950137" />'.
 						' or '.
-						'<a href="http://www.facebook.com/home.php?filter=app_2392950137"
+						'<a href="http://www.facebook.com/video/?record"
 								target="_blank" >Facebook</a>'.
 						'</fb:editor-custom>';
 			
@@ -369,9 +371,9 @@ class read {
 	
 			// Bio profile
 			$code = '<div class="panel_1"><div class="panelBar clearfix">';
-			$code .= '<h2>Posted by <a href="'.URL_CANVAS.'?p=profile&memberid='.$fbId.'" onClick="return switchPage(\'profile\', \'\', '.$fbId.');"><fb:name ifcantsee="Anonymous" uid="'.$fbId.'" capitalize="true" firstnameonly="false" linked="false" /></a></h2>';
+			$code .= '<h2>Posted by <a href="'.URL_CANVAS.'?p=profile&memberid='.$fbId.'" onclick="return switchPage(\'profile\', \'\', '.$fbId.');"><fb:name ifcantsee="Anonymous" uid="'.$fbId.'" capitalize="true" firstnameonly="false" linked="false" /></a></h2>';
 			$code .= '</div><!-- end panelBar -->';
-			$code .= '<div class="panel_block"><div class="thumb"><a href="'.URL_CANVAS.'?p=profile&memberid='.$fbId.'" onClick="return switchPage(\'profile\', \'\', '.$fbId.');"><fb:profile_pic uid="'.$fbId.'" linked="false" size="square" /></a></div><!--end "thumb"-->';
+			$code .= '<div class="panel_block"><div class="thumb"><a href="'.URL_CANVAS.'?p=profile&memberid='.$fbId.'" onclick="return switchPage(\'profile\', \'\', '.$fbId.');"><fb:profile_pic uid="'.$fbId.'" linked="false" size="square" /></a></div><!--end "thumb"-->';
 			$code .= '<div class="storyBlockWrap"><p>'.$bio.'</p></div>';
 			$code .= '</div><!-- end panel_block --></div><!-- end panel_1 -->';
 	
@@ -418,38 +420,40 @@ class read {
 				$this->templateObj->cacheContent($cacheName,$temp); 			
 			}
 			$code.=$temp;
-  			$cacheName='read_chat_'.$cid.'_'.$session->userid;
-			if ($this->templateObj->checkCache($cacheName,5)) {
-				// still current, get from cache
-				$temp=$this->templateObj->fetchCache($cacheName);
-			} else {
-				$temp = '<div class="panel_1"><div class="panelBar clearfix"><h2>Chat with friends</h2></div>';
-				$temp .= '<div class="panel_block">';
-				// look for cached online_presence list for this user
-				$cacheName2='chat_'.$session->userid;
-				if ($this->templateObj->checkCache($cacheName2,5)) {
+			if ($this->session->isAppAuthorized) {
+	  			$cacheName='read_chat_'.$cid.'_'.$session->userid;
+				if ($this->templateObj->checkCache($cacheName,5)) {
 					// still current, get from cache
-					$liExcludeStr=$this->templateObj->fetchCache($cacheName2);
+					$temp=$this->templateObj->fetchCache($cacheName);
 				} else {
-					$this->session->facebook=$this->session->app->loadFacebookLibrary();
-					$arExclude=$this->session->facebook->api_client->fql_query("select uid from user where online_presence='offline' AND uid IN (SELECT uid2 FROM friend WHERE uid1 = ".$this->session->ui->fbId." );");				
-					if (count($arExclude)>0) {
-						$excludeStr='';
-						foreach ($arExclude as $arrfbId) {						
-							$excludeStr.=$arrfbId['uid'].',';							
-						}
-						$liExcludeStr='exclude_ids="'.trim($excludeStr,',').'"';
-						$this->templateObj->cacheContent($cacheName2,$liExcludeStr);	
-					} else 
-						$liExcludeStr='';
-				}								
-				$q=$this->db->query("SELECT Content.title FROM Content WHERE siteContentid=$cid;");
-				$data=$this->db->readQ($q);
-				$temp.='<div style="margin-left:18px;"><fb:chat-invite msg="Let\'s chat about '.htmlentities($data->title,ENT_QUOTES).' at '.SITE_TITLE.'. You can read the story here '.URL_CANVAS.'?p=read&cid='.$cid.'&referid='.$session->userid.'&chat" condensed="false" /></div>'; //'.$liExcludeStr.' 
-				$temp .= '</div><!-- end panel_block --></div><!-- end panel_1 -->';	
-				$this->templateObj->cacheContent($cacheName,$temp);			
-			}					
-			$code.=$temp;
+					$temp = '<div class="panel_1"><div class="panelBar clearfix"><h2>Chat with friends</h2></div>';
+					$temp .= '<div class="panel_block">';
+					// look for cached online_presence list for this user
+					$cacheName2='chat_'.$session->userid;
+					if ($this->templateObj->checkCache($cacheName2,5)) {
+						// still current, get from cache
+						$liExcludeStr=$this->templateObj->fetchCache($cacheName2);
+					} else {
+						$this->session->facebook=$this->session->app->loadFacebookLibrary();
+						$arExclude=$this->session->facebook->api_client->fql_query("select uid from user where online_presence='offline' AND uid IN (SELECT uid2 FROM friend WHERE uid1 = ".$this->session->ui->fbId." );");				
+						if (count($arExclude)>0) {
+							$excludeStr='';
+							foreach ($arExclude as $arrfbId) {						
+								$excludeStr.=$arrfbId['uid'].',';							
+							}
+							$liExcludeStr='exclude_ids="'.trim($excludeStr,',').'"';
+							$this->templateObj->cacheContent($cacheName2,$liExcludeStr);	
+						} else 
+							$liExcludeStr='';
+					}								
+					$q=$this->db->query("SELECT Content.title FROM Content WHERE siteContentid=$cid;");
+					$data=$this->db->readQ($q);
+					$temp.='<div style="margin-left:18px;"><fb:chat-invite msg="Let\'s chat about '.htmlentities($data->title,ENT_QUOTES).' at '.SITE_TITLE.'. You can read the story here '.URL_CANVAS.'?p=read&cid='.$cid.'&referid='.$session->userid.'&chat" condensed="false" /></div>'; //'.$liExcludeStr.' 
+					$temp .= '</div><!-- end panel_block --></div><!-- end panel_1 -->';	
+					$this->templateObj->cacheContent($cacheName,$temp);			
+				}									
+				$code.=$temp;
+			}
 		}
 		return $code;
 	}

@@ -674,10 +674,44 @@ Class Street_teamController extends AppController {
 				}
 	}
 
-			
-			/****************************************************************
-			 *  General Main section
-			 ***************************************************************/
+	/****************************************************************
+	 *  MISC Helper Tasks
+	 ***************************************************************/
+	public function updateScores() {
+		global $init;
+		require_once (PATH_CORE. '/classes/teamBackend.class.php');
+		$teamObj = new teamBackend();
+		$teamObj->updateScores();		
+		redirect(url_for('street_team', 'index'));
+	}
+
+	public function prepareContest() {
+		global $init;
+		require_once (PATH_CORE. '/classes/teamBackend.class.php');
+		$teamObj = new teamBackend();
+		$teamObj->prepareContest();
+		redirect(url_for('street_team', 'index'));
+	}
+
+	public function resetContestAdmins() {
+		global $init;
+		require_once (PATH_CORE. '/classes/teamBackend.class.php');
+		$teamObj = new teamBackend();
+		$teamObj->testResetAdmins();
+		redirect(url_for('street_team', 'index'));
+	}
+	
+	public function cleanupOrphans() {
+		global $init;
+		require_once (PATH_CORE. '/classes/teamBackend.class.php');
+		$teamObj = new teamBackend();
+		$teamObj->cleanupOrphanedUsers();
+		redirect(url_for('street_team', 'index'));
+	}
+
+	/****************************************************************
+	 *  General Main section
+	 ***************************************************************/
 	public function index() {
 				disp_header();
 				echo "<h1>Index page for Street Team.</h1>";

@@ -2,7 +2,7 @@
  "http://www.w3.org/TR/html4/strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-   <title><?php echo ($title != '') ? $title : 'NewsCloud Management Console'; ?></title>
+   <title><?php echo ($title != '') ? $title : ' NewsCloud Console'; ?></title>
    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 	 <style type="text/css">
 	 /*margin and padding on body element
@@ -483,6 +483,7 @@ padding:0;
 	 -->
 
 		<div class="clear"></div>
+		<strong><?php echo SITE_TITLE; ?> Console</strong><br />
      <div id="management" class="yuimenubar yuimenubarnav" style="margin-left: 0px; width: 100%;">
        <div class="bd">
 
@@ -495,6 +496,9 @@ padding:0;
                  <ul>
                    <?php if (($url = url_for('stories', 'featured'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Featured Stories</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'deliver_featured'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Deliver Features</a></li>
                    <?php endif; ?>
                    <?php if (($url = url_for('stories', 'story_posts'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Review Stories</a></li>
@@ -510,6 +514,9 @@ padding:0;
                    <?php endif; ?>
                    <?php if (($url = url_for('stories', 'edittemplates'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Site Templates</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('stories', 'list_feed'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Feed List</a></li>
                    <?php endif; ?>
                  </ul>
                </div>
@@ -531,8 +538,17 @@ padding:0;
                    <?php if (($url = url_for('members', 'outboundmessages'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Outbound Messages</a></li>
                    <?php endif; ?>
-                   <?php if (($url = url_for('members', 'forumtopics'))): ?>
+                   <?php if (($url = url_for('members', 'cards'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Cards</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'forumtopics'))):   ?> 
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Forum Topics</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'folders'))):   ?> 
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Resource Folders</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('members', 'folderlinks'))):   ?> 
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Manage Resource Links</a></li>
                    <?php endif; ?>
                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="http://www.facebook.com/apps/application.php?id=<?php global $init; echo $init['fbAppId'] ?>" target="_blank">Facebook About Page</a></li>
                  </ul>                    
@@ -568,6 +584,22 @@ padding:0;
                    <?php if (($url = url_for('street_team', 'leaders'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Leaders</a></li>
                    <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'update_weekly_leaders'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Update Weekly Leaders</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'updateScores'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Update All Scores</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'prepareContest'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Prepare Contest Start</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'resetContestAdmins'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Reset Admins</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('street_team', 'cleanupOrphans'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Clean up orphan data</a></li>
+                   <?php endif; ?>
+
                  </ul>                    
                </div>
              </div>                                        
@@ -608,6 +640,26 @@ padding:0;
 		           </li>
 		           <?php endif; ?>
 
+
+           <?php if (($url = url_for('research', false))): ?>
+           		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Research</a>
+             <div id="research" class="yuimenu">
+               <div class="bd">                    
+                 <ul>
+                   <?php if (($url = url_for('research', 'export_users'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Export Users</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('research', 'export_stories'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Export Stories</a></li>
+                   <?php endif; ?>
+                   <?php if (($url = url_for('research', 'export_challenges'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Export Challenges</a></li>
+                   <?php endif; ?>
+                 </ul>                    
+               </div>
+             </div>                                        
+           </li>
+           <?php endif; ?>
            <?php if (($url = url_for('admin', false))): ?>
            		<li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="<?php echo $url; ?>">Administrative</a>
              <div id="admin" class="yuimenu">
@@ -618,9 +670,6 @@ padding:0;
                    <?php endif; ?>
                    <?php if (($url = url_for('admin', 'cloud_properties'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Cloud Properties</a></li>
-                   <?php endif; ?>
-                   <?php if (($url = url_for('admin', 'feed_list'))): ?>
-                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Feed List</a></li>
                    <?php endif; ?>
                    <?php if (($url = url_for('admin', 'database'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Database</a></li>
@@ -634,6 +683,10 @@ padding:0;
                    <?php if (($url = url_for('admin', 'insert_survey_monkey_data'))): ?>
                    		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Load Survey Monkey CSV</a></li>
                    <?php endif; ?>
+                   <?php if (($url = url_for('admin', 'export_users'))): ?>
+                   		<li class="yuimenuitem"><a class="yuimenuitemlabel" href="<?php echo $url; ?>">Export Users</a></li>
+                   <?php endif; ?>
+
                  </ul>                    
                </div>
              </div>                                        

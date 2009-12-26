@@ -8,13 +8,98 @@
 		$currentPage=$_GET['currentPage'];
 	else
 		$currentPage=1;
+	if ($method<>'switchPage' AND ((isset($_GET['id']) AND !is_numeric($_GET['id'])))) { exit; }
 	/* begin building ajax response */
-	$sessionNotReqMethods=array('appTab','wall','fetchVideoPreview','fetchChallenges', 'fetchFeed', 'fetchLeaders','fetchFeedPage', /*'fetchRewards','fetchRewardsPage',*/'wallPublisher','fetchPublisherPage','emailAttach','showSponsor', 'parseStory','fetchDynamicDialog'); 		 
-	$sessionOptionalMethods=array('common','shareStory','shareStorySubmit','switchPage','switchTeamTab',/*'fetchRewards','fetchRewardsPage',*/'fetchNewswire','fetchNewswireWrap','fetchNewswirePage');
+	$sessionNotReqMethods=array('appTab','wall','fetchVideoPreview','fetchChallenges', 'fetchFeed', 'fetchLeaders','fetchFeedPage', 'wallPublisher','fetchPublisherPage','emailAttach','showSponsor', 'parseStory','fetchDynamicDialog','askRelated','askRefreshAnswers','ideaRelated','stuffRelated','searchAws','stuffCopyItem','stuffCopyAwsItem','slideMediaPanel','microFetchBrowse'); 		 
+	$sessionOptionalMethods=array('common','shareStory','shareStorySubmit','switchPage','switchTeamTab','fetchNewswire','fetchNewswireWrap','fetchNewswirePage','askFetchBrowseQuestions','ideaFetchBrowse','stuffRecordLike','ideaRecordLike','askRecordLike','stuffRefreshComments','stuffRefreshSearch','ideasRefreshComments','askRefreshAnswerComments','ideaShareSubmit','askShareSubmit');
 	// NOTE: AJAX methods that do not require a session must be added to the above array
 	if (array_search($method,$sessionNotReqMethods)!==false) {
-		// session not required		
+		// session not required 
 		switch ($method) {
+			case 'slideMediaPanel':
+				if (isset($_GET['pg'])) {
+					$pg=$_GET['pg'];
+					$app=setupAppFramework();
+					require_once(PATH_FACEBOOK."/classes/media.class.php");
+					$mObj=new media($db);
+					$code=$mObj->buildMediaSlider($pg,true);
+				}			
+			break;
+			case 'microFetchBrowse': // microBlogs
+				if (isset($_GET['tag'])) {
+					$tag=$_GET['tag'];
+					$page=$_GET['page'];
+					$app=setupAppFramework();
+					require_once(PATH_FACEBOOK."/classes/micro.class.php");
+					$mObj=new micro($db);
+					$code=$mObj->listMessages('recent',$tag,0,0,99);
+				}
+			break;
+			case 'stuffCopyAwsItem':
+				if (isset($_POST['asin'])) {
+					$asin=$_POST['asin'];
+					$app=setupAppFramework();
+					require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+					$stuffObj=new stuff($db);
+					$code=$stuffObj->ajaxGetAwsItem($asin);
+				}			
+			break;
+			case 'stuffCopyItem':
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+					$app=setupAppFramework();
+					require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+					$stuffObj=new stuff($db);
+					$code=$stuffObj->ajaxGetItem($id);
+				}			
+			break;
+			case 'searchAws':
+			// find stuff at Aws
+			$app=setupAppFramework();
+			require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+			$stuffObj=new stuff($db);
+			if (isset($_POST['keyword'])) 
+				$keyword=$_POST['keyword'];
+		 	else
+		 		$keyword='';
+			$code=$stuffObj->ajaxSearchAws($keyword);
+			break;
+			case 'askRefreshAnswers':
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+				} else {
+					$id=0;						
+					$error=true;
+					$errorMsg='Invalid question id';
+				}
+				require_once(PATH_FACEBOOK."/classes/ask.class.php");
+				$askObj=new ask();
+				$code=$askObj->ajaxAskRefreshAnswers($id);								
+			break;
+			case 'stuffRelated':
+				// find related questions
+				$app=setupAppFramework();
+				require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+				$stuffObj=new stuff($db);
+				$qStr=$_POST['qStr'];
+				$code=$stuffObj->findRelatedStuff($qStr);
+			break;
+			case 'askRelated':
+				// find related questions
+				$app=setupAppFramework();
+				require_once(PATH_FACEBOOK."/classes/ask.class.php");
+				$askObj=new ask($db);
+				$qStr=$_POST['qStr'];
+				$code=$askObj->findRelatedQuestions($qStr);
+			break;
+			case 'ideaRelated':
+				// find related questions
+				$app=setupAppFramework();
+				require_once(PATH_FACEBOOK."/classes/ideas.class.php");
+				$iObj=new ideas($db);
+				$qStr=$_POST['qStr'];
+				$code=$iObj->findRelatedIdeas($qStr);
+			break;
 			case 'wall':
 				$topic=requestInt('topic');				
 				if ($topic==0)
@@ -55,18 +140,13 @@
 	            require_once(PATH_FACEBOOK.'/pages/pageLeaders.class.php');
 	            $leadersObj=new pageLeaders($pagesObj);
 	            $code= $leadersObj->fetchLeaders($view,$filter,true);           
-			break;
-			
+			break;			
 			case 'fetchVideoPreview':
 				require_once(PATH_CORE .'/classes/video.class.php');
 			 	if (isset($_POST['videoURL']))
 					$videoURL = videos::getVideoURLFromEmbedCodeOrURL(stripslashes($_POST['videoURL']));
-				$code =  videos::buildPlayerFromLink($videoURL, 160, 120);
-				
+				$code =  videos::buildPlayerFromLink($videoURL, 160, 120);				
 			break;
-			
-			
-			
 			case 'fetchFeed':
 			 	if (isset($_GET['filter']))
 					$filter=$_GET['filter'];
@@ -162,6 +242,150 @@
 		$app=setupAppFramework();
 		$isSessionValid=$session->validateSession($userid,$sessionKey);			
 		switch ($method) {
+			case 'askRefreshAnswerComments':
+				$change=0;
+				if(isset($_POST['fb_sig_xid_action'])) {
+					$action = $_POST['fb_sig_xid_action'];
+					if($action == 'delete'){
+					 $change = -1;
+					}else{
+					 $change = 1;
+					}				
+				}
+				$answerid=requestInt('id');							
+				require_once(PATH_FACEBOOK."/classes/ask.class.php");
+				$askObj=new ask($db);
+				$askObj->setAppLink($app);
+				$code=$askObj->ajaxAskCommentPosted($isSessionValid,$answerid,$change);
+			break;			
+			case 'ideasRefreshComments':
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+				} else {
+					$id=0;						
+					$error=true;
+					$errorMsg='Invalid idea id';
+				}
+				$change=0;
+				if(isset($_POST['fb_sig_xid_action'])) {
+					$action = $_POST['fb_sig_xid_action'];
+					if($action == 'delete'){
+					 $change = -1;
+					}else{
+					 $change = 1;
+					}				
+				}
+				require_once(PATH_FACEBOOK."/classes/ideas.class.php");
+				$iObj=new ideas($db);
+				$iObj->setAppLink($app);
+				$code=$iObj->ajaxIdeasPostComment($isSessionValid,$id,$change);								
+			break;			
+			case 'stuffRefreshComments':
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+				} else {
+					$id=0;						
+					$error=true;
+					$errorMsg='Invalid item id';
+				}
+				$change=0;
+				if(isset($_POST['fb_sig_xid_action'])) {
+					$action = $_POST['fb_sig_xid_action'];
+					if($action == 'delete'){
+					 $change = -1;
+					} else {
+					 $change = 1;
+					}				
+				}
+				require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+				$stuffObj=new stuff($db);
+				$stuffObj->setAppLink($app);
+				$code=$stuffObj->ajaxStuffPostComment($isSessionValid,$id,$change);		
+			break;			
+			case 'stuffRefreshSearch':
+				if (isset($_GET['tagid'])) 
+					$tagid=$_GET['tagid'];
+			 	else
+			 		$tagid=0;
+				if (isset($_GET['view'])) 
+					$view=$_GET['view'];
+			 	else
+			 		$view='all';
+				if (isset($_GET['type'])) 
+					$type=$_GET['type'];
+			 	else
+			 		$type='share';
+				if (isset($_GET['status'])) 
+					$status=$_GET['status'];
+			 	else
+			 		$status='all';
+				// keyword posted thru queryParams
+				if (isset($_POST['keyword'])) 
+					$keyword=$_POST['keyword'];
+			 	else
+			 		$keyword='';
+				require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+				$sObj=new stuff();
+				if ($isSessionValid) {
+					$fbId=$session->fbId;
+					// list of friends of this user
+					$sObj->setFriends($session->ui->friends);
+				} else
+					$fbId=0;
+				$code=$sObj->fetchSearchPage(true,$fbId,$tagid,$view,$type,$status,$keyword);
+			break;						
+			case 'stuffRecordLike': // record stuff like
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+					require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+					$stuffObj=new stuff($db);
+					$code=$stuffObj->ajaxRecordLike($isSessionValid,$userid,$id);
+				} 
+			break;
+			case 'askRecordLike': // record question like		
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+					$mode=$_GET['mode'];
+					require_once(PATH_FACEBOOK."/classes/ask.class.php");
+					$askObj=new ask($db);
+					$code=$askObj->ajaxAskRecordLike($isSessionValid,$mode,$userid,$id);
+				} 
+			break;				
+			case 'ideaRecordLike': // record idea like
+				//$db->log('inside ajax.php idearecordlike'.$userid.' - '.$_GET['id']);
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+					require_once(PATH_FACEBOOK."/classes/ideas.class.php");
+					$iObj=new ideas($db);
+					$code=$iObj->ajaxIdeaRecordLike($isSessionValid,$userid,$id);
+				} 
+			break;																		
+			case 'ideaFetchBrowse':
+				if (isset($_GET['tagid'])) 
+					$tagid=$_GET['tagid'];
+			 	else
+			 		$tagid=0;
+				if (isset($_GET['view'])) 
+					$view=$_GET['view'];
+			 	else
+			 		$view='recent';
+				require_once(PATH_FACEBOOK."/classes/ideas.class.php");
+				$iObj=new ideas();
+				$code=$iObj->fetchBrowseIdeas(true,$tagid,$userid,$view);				
+			break;			
+			case 'askFetchBrowseQuestions':
+				if (isset($_GET['tagid'])) 
+					$tagid=$_GET['tagid'];
+			 	else
+			 		$tagid=0;
+				if (isset($_GET['view'])) 
+					$view=$_GET['view'];
+			 	else
+			 		$view='noanswers';
+				require_once(PATH_FACEBOOK."/classes/ask.class.php");
+				$askObj=new ask();
+				$code=$askObj->fetchBrowseQuestions(true,$tagid,$userid,$view);				
+			break;			
 			case 'switchPage':
  				$name=requestStr('name');
 				$option=requestStr('option');
@@ -169,29 +393,25 @@
 				require_once(PATH_FACEBOOK.'/classes/pages.class.php');
 				$pagesObj=new pages($app,$user,true);
 				// hybrid session requirement - some pages need session
-				$publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links');
+				$publicPages=array('home','stories','read','team','rewards','challenges','rules','leaders','404','static','links','micro','stuff','ask','ideas','media','wall','predict');
 				if ($isSessionValid OR array_search($name,$publicPages)!==false) {
 					$code=$pagesObj->fetch($name,$option,$arg3);
 				} else {
 					$code = fetchSessionAlert();	
-				}				
-				
+				}								
 			break;				
 			case 'switchTeamTab':
  				$tab=requestStr('tab');
  				$id=requestStr('id');
 				require_once(PATH_FACEBOOK.'/classes/pages.class.php');
 				$pagesObj=new pages($app,$user,true);
-				$publicPages=array('team','rewards','challenges','rules','leaders','wall', '404');
+				$publicPages=array('team','rewards','challenges','rules','leaders', '404');
 				if (($isSessionValid && $session->isMember) OR array_search($tab,$publicPages)!==false) {
 					$code=$pagesObj->fetchTeam('teamWrap',$tab,$id);
 				} else {
 					$code = fetchSessionAlert();	
 				}				
-		
 			break;	
-
-				
 			case 'fetchNewswire':
 				// change story list when filter changed
 			  	if (isset($_GET['o']))
@@ -239,7 +459,7 @@
 					$returnPage=requestStr('returnPage');
 					require_once(PATH_FACEBOOK.'/classes/shareStories.class.php');
 					$ssObj=new shareStories($app);
-					$code.=$ssObj->buildShareDialog($itemid,$returnPage);
+					$code=$ssObj->buildShareDialog($itemid,$returnPage);
 				} else {
 					// to do: improve this
 					$code = fetchSessionAlert();
@@ -261,6 +481,38 @@
 					} else {
 						$code=$result[code];
 					}					
+				} else {
+					// to do: improve this
+					$code = fetchSessionAlert();
+				}					
+			break;
+			case 'ideaShareSubmit':
+				if ($isSessionValid) {
+					if (isset($_GET['id'])) {
+						$id=$_GET['id'];
+						$app=setupAppFramework();
+						require_once(PATH_FACEBOOK."/classes/ideas.class.php");
+						$iObj=new ideas($db);
+						$iObj->setAppLink($app);						
+						$ids=$_POST['ids'];
+						$code=$iObj->ajaxShareSubmit($userid,$id,$ids);
+					}
+				} else {
+					// to do: improve this
+					$code = fetchSessionAlert();
+				}					
+			break;
+			case 'askShareSubmit':
+				if ($isSessionValid) {
+					if (isset($_GET['id'])) {
+						$id=$_GET['id'];
+						$app=setupAppFramework();
+						require_once(PATH_FACEBOOK."/classes/ask.class.php");
+						$aObj=new ask($db);
+						$aObj->setAppLink($app);						
+						$ids=$_POST['ids'];
+						$code=$aObj->ajaxShareSubmit($userid,$id,$ids);
+					}
 				} else {
 					// to do: improve this
 					$code = fetchSessionAlert();
@@ -307,8 +559,16 @@
 			$sessionKey='noSessionKey';		
 		$app=setupAppFramework();
 		if ($session->validateSession($userid,$sessionKey)!==false) {			
-			switch ($method) {
-				
+			switch ($method) {		
+				case 'askPostAnswer':
+				if (isset($_GET['id'])) {
+					$id=$_GET['id'];
+					require_once(PATH_FACEBOOK."/classes/ask.class.php");
+					$askObj=new ask($db);
+					$askObj->setAppLink($app);
+					$code=$askObj->ajaxAskPostAnswer($userid,$id);
+				} 
+				break;				
 			case 'fetchRewards':
 			 	if (isset($_GET['sort']))
 					$sort=$_GET['sort'];
@@ -494,7 +754,6 @@
 						$error = true;
 						$code = 'Too many posts. Try again in 12 hours.';
 					}
-
 					if (!$error && isset($_GET['itemid'])) {
 						$itemid=$_GET['itemid'];
 						require_once(PATH_CORE.'/classes/log.class.php');
@@ -609,7 +868,7 @@
 					$code=$nwObj->fetchNewswirePage($userid,$currentPage);
 				break;
 				case 'refreshComments':
-					if (isset($_GET['cid'])) {
+					if (isset($_GET['cid']) AND is_numeric($_GET['cid'])) {
 						$cid=$_GET['cid'];
 					} else {
 						$cid=0;						
@@ -627,7 +886,7 @@
 				break;
 				case 'postComment':
 					$error=false;
-					if (isset($_GET['cid']))
+					if (isset($_GET['cid']) AND is_numeric($_GET['cid'])) 
 						$cid=$_GET['cid'];
 					else {
 						$cid=0;
@@ -656,9 +915,7 @@
 						}
 					}
 
-					// TODO: grab videoURL, validate it, stuff it in to the $comment structure
-
-					
+					// TODO: grab videoURL, validate it, stuff it in to the $comment structure					
 					if (isset($_POST['videoURL']) and $_POST['videoURL']<>'')
 					{
 						require_once(PATH_CORE .'/classes/video.class.php');
@@ -726,6 +983,7 @@
 					// to do - this code is duped in pagesignup, move to account.class.php
 					global $init;
 					// ask NewsCloud to send an email verification request
+					/*
 					require_once (PATH_CORE.'/classes/systemStatus.class.php');
 					$ssObj=new systemStatus($db);
 					$partnerid=$ssObj->getState('partnerid');				
@@ -736,7 +994,80 @@
 						$apiObj=new apiCloud($db,$init[apiKey]);
 						$db->log($session->u->email);
 						$resp=$apiObj->sendVerifyEmailRequest(SITE_CLOUDID,$session->u->email,$partnerid); 
-					}		
+					}
+					*/		
+				break;
+				case 'mediaProfileUpload':			
+				if (isset($_POST['tempName'])) {
+					$tempName=$_POST['tempName'];
+					require_once(PATH_FACEBOOK."/classes/media.class.php");
+					$mObj=new media($db);
+					$mObj->setAppLink($app);
+					$code=$mObj->ajaxMediaProfileUpload($tempName);
+				} else {
+					$error=true;
+					$errorMsg='Invalid call';
+				}							
+				break;
+				case 'mediaRefreshProfile':
+					if (isset($_GET['imageIndex'])) {
+						$imageIndex=$_GET['imageIndex'];
+						$alpha=$_GET['alpha'];
+						$location=$_GET['location'];
+						require_once(PATH_FACEBOOK."/classes/media.class.php");
+						$mObj=new media($db);
+						$mObj->setAppLink($app);
+						$code=$mObj->ajaxRefreshPreview($userid,$imageIndex,$alpha,$location);
+					} else {
+						$error=true;
+						$errorMsg='Invalid call';
+					}							
+				break;				
+				case 'mediaRefreshProfileForm':
+					if (isset($_GET['imageIndex'])) {
+						$imageIndex=$_GET['imageIndex'];
+						require_once(PATH_FACEBOOK."/classes/media.class.php");
+						$mObj=new media($db);
+						$mObj->setAppLink($app);
+						$code=$mObj->ajaxBuildProfileForm($imageIndex,'',true);
+					} else {
+						$error=true;
+						$errorMsg='Invalid call';
+					}							
+				break;				
+				case 'stuffSetStatus':
+					if (isset($_GET['id'])) {
+						$id=$_GET['id'];
+						$newStatus=$_GET['newStatus'];
+						require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+						$sObj=new stuff($db);
+						$code=$sObj->ajaxSetStatus($id,$newStatus);
+					}
+				break;
+				case 'stuffSetVisibility':
+					if (isset($_GET['id'])) {
+						$id=$_GET['id'];
+						$newVis=$_GET['newVis'];
+						require_once(PATH_FACEBOOK."/classes/stuff.class.php");
+						$sObj=new stuff($db);
+						$code=$sObj->ajaxSetVisibility($id,$newVis);
+					}
+				break;
+				case 'banStoryPoster':
+					if (isset($_GET['cid']) AND is_numeric($_GET['cid'])) {
+						$cid=$_GET['cid'];
+						require_once(PATH_CORE."/classes/content.class.php");
+						$cObj=new content($db);
+						$code=$cObj->ajaxBanStoryPoster($app,$cid,$userid);
+					}
+				break;
+				case 'chooseHood':
+				if (isset($_GET['hood'])) {
+					$hood=$_GET['hood'];
+					require_once(PATH_FACEBOOK."/classes/local.class.php");
+					$lObj=new local($db);
+					$code=$lObj->ajaxUpdateHood($hood,$userid);
+				}											
 				break;
 			}				
 		} else {
@@ -759,7 +1090,16 @@
 		};		
 		// caution: do not assign globals by reference
 		$db=$app->db;
-		$session=$app->session;				
+		// to do - clean up when arrays get posted
+		$session=$app->session;	
+		if (isset($_POST['ids'])) {
+			$tempArr=$_POST['ids'];
+			$_POST = $db->mysql_real_escape_array($_POST);
+			$_POST['ids']=$tempArr;
+		} else {
+			$_POST = $db->mysql_real_escape_array($_POST);	
+		}
+		$_GET = $db->mysql_real_escape_array($_GET);
 		return $app;		
 	}
 	
@@ -784,7 +1124,10 @@
 		if ($isExpired) {
 			$code='<p>Session expired. Please revisit the <a href="?p=home">home page</a> to reactivate it.</p>';
 		} else {
-			$code='<p>Please <a href="?p=signup" '.(!isset($_POST['fb_sig_logged_out_facebook'])?'requirelogin="1"':'').'>sign up</a> to perform this operation.</p>';			
+			if (!defined('REG_SIMPLE'))
+				$code='<p>Please <a href="?p=signup" '.(!isset($_POST['fb_sig_logged_out_facebook'])?'requirelogin="1"':'').'>sign up</a> so you can do this activity.</p>';		
+			else	
+				$code='<p>Please <a href="?p=home" requirelogin="1">authorize '.SITE_TITLE.' application</a> with Facebook so you can do this activity.</p>';			
 		}
 		return $code;
 	}
@@ -801,4 +1144,5 @@
 		}
 		return $code;
 	}	
+	
 ?>

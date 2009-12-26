@@ -1,0 +1,10 @@
+Install APC for PHP caching performance improvements
+
+On debian etch:
+sudo apt-get install php-pear
+sudo apt-get install php5-dev apache2-prefork-dev build-essential
+sudo pecl install apc
+sudo nano /etc/php5/apache2/php.ini
+sudo /usr/sbin/apache2ctl graceful
+
+Package avail on debian lenny

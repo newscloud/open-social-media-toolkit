@@ -131,9 +131,11 @@ class pageAccount {
 		} else {
 				$fdata = $account->initFormDataFromDatabase($this->page->session->userid);
 				$code.='<h5>Please update your address information below.</h5>';
+/*
 				if ($this->page->session->u->ncUid==0) {
 					$code.=$this->page->buildMessage('error','Please verify your email address','We do not have a record of you verifying your email address. Please look in your email and spam folder for a verification request link. If you can\'t find one, <a href="#" onclick="requestVerify();return false;">request another here</a>.');	
 				}
+*/
 				$code.=$account->buildAccountAddressForm($fdata);
 			}	
 			return $code;
@@ -158,9 +160,11 @@ class pageAccount {
 			$fdata = $account->initFormDataFromDatabase($this->page->session->userid);
 							
 			$code.='<h5>Please update your subscription settings below.</h5>';
+			/*
 			if ($this->page->session->u->ncUid==0) {
 				$code.=$this->page->buildMessage('error','Please verify your email address','We do not have a record of you verifying your email address. Please look in your email and spam folder for a verification request link. If you can\'t find one, <a href="#" onclick="requestVerify();return false;">request another here</a>.');	
 			}
+			*/
 			
 			$code.=$account->buildAccountSubscribeForm($fdata);
 	
@@ -210,10 +214,11 @@ class pageAccount {
 			$fdata->researchImportance=$this->page->session->ui->researchImportance;
 							
 			$code.='<h5>Please update your account settings below.</h5>';
+			/*
 			if ($this->page->session->u->ncUid==0) {
 				$code.=$this->page->buildMessage('error','Please verify your email address','We do not have a record of you verifying your email address. Please look in your email and spam folder for a verification request link. If you can\'t find one, <a href="#" onclick="requestVerify();return false;">request another here</a>.');	
 			}
-			
+			*/
 			$code.=$account->buildAccountSettingsForm($fdata);
 	
 		}

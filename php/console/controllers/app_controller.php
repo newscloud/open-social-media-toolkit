@@ -29,7 +29,6 @@ class AppController {
 		if (!$view)
 			$view = $this->action;
 
-
 		if (!$this->skip_render) {
 			// Set some local view variables
 			$this->set_class_vars();
@@ -47,7 +46,7 @@ class AppController {
 				disp_footer();
 			} else {
 				set_flash(array('error' => 'Action does not exist.'));
-				redirect(url_for($this->name));
+				redirect(url_for($BASE_URL)); // $this->name
 			}
 		}
 

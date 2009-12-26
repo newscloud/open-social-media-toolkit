@@ -1,6 +1,5 @@
 <?php
 	// process cron jobs for cloud api
-	echo 'Starting CRON engine.<br />';	
 	/* Process incoming variable requests */	
 	if (isset($_GET['apiKey'])) {
 		$apiKey=$_GET['apiKey'];
@@ -19,6 +18,7 @@
 	
 	require_once(PATH_CORE.'/classes/cron.class.php');
 	$cObj=new cron($init['apiKey']);
+	echo 'Starting CRON engine.<br />';	
 	// when you set init variable, we populate the job list for the first time
 	if (isset($_GET['init'])) {
 		echo 'Initialize cron jobs...';

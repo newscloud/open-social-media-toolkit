@@ -14,14 +14,6 @@ if($_REQUEST['password'] == 'xxx') {
 
 if($_SESSION['authed']) {
 
-
-
-
-
-
-
-
-
 require('../connect_to_db.php');
 
 function url_for($ctrl, $action, $id=0) {

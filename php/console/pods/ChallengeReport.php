@@ -72,15 +72,15 @@ class ChallengeReport extends BasePod {
 			//$where[] = "U.optInStudy = 1 AND U.eligibility = 'team'";
 		}
 		if (isset($_REQUEST['startDate'])) {
-			$where[] = "Challenges.dateEnd > '".$_REQUEST['startDate']." 00:00:00'";
+			$where[] = "Log.t > '".$_REQUEST['startDate']." 00:00:00'";
 			$startLabel = date('l jS \of F Y', strtotime($params['startDate']));
 		} else {
 			//$where[] = "Challenges.dateEnd > '".date("Y-m-d 00:00:00", time())."'";
-			$where[] = "Challenges.dateEnd > '".date("2000-01-01 00:00:00", time())."'";
+			$where[] = "Log.t > '".date("2000-01-01 00:00:00", time())."'";
 			$startLabel = date('l jS \of F Y', time());
 		}
 		if (isset($_REQUEST['endDate'])) {
-			$where[] = "Challenges.dateEnd < '".$_REQUEST['endDate']." 23:59:59'";
+			$where[] = "Log.t < '".$_REQUEST['endDate']." 23:59:59'";
 			$endLabel = date('l jS \of F Y', strtotime($params['endDate']));
 		} else {
 			$endDate = false;
@@ -92,7 +92,7 @@ class ChallengeReport extends BasePod {
 			$currSiteId = false;
 		}
 		if (count($where)) {
-			$wherestr = ' WHERE '.join(' AND ', $where);
+			$wherestr = ' '.join(' AND ', $where);
 		} else {
 			$wherestr = '';
 		}
@@ -105,10 +105,9 @@ class ChallengeReport extends BasePod {
 		} else {
 			$usersql = "
 				SELECT id, title, requires, type, dateEnd, pointValue,
-					(SELECT COUNT(1) FROM Log LEFT JOIN ChallengesCompleted ON Log.itemid = ChallengesCompleted.id WHERE ChallengesCompleted.challengeid = Challenges.id AND action = 'completedChallenge') AS numCompletedChallenge,
+					(SELECT COUNT(1) FROM Log LEFT JOIN ChallengesCompleted ON Log.itemid = ChallengesCompleted.id WHERE $wherestr AND ChallengesCompleted.challengeid = Challenges.id AND action = 'completedChallenge') AS numCompletedChallenge,
 					(SELECT count(distinct(userid)) from ChallengesCompleted WHERE ChallengesCompleted.challengeid = Challenges.id) as numParticipants
-				FROM Challenges $wherestr
-				ORDER BY dateEnd ASC
+				FROM Challenges ORDER BY dateEnd ASC
 			";
 			//FROM Content $wherestr
 		}
@@ -140,7 +139,7 @@ class ChallengeReport extends BasePod {
 						'type' => $story['type'],
 						'requires' => $story['requires']
 					);
-				} else if ($view == 'full' || $view == 'csv') {
+				} else if ($view == 'full') {
 					$tmp = array(
 						'title' => util_link_for($story['title'], 'street_team', 'challenge_detail_report', $story['id']),
 						'siteid' => $name,
@@ -151,6 +150,17 @@ class ChallengeReport extends BasePod {
 						'numCompletedChallenge' => $story['numCompletedChallenge'],
 						'dateEnd' => $story['dateEnd']
 					);
+				} else if ($view=='csv') {
+					$tmp = array(
+						'title' => $story['title'].' id: '.$story['id'],
+						'siteid' => $name,
+						'type' => $story['type'],
+						'requires' => $story['requires'],
+						'pointValue' => $story['pointValue'],
+						'numParticipants' => $story['numParticipants'],
+						'numCompletedChallenge' => $story['numCompletedChallenge'],
+						'dateEnd' => $story['dateEnd']
+					);					
 				}
 				$jsonarr['Results']['data'][] = $tmp;
 			}

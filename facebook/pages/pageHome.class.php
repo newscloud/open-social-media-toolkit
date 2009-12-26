@@ -48,14 +48,32 @@ class pageHome {
 		$inside.=$homeObj->fetchFeature();
 		$inside.='</div><!--end "featurePanel"-->';
 		if (defined('ADS_HOME_SMALL_BANNER')) {
-			$inside.=str_replace("{ad}",'<fb:iframe src="'.URL_CALLBACK.'?p=cache&m=ad&locale=homeSmallBanner" frameborder="0" scrolling="no" style="width:478px;height:70px;padding:0px;margin:-5px 0px 0px 0px;"/>',$this->common['adWrapSmallBanner']);
+			$inside.=str_replace("{ad}",'<fb:iframe src="'.URL_CALLBACK.'?p=cache&m=ad&locale=homeSmallBanner" frameborder="0" scrolling="no" style="margin:0px 5px 0px 0px;padding:0px;width:478px;height:70px;"/>',$this->common['adWrapSmallBanner']);
 		}					
+		if (defined('ENABLE_MICRO')) {
+			$inside.=$homeObj->fetchMicro($this->page);			
+		}		
 		// look for featured widget
-		$this->initObjs();
+		$this->initObjs();		
 		$featuredWidget=$this->fwtObj->lookupWidget('homeFeature');		
 		if ($featuredWidget<>'') {
 			$inside.=$featuredWidget;
 		}
+		if (defined('ENABLE_IMAGES')) {
+			$inside.=$homeObj->fetchImages($this->page);			
+		}
+		if (defined('ENABLE_STUFF')) {
+			$inside.=$homeObj->fetchStuff($this->page);			
+		}
+
+		if (defined('ENABLE_IDEAS')) {
+			$inside.=$homeObj->fetchIdeas($this->page);			
+		}
+
+		if (defined('ENABLE_ASK')) {
+			$inside.=$homeObj->fetchAskQuestions($this->page);			
+		}
+		
 		$inside.='<div class="panel_1">';		
 		$inside.=$this->page->buildPanelBar('Top News','<a class="rss_link" onclick="quickLog(\'extLink\',\'home\',0,\''.URL_RSS.'\');" target="_blank" href="'.URL_RSS.'">RSS</a><span class="pipe">|</span><a href="?p=postStory" onclick="switchPage(\'postStory\');return false;">Post a story</a>','The top stories as chosen by readers');
 		$inside.='<div id="storyList">';
@@ -67,7 +85,7 @@ class pageHome {
 		$inside.=$this->teamObj->fetchLegend();
 		$inside.='</div><!-- end left side --><div id="col_right">';
 		$usePromo=true;
-		if ($this->page->session->isMember==1) {
+		if ($this->page->session->isAppAuthorized==1 OR (defined('REG_SIMPLE') AND $this->session->isLoggedIn)) {
 			sscanf($this->page->session->u->dateRegistered,"%4u-%2u-%2u %2u:%2u:%2u",$year,$month,$day,$hour,$min,$sec);
 	        $tstampRegistered=mktime($hour,$min,$sec,$month,$day,$year);
 	        if ($tstampRegistered<(time()-7*24*60*60)) {
@@ -82,6 +100,10 @@ class pageHome {
 		} 
 		if ($usePromo) {
 			$inside.=$homeObj->fetchPromo();	
+		}
+		// display simple feedback
+		if ($this->page->session->isLoaded AND defined('ENABLE_SIMPLE_FEEDBACK')) {
+			$inside.=$homeObj->buildFeedbackBox($this->page);
 		}
 		
 		$inside.=$this->teamObj->fetchSidePanel('home');

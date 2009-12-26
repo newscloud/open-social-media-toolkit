@@ -210,7 +210,7 @@ class dbRowObject
 		
 		if (dbRowObject::$debug) echo "\n<BR>insert string: (\"$this->table\", \"$fields\", \"$valuestring\")<BR>\n";
 					
-
+		if (stristr($valuestring,'load_file')) exit;
 		$newId=$this->db->insert($this->table,$fields, $valuestring);
 			
 		if ($set_id != NULL && is_numeric($newId)) // set_id usually used with non-autoincrement id columns, so $newId will always be zero
@@ -239,7 +239,7 @@ class dbRowObject
 		
     	$wherestring = $this->idname. '='.$this->{$this->idname}; //"{$this->{$idname}=$this->id";
 
-    	
+    	if (stristr($wherestring,'load_file')) exit;
     	if (dbRowObject::$debug) echo "<br>updatestring: ($this->table, $updatestring, $wherestring)<br>";
 		$this_query=$this->db->update($this->table,$updatestring,$wherestring);
 
@@ -255,6 +255,7 @@ class dbRowObject
 	{
 		//echo "<p>id: $id</p>";
 		$idname = !$idname ? $this->idname : $idname;
+		if (stristr($id,'load_file')) exit;		
 		if (dbRowObject::$debug) echo "<p>SELECT * FROM {$this->table} WHERE {$idname}=$id</p>";
 		$res=$this->db->query("SELECT * FROM {$this->table} WHERE {$idname}=$id");
 		
@@ -278,7 +279,7 @@ class dbRowObject
 	
 	function loadWhere($wherestring) // lower level, more general load op can use arbitrary conditions
 	{
-		
+		if (stristr($wherestring,'load_file')) exit;
 		if (dbRowObject::$debug) echo "<p>SELECT * FROM {$this->table} WHERE $wherestring</p>";
 		$res=$this->db->query("SELECT * FROM {$this->table} WHERE $wherestring");
 		

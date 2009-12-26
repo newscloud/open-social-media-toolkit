@@ -25,7 +25,9 @@ class TemplateTable
 		"shortName" => 		"VARCHAR(255)",
 		"code" 		=>		"BLOB",
 		"category"  =>		"VARCHAR(128)",
-		"helpString" =>		"BLOB"
+		"helpString" =>		"BLOB",
+		"hasChanged" => "TINYINT(1) default 0",
+		"lastChange" => "timestamp"
 		
 	);
 
@@ -146,7 +148,7 @@ class dynamicTemplate
 			return true; 
 		}
 		
-		if ($_POST['fb_sig_added']) { 
+		if (isset($_POST['fb_sig_added']) AND $_POST['fb_sig_added']==1) {  
 			$fbId=$_POST['fb_sig_user'];
 		} else {
 			$fbId=$_POST['fb_sig_canvas_user'];
@@ -214,27 +216,22 @@ class dynamicTemplate
 		
 	}
 	
-	
 	function useDBTemplate($templateShortName, $templateDefaultCode, $templateHelpString = '', $refreshPage = false, $category='', $ajaxEdit=true)
 	{
-	
 	    if (!$this->dbtemplates)
 	        $this->loadDBTemplates();
-	    if (array_key_exists($templateShortName, $this->dbtemplates))//($this->dbtemplates[$templateShortName]<>'')
-	        $code= $this->dbtemplates[$templateShortName]['code'];
-	    else
-	    {
+	    if (array_key_exists($templateShortName, $this->dbtemplates)){ //($this->dbtemplates[$templateShortName]<>'') 
+	        $code= $this->dbtemplates[$templateShortName]['code'];		
+		} else {
 	    	$code= $templateDefaultCode;
 	    	// add to db and update loaded templates
 	    	$this->updateAddDBTemplate($templateShortName, $templateDefaultCode, $templateHelpString, $category);
-	    }
-	    
+	    }	    
 	    if ($this->editEnabled && ($ajaxEdit || $this->forceAjaxEdit))
-	        $code = $this->wrapCodeForEditMode($code, $templateShortName, $templateHelpString, $refreshPage);
-	       
+	        $code = $this->wrapCodeForEditMode($code, $templateShortName, $templateHelpString, $refreshPage);	       
 	    return $code;
-	    
 	}
+	
 	function loadDBTemplates()
 	{
 		$tt = new TemplateTable($this->db);
@@ -244,12 +241,13 @@ class dynamicTemplate
 	
 	function updateAddDBTemplate($shortName, $code,$helpString='', $category='')
 	{
-		if (/*ENABLE_TEMPLATE_EDITS &&*/ $this->editEnabled) // extra auth check to make sure this isnt being invoked by an unauthorized user
+		if (/*ENABLE_TEMPLATE_EDITS &&*/ $this->editEnabled OR defined('NO_CACHE')) // extra auth check to make sure this isnt being invoked by an unauthorized user
 		{		
 			$tt = new TemplateTable($this->db);
 			$to = $tt->getRowObject();
 			$to->shortName = $shortName;
 			$to->code = $code;
+			$to->lastChange=time();
 			if ($helpString <>'') $to->helpString = $helpString;
 			if ($category <> '') $to->category = $category;
 			if ($to->loadWhere("shortName='$shortName'"))
@@ -257,8 +255,7 @@ class dynamicTemplate
 				$to->code=$code; 
 				$to->update();
 			} else
-				$to->insert();
-				
+				$to->insert();				
 		}
 	}
 	

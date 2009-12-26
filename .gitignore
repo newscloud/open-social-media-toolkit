@@ -1,0 +1,7 @@
+.DS_Store
+config/deploy.rb
+*.swp
+*.bak
+smt
+*.tmproj
+.gitignore

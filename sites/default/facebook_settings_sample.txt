@@ -1,0 +1,51 @@
+After you run step 3) Upload your Application settings to Facebook from the configuration menu, you should see settings similar to this. If you don't, there may be a problem with your constants.php settings.
+
+Visit http://www.facebook.com/developers/apps.php to see your application settings
+
+Canvas Callback URL
+http://default.newsi.us/facebook
+
+Canvas URL
+http://apps.facebook.com/defaultapp/
+
+FBML/iframe
+FBML
+
+Developer Mode
+Off
+
+Application Type
+Website
+Post-Authorize Redirect URL
+http://apps.facebook.com/defaultapp/?p=team
+
+Post-Remove URL
+http://default.newsi.us/facebook?p=postAuth&m=remove
+
+Post-Authorize URL
+http://default.newsi.us/facebook?p=postAuth&m=add
+
+Privacy URL
+http://apps.facebook.com/defaultapp/?p=tos
+
+Help URL
+http://apps.facebook.com/defaultapp/?p=contact
+
+Private Install
+No
+
+API Key
+xxxxxx
+
+Application Secret
+xxxxx
+
+Application ID
+xxxxx
+
+Contact Email
+you@default.com
+
+Support Email
+support@default.com
+

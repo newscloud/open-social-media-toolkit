@@ -193,9 +193,12 @@ class content {
 				"$story->contentid,'$story->title','$story->caption','$story->source','$story->url','$story->permalink',$story->postedById,'$story->postedByName',$story->userid,'$story->date',$story->score,$story->isFeatured,$story->imageid,$story->videoid,$story->isBlogEntry,$story->isFeatureCandidate");
 			$q=$this->db->query("SELECT siteContentId FROM Content WHERE url='$story->url' AND permalink='$story->permalink';");
 			$data=$this->db->readQ($q);			
+			// every story gets a contentimage entry
 			$contentImageQuery = $this->db->insert("ContentImages", "url, siteContentId, date", "'$story->imageUrl', $data->siteContentId, NOW()");
 			$imageid=$this->db->getId();
-			$this->db->update("Content","imageid=$imageid","siteContentId=$data->siteContentId");
+			// only set imageid in Content table if there is actually an image
+			if ($story->imageUrl<>'') 
+				$this->db->update("Content","imageid=$imageid","siteContentId=$data->siteContentId");
 		} else {
 			$data=$this->db->readQ($chkDup);
 		}

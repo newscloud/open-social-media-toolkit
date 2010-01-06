@@ -176,26 +176,29 @@
 			}			
 		}
 		
+		// check for write access to cache directory for CSS, JS files
+		try {	
+			$tempStr=' <p><span style="color:red;"><strong>WARNING:</strong></span>Caching problem with CSS stylesheets and Javascript files - could not open or write to '.PATH_CACHE.' - set ownership for Apache Web service e.g. chown www-user:www-user '.PATH_CACHE.' and set write permissions for the directory chmod -R 755 '.PATH_CACHE.'</p>';
+			$handle = fopen(PATH_CACHE.DS.'configTest.txt', "a");
+			if (!$handle) 
+				$warnings.=$tempStr;
+			else {
+				$res=fwrite($handle,"config.php cache test");
+				if (!$res) $warnings.=$tempStr;									
+			}
+		} catch (Exception $e) {
+			$warnings.=$tempStr;
+		}			
+
 		if (defined('NO_SECURITY') AND NO_SECURITY) {
 			global $init;	
 			$warnings.='<p><span style="color:red;"><strong>WARNING: Security is turned off</strong></span> Before you launch, be sure to turn security on in constants.php. <strong>Important</strong>: Bookmark <strong><a href="'.SITE_DOMAIN.'?p=config&apiKey='.$init['apiKey'].'">this link</a></strong> before you turn security on. After you turn security on, you can reach the management console from the Admin link in the footer of your Facebook application.</p>';
 		}
+
 		if (defined('NO_CACHE') AND NO_CACHE) {	
-			$warnings.='<p><span style="color:orange;"><strong>NOTICE: Caching is turned off</strong></span> When you are ready to launch, you can turn on caching in constants.php to enhance performance. You will need to permission the /sites/cache directory for Apache to write to.</p>';
-		} else {
-			try {	
-				$tempStr=' <p><span style="color:red;"><strong>WARNING:</strong></span> Caching problem - could not open or write to '.PATH_CACHE.' - set ownership for Apache Web service e.g. chown www-data:www-data '.PATH_CACHE.' and set write permissions for the directory chmod -R 755 '.PATH_CACHE.'</p>';
-				$handle = fopen(PATH_CACHE.DS.'configTest.txt', "a");
-				if (!$handle) 
-					$warnings.=$tempStr;
-				else {
-					$res=fwrite($handle,"config.php cache test");
-					if (!$res) $warnings.=$tempStr;									
-				}
-			} catch (Exception $e) {
-				$warnings.=$tempStr;
-			}			
-		}
+			$warnings.='<p><span style="color:orange;"><strong>NOTICE: Caching is turned off</strong></span> When you are ready to launch, you can turn on caching in constants.php to enhance performance. You will need to permission the '.PATH_CACHE.' directory for Apache to write to.</p>';
+		} 
+		
 		if (defined('NO_LOGGING') AND NO_LOGGING) {	
 			$warnings.='<p><span style="color:orange;"><strong>NOTICE: Logging is turned off</strong></span> You can turn it on constants.php. You will need to touch and permission the specified /var/logs/*.log files for Apache to write to.</p>';
 		} else {
@@ -212,6 +215,35 @@
 				$warnings.=$tempStr;
 			}			
 		}
+
+		// check for write access to uploaded file directories - PATH_UPLOAD_IMAGES
+		try {	
+			$tempStr=' <p><span style="color:yellow;"><strong>Warning:</strong></span> Uploading user submissions - could not open or write to '.PATH_UPLOAD_IMAGES.' - set ownership for Apache Web service e.g. chown www-user:www-user '.PATH_UPLOAD_IMAGES.' and set write permissions for the directory chmod -R 755 '.PATH_UPLOAD_IMAGES.'</p>';
+			$handle = fopen(PATH_UPLOAD_IMAGES.'configTest.txt', "a");
+			if (!$handle) 
+				$warnings.=$tempStr;
+			else {
+				$res=fwrite($handle,"config.php upload test");
+				if (!$res) $warnings.=$tempStr;									
+			}
+		} catch (Exception $e) {
+			$warnings.=$tempStr;
+		}			
+
+		// check for write access to uploaded file directories - PATH_UPLOAD_SUBMISSIONS
+		try {	
+			$tempStr=' <p><span style="color:yellow;"><strong>Warning:</strong></span> Uploading user submissions - could not open or write to '.PATH_UPLOAD_SUBMISSIONS.' - set ownership for Apache Web service e.g. chown www-user:www-user '.PATH_UPLOAD_SUBMISSIONS.' and set write permissions for the directory chmod -R 755 '.PATH_UPLOAD_SUBMISSIONS.'</p>';
+			$handle = fopen(PATH_UPLOAD_SUBMISSIONS.'configTest.txt', "a");
+			if (!$handle) 
+				$warnings.=$tempStr;
+			else {
+				$res=fwrite($handle,"config.php upload test");
+				if (!$res) $warnings.=$tempStr;									
+			}
+		} catch (Exception $e) {
+			$warnings.=$tempStr;
+		}			
+
 		
 		return $warnings;
 	}

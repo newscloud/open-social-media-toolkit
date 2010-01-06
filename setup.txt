@@ -16,7 +16,7 @@ This program is free software: you can redistribute it and/or modify
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	----------------------------------------
 
-Last modified: December 2009
+Last modified: January 6, 2009
 
 * APACHE: Configure your website in Apache using /sites/default/apache_conf_sample as a guide
   - e.g. we are using default.newsi.us in our example pages
@@ -25,7 +25,7 @@ Last modified: December 2009
 
 * DATABASE: Create a database and set permissions
   - e.g. CREATE DATABASE menagerie; 
-  - e.g. GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
+  - e.g. GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host' IDENTIFIED BY 'my-pass-word';
 
 * FACEBOOK: Create a Facebook application 
   - Use the http://www.facebook.com/developers/ application to set up a new application. You just need to select a name at this time. Other settings will be uploaded during our installation process.

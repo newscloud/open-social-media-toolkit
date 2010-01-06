@@ -33,6 +33,10 @@ Please also follow us on twitter @newscloud: http://twitter.com/newscloud
 
 Release Notes
 ---------------------------------------------
+v0.31 - Facebook PHP Open Source Releases Jan 6, 2009
+ * Updated documentation and sample settings to make configuration easier for more environments
+ * Patch release to v0.30
+
 v0.30 - Facebook PHP Updated Dec 2009
  * Updated to provide easier set up: /sites/default subdirectory added with sample installation files, see /setup.txt
  * New features include ideas, answers, twitter rooms and photo streams

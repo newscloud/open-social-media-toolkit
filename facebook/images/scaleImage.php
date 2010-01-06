@@ -22,6 +22,7 @@
 			$data=$db->readQ($q);
 			// else create a new scaled image
 			$file_orig=$data->url; // old PATH_CACHE.'/story_'.$imageid.'.jpg';
+			if ($file_orig=='') $file_orig=PATH_SITE_IMAGES.'watermark.jpg';
 			$srcImage = imagecreatefromjpeg($file_orig);
 			list($srcWidth, $srcHeight) = getimagesize($file_orig);
 			$srcWidth>$srcHeight?$layout='landscape':$layout='portrait';

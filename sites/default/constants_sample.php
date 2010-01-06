@@ -1,59 +1,65 @@
 <?php
-	// Copy this file to constants.php
-	// Change settings to your particular site and configuration
+	/************************************************************************/
+	/* Copy this file to constants.php 										*/
+	/* Change settings to your particular site and configuration 			*/
+	/* Pay special attention to areas marked REQUIRED 						*/
+	/************************************************************************/
 
-	// IMPORTANT: be sure to change image paths to your server in /facebook/styles/default.css
-
-	// Site directory name e.g. if using /sites/default, set to 'default'
-	define ("SITE_PATH_NAME",'default');
-	define ("SITE_DOMAIN",'http://default.newsi.us');
-	define ("URL_CANVAS","http://apps.facebook.com/defaultapp/"); // trailing slash matters to Facebook
-	define("URL_BASE",SITE_DOMAIN.'/facebook');
-	define ("URL_HOME",SITE_DOMAIN.'/php/');
-
-	// For installation and testing - remove when done
-	define ("NO_SECURITY",true);	// remove to enable console security after configuration	
-	define ("NO_LOGGING",true);	// remove to enable logging, must touch and permission /var/log files
-	define ("NO_CACHE",true);	// remove to enable caching, must touch and permission /sites/cache files
-
-	// Model settings 
+	// Model settings
 	define ("DS","/"); // directory separator
 	define ("MODULE_FACEBOOK",true);	
 	define ("MODULE_ACTIVE","FACEBOOK");
+
+	// For installation and testing
+	// REQUIRED: remove these or set to false for launch
+	define ("NO_SECURITY",true);	// remove to enable console security after configuration	
+	define ("NO_LOGGING",true);	// remove to enable logging, touch & permission PATH_LOGFILE files e.g. /var/log
+	define ("NO_CACHE",true); // remove to enable caching, touch & permission PATH_CACHE files e.g. /sites/default/cache
+
+	// REQUIRED: Site sub-directory name e.g. if using /sites/default, set to 'default'
+	define ("SITE_PATH_NAME",'default');
+	define ("SITE_DOMAIN",'http://default.newsi.us'); // do not use trailing slash
+	define ("URL_CANVAS","http://apps.facebook.com/defaultapp/"); // requires trailing slash (due to Facebook)
+	define("URL_BASE",SITE_DOMAIN.'/facebook');
+	define ("URL_HOME",SITE_DOMAIN.'/php/');
+	define ('SRC_ROOT',DS.'var'.DS.'www'.DS.'newscloud'); // e.g. root of the source code for NewsCloud
+	// IMPORTANT for SITE_DOMAIN setting 
+	// The above basic configuration uses an Apache virtual host 
+	// The DOCUMENT_ROOT setting in  /sites/default/apache_conf_sample determines which subdirectory SITE_DOMAIN resolves
+	// If you use a virtual host, the DOCUMENT_ROOT or public web directory that SITE_DOMAIN points to should be WEBROOT/sites/default/ e.g. /var/www/sites/default or /var/www/newscloud/sites/default 
+	// If you do not use a virtual host, SITE_DOMAIN needs to point to a full path to your sites directory
+	// e.g. define ("SITE_DOMAIN","http://yourdomain.com/sites/default"); 
+	// e.g. or define ("SITE_DOMAIN","http://yourdomain.com/newscloud/sites/default"); 
 	
-	// Secret key settings 
+	// REQUIRED: Secret key settings 
 	// You can either define your secret keys in the constants file
 	// - or - do as we do, for security, store them in an ini file outside of the apache web directory path
 	// a global $init array must exist for the database to be initialized properly
-	define ("INI_FILE_FOR_SECRET_KEYS",true);
-	if (INI_FILE_FOR_SECRET_KEYS) {
-		// check for ini file existence
-		define ("INI_PATH",DS.'var'.DS.'www'.DS.'grist'.DS); // hard coded for unification
-		$init=parse_ini_file(INI_PATH.SITE_PATH_NAME.'.ini');
-	} else {	
-		// otherwise, set up your  $init settings here
+	define ("INI_FILE_FOR_SECRET_KEYS",false); // default is to define these in this file
+	if (!INI_FILE_FOR_SECRET_KEYS) {
+		// set up your  $init settings here
 		$init['apiKey']='put-yourkeyhere'; // deprecated use random#-anystring e.g. 1223-asldjkwemx , 35 char max
 		$init['fbAnalytics']='your-google-analytics-key-for-facebook'; // get from http://google.com/analytics
 		$init['database']='your database Name';
 		$init['username']='your database user';
 		$init['password']='your database password';
 		$init['hostname']='your database hostname';
-		if (MODULE_FACEBOOK) {		
-			// Get these from http://developers.facebook.com based on your application
-			$init['fbAppId']='your facebook appid (numeric)';
-			$init['fbAPIKey']='your facebook api key';
-			$init['fbSecretKey']='your facebook secret key';
-		}						
+		$init['fbAppId']='your facebook appid (numeric)';
+		$init['fbAPIKey']='your facebook api key';
+		$init['fbSecretKey']='your facebook secret key';
+		// optional - only needed if using micro/twitter room, twitter posts
+		$init['twitterPwd'] = 'your twitter account password'; 
+		// optional - only needed if using recaptcha
+		$init['key_pri_recaptcha']='your recaptcha key';
+	} else {	
+		// otherwise, check for ini file existence at path below
+		// can be more secure if you configure variables in .ini file outside of public web server directories
+		define ("INI_PATH",DS.'var'.DS); // hard coded for unification
+		$init=parse_ini_file(INI_PATH.SITE_PATH_NAME.'.ini');
 	}
-	define ("USE_TWITTER",true); 
-	if (USE_TWITTER)
-		define ("TWITTER_PWD",$init['twitterPwd']);	// your twitter password from above INI file or set statically here
-	define ("USE_RECAPTCHA",false);	
-	if (USE_RECAPTCHA)
-		define ("KEY_PRI_RECAPTCHA",$init['key_pri_recaptcha']); // get from http://recaptcha.net
 
-	// Site settings
-	define ("SITE_TITLE",'Default Site Title');
+	// REQUIRED: Site settings
+	define ("SITE_TITLE",'Default Title'); // Maximum of 16 characters per Facebook
 	define ("SITE_TITLE_SHORT",SITE_PATH_NAME);
 	define ("CACHE_PREFIX",'dft'); // two or three letter prefix for your site title
 	define ("SITE_SPONSOR",'Default Corp.');
@@ -73,31 +79,36 @@
 	define ("TAB_STORIES","News");
 	// tags module
 	$crowdTags=array('education','health','music','technology','food','politics','transportation','lifestyle','arts','sports','business','gardening','travel','recreation','government','environment');
+	define ("USE_TWITTER",true); 
+
+	if (USE_TWITTER)
+		define ("TWITTER_PWD",$init['twitterPwd']);	// your twitter password from above INI file or set statically here
+	define ("USE_RECAPTCHA",false);	
+	if (USE_RECAPTCHA)
+		define ("KEY_PRI_RECAPTCHA",$init['key_pri_recaptcha']); // get from http://recaptcha.net
 
 	/* URL Settings */
 	define ("URL_PREFIX",'/index.php');	
 	define ("URL_CALLBACK",URL_BASE.URL_PREFIX);
 	define ("URL_RSS",URL_BASE."?p=rss"); // or burned RSS feed e.g. http://feeds2.feedburner.com/default
-	define('URL_UPLOADS', URL_BASE.'/uploads');
-	define('URL_THUMBNAILS', URL_UPLOADS.'/images');
-	define('URL_SUBMITTED_IMAGES', URL_UPLOADS.'/submissions');
+	define('URL_UPLOADS', URL_BASE.'/uploads'); // make sure that web server can write to this directory and children
+	define('URL_THUMBNAILS', URL_UPLOADS.'/images'); 
+	define('URL_SUBMITTED_IMAGES', URL_UPLOADS.'/submissions'); 
 	define ("URL_CACHE",URL_HOME.'?p=cache');
 	define ("URL_CONSOLE",URL_HOME."?p=console");
 	
-	/* Directory path settings */
-	define ("PATH_ROOT",$_SERVER['DOCUMENT_ROOT']);
-	define ('SRC_ROOT',DS.'var'.DS.'www'.DS.'grist'.DS.'current');
-	define ('SRC_SITE',DS.'sites'.DS.SITE_PATH_NAME);
+	/* Additional Directory path settings */
+	define ('SRC_SITE',DS.'sites'.DS.SITE_PATH_NAME);	
 	define ('PATH_CORE',SRC_ROOT.DS.'core'.DS);
 	define ('PATH_CONSOLE',SRC_ROOT.DS.'php'.DS.'console');
-	define ('PATH_SITE',PATH_ROOT.SRC_SITE.DS.'facebook');
+	define ('PATH_SITE',SRC_ROOT.SRC_SITE.DS.'facebook');
 	define ('PATH_FACEBOOK',SRC_ROOT.DS.'facebook');	
-	define ('PATH_CACHE',SRC_ROOT.DS.SRC_SITE.DS.'cache'); 
+	define ('PATH_CACHE',SRC_ROOT.SRC_SITE.DS.'cache'); 
 	define ('PATH_SITE_IMAGES', SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'images'.DS);
 	define ('PATH_IMAGES',PATH_FACEBOOK.DS.'images'.DS);
 	define ('PATH_TEMPLATES',SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'templates');
-	define ('PATH_STYLES',SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'styles'); // or, move to /smt/sites/climate/facebook/styles directory for site-specific approach
-	define ('PATH_FACEBOOK_STYLES',SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'styles'); // this has to have a shared name with constants.php
+	define ('PATH_STYLES',SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'styles');
+	define ('PATH_FACEBOOK_STYLES',SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'styles'); 
 	define ('PATH_SCRIPTS',SRC_ROOT.DS.'facebook'.DS.'scripts');
 	define('PATH_UPLOAD_IMAGES', SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'uploads'.DS.'images'.DS);	
 	define('PATH_UPLOAD_SUBMISSIONS', SRC_ROOT.SRC_SITE.DS.'facebook'.DS.'uploads'.DS.'submissions'.DS);
@@ -234,8 +245,5 @@
 	// DEPRECATED 
 	define ("SITE_CLOUDID",1); 
 	define ("RESEARCH_SITE_ID",1); // value definied in research.sites database
-	// define ("USE_SIMPLEPIE",true); // fetch rss feeds locally
-	// define ("URL_SMT_NODE","http://api.newscloud.com/services/cloud.php");	
-	// define ("URL_SMT_SERVER",URL_CANVAS);
-	// define("ENABLE_RESEARCH_STUDY", true); // might not need to be global if all relevant logic is in account.php template and rules templates
+
 ?>

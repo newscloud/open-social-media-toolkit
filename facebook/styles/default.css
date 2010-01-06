@@ -1,6 +1,6 @@
 /*
-Author: Adam Faja for Geoffco
-URL: http://www.geoffco.com 
+Author: Adam Faja for Eye Level
+URL: http://www.youreyelevel.com
 Test compress
 CONTENTS 
 
@@ -180,7 +180,7 @@ blockquote .quotes {
 	display: list-item;
 	margin: 0 0 10px 20px;
 	padding: 0;
-	list-style-image: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bullet1.gif);
+	list-style-image: url({URL_BASE}/index.php?p=cache&img=bullet1.gif);
 	list-style-type: disc;
 	list-style-position: outside;
 	border: none;
@@ -211,7 +211,7 @@ hr { border: none 0;
 	width: 760px;
 	height: 78px;
 	display: inline-block;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_banner.jpg) top left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=bg_banner.jpg) top left no-repeat;
 	margin: 0;
 	}
 
@@ -241,7 +241,7 @@ hr { border: none 0;
 	width: 740px;
 	padding: 5px 10px;
 	margin-bottom: 2px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
 	}
 
 
@@ -310,22 +310,22 @@ a.powered:hover {
 *********************************/
 
 .rss_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_rss.png) left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_rss.png) left no-repeat;
 	padding: 3px 0 3px 18px;
 	}
 
 .twitter_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_twitter.gif) left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_twitter.gif) left no-repeat;
 	padding: 3px 0 3px 18px;
 	}
 
 .newscloud_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_newscloud.gif) left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_newscloud.gif) left no-repeat;
 	padding: 3px 0 3px 20px;
 	}
 
 .grist_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_grist.gif) left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_grist.gif) left no-repeat;
 	padding: 3px 0 3px 20px;
 	}
 
@@ -404,7 +404,7 @@ a.powered:hover {
 	font-weight: bold;
 	font-size: 12px;
 	line-height: normal;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
 	display: inline; }
 
 .ie6 .toggle_tabs li a, .ie7 .toggle_tabs li a {display:inline-block;}
@@ -472,7 +472,7 @@ a.powered:hover {
 	color: #fff;
 	font-weight: bold;
 	font-size: 11px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_dark.png) top repeat-x #1d7195;
 	display: inline; }
 
 #subNav .toggle_tabs li a.selected {
@@ -521,17 +521,17 @@ a.powered:hover {
 	margin-left: 0;}
 
 #attachTabs .toggle_tabs li a.selected.photo_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_photo.gif) 4px no-repeat #fff;}
+	background: url({URL_BASE}/index.php?p=cache&img=icon_photo.gif) 4px no-repeat #fff;}
 
 #attachTabs .toggle_tabs li a.photo_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_photo.gif) 4px no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_photo.gif) 4px no-repeat;
 	}
 
 #attachTabs .toggle_tabs li a.selected.video_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_video.gif) 4px no-repeat #fff;}
+	background: url({URL_BASE}/index.php?p=cache&img=icon_video.gif) 4px no-repeat #fff;}
 
 #attachTabs .toggle_tabs li a.video_link {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_video.gif) 4px no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_video.gif) 4px no-repeat;
 	}
 
 #attachTabs .toggle_tabs li a.selected:hover { text-decoration:none;}
@@ -551,7 +551,7 @@ a.powered:hover {
 
 #featurePanel {
 	padding: 0px 0px 10px 0px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
 	margin-bottom: 15px;
 	}
 
@@ -577,7 +577,7 @@ a.powered:hover {
 	}
 
 #featurePanel .panelBar {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_light.png) top repeat-x #aed0da;
 	}
 
 #featurePanel .thumb {
@@ -743,7 +743,7 @@ a.powered:hover {
 #introPanel {
 	padding: 10px 10px 3px 10px;
 	margin: 0 0 5px 0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
 	}
 
 #introPanel p { color: #fff; }
@@ -755,7 +755,7 @@ a.powered:hover {
 	margin: 0 0 15px 0;
 	overflow: auto;
 	display: inline-block;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
 	}
 
 #teamPanel h1 {
@@ -792,7 +792,7 @@ a.powered:hover {
 	padding: 0;
 	margin: 0;
 	display: inline-block;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
 	}
 
 #rewardsHead .storyBlockWrap {
@@ -854,7 +854,7 @@ a.powered:hover {
 
 #teamIcon {
 	padding: 10px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_team.gif) top right no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=bg_team.gif) top right no-repeat;
 	overflow: auto;
 	}
 
@@ -874,48 +874,48 @@ a.powered:hover {
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cc99cc;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_reader.gif) center repeat-x; }
+	background: url({URL_BASE}/index.php?p=cache&img=user_reader.gif) center repeat-x; }
 
 .userLevel1 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cb4d01;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_contributor.gif) center repeat-x;	}
+	background: url({URL_BASE}/index.php?p=cache&img=user_contributor.gif) center repeat-x;	}
 
 .userLevel2 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #996633;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_bronze.gif) center repeat-x;	}
+	background: url({URL_BASE}/index.php?p=cache&img=user_bronze.gif) center repeat-x;	}
 
 .userLevel3 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #999999;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_silver.gif) center repeat-x;	}
+	background: url({URL_BASE}/index.php?p=cache&img=user_silver.gif) center repeat-x;	}
 
 .userLevel4 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #cc9900;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_gold.gif) center repeat-x;	}
+	background: url({URL_BASE}/index.php?p=cache&img=user_gold.gif) center repeat-x;	}
 
 .userLevel5 {
 	font-weight: normal;
 	font-size: 9px;
 	padding: 1px 2px;
 	color: #80aac0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=user_platinum.gif) center repeat-x;	}
+	background: url({URL_BASE}/index.php?p=cache&img=user_platinum.gif) center repeat-x;	}
 
 
 #actionLegend {
 	padding: 10px;
 	margin: 0 0 15px 0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) repeat-x bottom;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_orange.png) repeat-x bottom;
 	}
 
 #actionLegend .btn_1 { margin: 0 0 10px 20px; float: right; }
@@ -926,7 +926,7 @@ a.powered:hover {
 	padding: 0;
 	margin: 0 0 15px 0;
 	display: inline-block;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_light.png) bottom repeat-x #ebf6fc;
 	}
 
 #wideTipPanel .wideTipLeft {
@@ -974,11 +974,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	}
 
 .panel_1 .panelBar {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) top repeat-x #AED0DA;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_light.png) top repeat-x #AED0DA;
 	}
 
 .panel_2 .panelBar {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_orange.png) top repeat-x #cb4d01;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bar_orange.png) top repeat-x #cb4d01;
 	}
 
 .panelBar h2 {
@@ -1026,7 +1026,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: #AED0DA url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bar_light.png) repeat-x scroll center top;
+	background: #AED0DA url({URL_BASE}/index.php?p=cache&img=grad_bar_light.png) repeat-x scroll center top;
 	}
 
 
@@ -1041,7 +1041,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_1.png) top repeat-x #c14001;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_1.png) top repeat-x #c14001;
 	}
 
 .btn_1_lg {
@@ -1060,7 +1060,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
 	}
 
 .btn_left {
@@ -1072,18 +1072,18 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-webkit-border-bottom-left-radius: 4px;
 	border-top-left-radius: 4px;
 	border-bottom-left-radius: 4px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
 	}
 
 .voteLink {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_vote.gif) left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_vote.gif) left no-repeat;
 	padding-left: 15px;
 	}
 
 .btn_mid {
 	margin: 0 1px;
 	padding: 3px 8px 4px 8px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
 	}
 
 .btn_right {
@@ -1095,7 +1095,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	-webkit-border-bottom-right-radius: 4px;
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
 	}
 
 .rating {
@@ -1111,11 +1111,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 0 0 10px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) top left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) top left no-repeat;
 	}
 
 .rate_up:hover {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) center left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) center left no-repeat;
 	}
 
 .rate_up_on {
@@ -1124,7 +1124,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 0 0 10px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) bottom left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) bottom left no-repeat;
 	}
 
 .rate_down {
@@ -1133,11 +1133,11 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 10px 0 10px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) top right no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) top right no-repeat;
 	}
 
 .rate_down:hover {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) center right no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) center right no-repeat;
 	}
 
 .rate_down_on {
@@ -1146,7 +1146,7 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	width: 16px;
 	height: 16px;
 	margin: 0 10px 0 10px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_thumbs.gif) bottom right no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_thumbs.gif) bottom right no-repeat;
 	}
 
 .flag {
@@ -1157,12 +1157,12 @@ These wrappers cascade to tell .panelBar to which background to use for the titl
 	margin: 0 0 0 10px;
 	border-left: 1px solid #ccc;
 	padding-left: 30px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px top no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_flag.gif) 10px top no-repeat;
 	}
 
 a.flag:hover {
 	color: #cc3333;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px center no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_flag.gif) 10px center no-repeat;
 	}
 
 .flag_on {
@@ -1173,7 +1173,7 @@ a.flag:hover {
 	margin: 0 0 0 10px;
 	border-left: 1px solid #ccc;
 	padding-left: 30px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=icon_flag.gif) 10px bottom no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=icon_flag.gif) 10px bottom no-repeat;
 	}
 
 
@@ -1284,7 +1284,7 @@ li {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
+	background: url({URL_BASE}/index.php?p=cache&img=btn_2.png) bottom repeat-x #cce4f0;
 	}
 
 .storyCommands td {
@@ -1307,7 +1307,7 @@ li {
 .top_reward {
 	padding: 10px 10px 3px 10px;
 	margin: 0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
 	}
 
 .top_reward .thumb {
@@ -1385,7 +1385,7 @@ li {
 /* My Profile Summary */
 
 #profileSummary {
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_orange.png) bottom repeat-x;
 	}
 
 #profileSummary .panel_block {
@@ -1424,7 +1424,7 @@ li {
 #bookmarkletPanel {
 	padding: 10px 10px 3px 10px;
 	margin: 0 0 5px 0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
+	background: url({URL_BASE}/index.php?p=cache&img=grad_bg_dark.png) top repeat-x #1d7195;
 	}
 
 #bookmarkletPanel p, #bookmarkletPanel h2 {
@@ -1441,7 +1441,7 @@ li {
 	height: 26px;
 	padding: 70px 0 0 0;
 	margin: 15px 0 10px 0;
-	background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bookmarklet_demo.gif) top left no-repeat;
+	background: url({URL_BASE}/index.php?p=cache&img=bookmarklet_demo.gif) top left no-repeat;
 	}
 
 
@@ -1488,7 +1488,7 @@ li {
 	margin: 0 0 10px 0;
 	padding: 0px 8px 3px 8px;
 	width: 170px;
-	/*background: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bg_bob2.gif) top right no-repeat #d8dfea;*/
+	/*background: url({URL_BASE}/index.php?p=cache&img=bg_bob2.gif) top right no-repeat #d8dfea;*/
 	}
 .box_intro p {
 	font-size: 10px;
@@ -1575,7 +1575,7 @@ li {
 	display: list-item;
 	margin: 0 0 10px 40px;
 	padding: 0;
-	list-style-image: url(http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=bullet1.gif);
+	list-style-image: url({URL_BASE}/index.php?p=cache&img=bullet1.gif);
 	list-style-type: disc;
 	list-style-position: outside;
 	border: none;
@@ -1612,7 +1612,7 @@ li {
 /*****************
 13)  FORMS
 ******************/
-.process {background: white url('http://host.newscloud.com/sites/climate/facebook/index.php?p=cache&img=vertical_bg_animation.gif') top left repeat;opacity: .5;}
+.process {background: white url('{URL_BASE}/index.php?p=cache&img=vertical_bg_animation.gif') top left repeat;opacity: .5;}
 .attachment_stage{width:360px;}
 .attachment_stage{border-top:1px solid #ccc;border-bottom:1px solid #ccc;background-color:#f0f0f0;}
 .formErrorText {font-weight: bold;color: #cb4d01;}

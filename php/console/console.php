@@ -25,7 +25,7 @@ if (!isset($_SESSION['curr_site_id'])) {
  * change this..
  */
 //require_once('../db.php');
-require_once('/var/www/grist/db.php');
+require_once(PATH_CONSOLE.'/db.php');
 $poddb = new DB();
 $controller_name = '';
 //$poddb->selectdb('hotdish');

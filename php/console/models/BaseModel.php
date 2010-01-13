@@ -1,7 +1,7 @@
 <?php
 /* ::TODO:: CHANGE THIS */
 //require_once('../db.php');
-require_once('/var/www/grist/db.php');
+require_once(PATH_CONSOLE.'/db.php');
 
 
 class BaseModel {

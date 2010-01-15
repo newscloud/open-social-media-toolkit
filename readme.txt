@@ -33,6 +33,9 @@ Please also follow us on twitter @newscloud: http://twitter.com/newscloud
 
 Release Notes
 ---------------------------------------------
+v0.32 - Facebook PHP Open Source Releases Jan 15, 2009
+ * Minor patch release to v0.31 related to console and console images
+
 v0.31 - Facebook PHP Open Source Releases Jan 6, 2009
  * Updated documentation and sample settings to make configuration easier for more environments
  * Patch release to v0.30

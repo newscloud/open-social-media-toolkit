@@ -1,7 +1,7 @@
 <div class="yui-b">
 <div class="yui-g">
 <h1>Template Builder for template 3</h1>
-<img src="?p=img&img=console/template_3.jpg" />
+<img src="?p=img&img=template_3.jpg" />
 <br />
 <div id="template-3" class="template" style="border: 1px solid black; padding: 10px; width: 500px; height: 315px;">
 <div class="story-1-template">

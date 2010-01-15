@@ -9,10 +9,10 @@
 		$dy=$y;
 		if (isset($_GET['fixed'])) $fixed=$_GET['fixed']; else $fixed=''; // fix x or y dimension
 		if (isset($_GET['crop'])) $crop='c'; else $crop=''; // crop the height
-		$file_cache_path=PATH_CACHE.'/scaled_'.$imageid.'_'.$dx.'_'.$dy.'_'.$fixed.$crop.'.jpg';
+		$file_cache_path=PATH_CACHE.'/'.CACHE_PREFIX.'_imgSc_'.$imageid.'_'.$dx.'_'.$dy.'_'.$fixed.$crop.'.jpg';
 		if (file_exists($file_cache_path)) {
 			// try reading cached file
-			header("Content-type: image/jpg");
+			header("Content-type: image/jpeg");
 			readfile($file_cache_path);
 		} else {
 			require_once(PATH_CORE.'classes/db.class.php');
@@ -23,7 +23,18 @@
 			// else create a new scaled image
 			$file_orig=$data->url; // old PATH_CACHE.'/story_'.$imageid.'.jpg';
 			if ($file_orig=='') $file_orig=PATH_SITE_IMAGES.'watermark.jpg';
-			$srcImage = imagecreatefromjpeg($file_orig);
+			$imageType=getExtension($file_orig);
+			switch ($imageType) {
+				default:
+					$srcImage = imagecreatefromjpeg($file_orig);
+				break;
+				case 'gif':
+					$srcImage = imagecreatefromgif($file_orig);
+				break;
+				case 'png':
+					$srcImage = imagecreatefrompng($file_orig);
+				break;
+			}
 			list($srcWidth, $srcHeight) = getimagesize($file_orig);
 			$srcWidth>$srcHeight?$layout='landscape':$layout='portrait';
 			if (($layout=='landscape' AND $srcWidth<$dx) OR ($layout=='portrait' AND $srcHeight<$dy)) {
@@ -75,17 +86,25 @@
 			}
 	       Imagejpeg( $destImage,$file_cache_path,100);		
 			if (prepWritableFile($file_cache_path)) {
-				header("Content-type: image/jpg");
+				header("Content-type: image/jpeg");
 				readfile($file_cache_path);
 			} else {
 				// if all caching fails, output directly
-				header("Content-type: image/jpg");
+				header("Content-type: image/jpeg");
 				imagejpeg($destImage);
 			}
 			imagedestroy($srcImage);	
 			imagedestroy($destImage);			
 		}
 	}
+
+ 	function getExtension($str) {
+         $i = strrpos($str,".");
+         if (!$i) { return ""; }
+         $l = strlen($str) - $i;
+         $ext = substr($str,$i+1,$l);
+         return $ext;
+ 	}
 
 function prepWritableFile($file_path) {
 	if (file_exists($file_path) && is_writable($file_path)) {

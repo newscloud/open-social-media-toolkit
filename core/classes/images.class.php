@@ -29,11 +29,10 @@ class images {
 			$imgArr=explode('.',$image);
 			if (isset($_GET['fixed'])) $fixed=$_GET['fixed']; else $fixed=''; // fix x or y dimension
 			if (isset($_GET['crop'])) $crop='c'; else $crop=''; // crop the height
-			$file_cache_path=PATH_CACHE.'/scaleImg_'.$imgArr[0].'_'.$dx.'_'.$dy.'_'.$fixed.$crop.'.jpg';
-			//$this->db->log($file_cache_path);
+			$file_cache_path=PATH_CACHE.'/'.CACHE_PREFIX.'_imgSc_'.$imgArr[0].'_'.$dx.'_'.$dy.'_'.$fixed.$crop.'.jpg';
 			if (file_exists($file_cache_path)) {
 				// try reading cached file
-				header("Content-type: image/jpg");
+				header("Content-type: image/jpeg");
 				readfile($file_cache_path);
 			} else {
 				$this->scaleImage($imgArr[0],$imgArr[1],$path,$x,$y,$dx,$dy,$fixed,$crop,$file_cache_path);
@@ -134,11 +133,11 @@ class images {
 			}
 	       Imagejpeg( $destImage,$file_cache_path,100);		
 			if ($this->prepWritableFile($file_cache_path)) {
-				header("Content-type: image/jpg");
+				header("Content-type: image/jpeg");
 				readfile($file_cache_path);
 			} else {
 				// if all caching fails, output directly
-				header("Content-type: image/jpg");
+				header("Content-type: image/jpeg");
 				imagejpeg($destImage);
 			}
 			imagedestroy($srcImage);	

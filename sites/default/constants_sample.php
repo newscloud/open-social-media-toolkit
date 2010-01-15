@@ -125,7 +125,7 @@
 	/* PHP Module Settings */
 	define ("MODULE_PHP","FACEBOOK");
 	define ("PATH_PHP",SRC_ROOT.'/php/');
-	define ("PATH_PHP_IMAGES",SRC_ROOT.'/sites/images/');
+	define ("PATH_PHP_IMAGES",SRC_ROOT.'/php/images/');
 	define ("PATH_PHP_TEMPLATES",SRC_ROOT.SRC_SITE.'/php/templates');
 	define ("PATH_PHP_STYLES",PATH_PHP.'styles'); // or, move to /styles directory for site-specific approach
 	define ("PATH_PHP_SCRIPTS",PATH_PHP.'scripts');
